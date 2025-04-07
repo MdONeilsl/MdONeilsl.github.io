@@ -226,18 +226,6 @@ class ImageProcessor {
         this.elements.saveButton.addEventListener('click', () => {
             if (!this.originalImage) return;
 
-            /*
-            const mat_setting = {
-    double_side: false,
-    colot_tint: new color(color.RGB, 0xFF, 0xFF, 0xFF),
-    alpha_mode: `OPAQUE`,
-    alpha: 1,
-    alpha_cut: 1,
-    metal_fact: 0,
-    rough_fact: 1,
-    emiss_tint: new color()
-};
-            */
             const material = {
                 doubleSided: false,
                 alphaMode: "OPAQUE",
@@ -284,9 +272,6 @@ class ImageProcessor {
                 const targetObj = target ? material[target] : material;
                 targetObj[prop] = { index: textureIdx };
             });
-            console.log(JSON.stringify(gltf, null, 2));
-
-
 
             const blob = new Blob([JSON.stringify(gltf, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
