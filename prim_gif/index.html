@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Media to Prim</title>
+</head>
+
+<body>
+    <link rel="stylesheet" href="./css/style.css">
+    <div id="container">
+        <div id="controls">
+            <div><label for="maxCanvasSize">Max Image Size:</label><select id="maxCanvasSize">
+                    <option value="64">64</option>
+                    <option value="128">128</option>
+                    <option value="256">256</option>
+                    <option value="512">512</option>
+                    <option value="1024">1024</option>
+                    <option value="2048" selected>2048</option>
+                </select></div>
+            <div><label for="maxFrameSize">Max Frame Size:</label><select id="maxFrameSize">
+                    <option value="64">64</option>
+                    <option value="128">128</option>
+                    <option value="256">256</option>
+                    <option value="512" selected>512</option>
+                    <option value="1024">1024</option>
+                    <option value="2048">2048</option>
+                </select></div>
+            <div><label for="videoFps">FPS Target:</label><select id="videoFps">
+                    <option value="15" selected>15 FPS</option>
+                    <option value="24">24 FPS</option>
+                    <option value="30">30 FPS</option>
+                    <option value="45">45 FPS</option>
+                    <option value="50">50 FPS</option>
+                    <option value="60">60 FPS</option>
+                </select></div>
+            <div><label for="objectSide">Side Target:</label><select id="objectSide">
+                    <option value="0" selected>Side 0</option>
+                    <option value="1">Side: 1</option>
+                    <option value="2">Side: 2</option>
+                    <option value="3">Side: 3</option>
+                    <option value="4">Side: 4</option>
+                    <option value="5">Side: 5</option>
+                    <option value="6">Side: 6</option>
+                    <option value="7">Side: 7</option>
+                    <option value="8">Side: 8</option>
+                </select></div>
+            <div><label for="input">Select GIF or Video:</label><input type="file" id="input"
+                    accept="image/gif,video/mp4,video/webm"></div>
+        </div>
+        <div id="progressContainer"><progress id="progressBar" value="0" max="100"></progress></div>
+        <div id="messageContainer"></div>
+        <div id="canvasContainer"></div><textarea id="canvasInfo" readonly
+            placeholder="Canvas Information will appear here."></textarea>
+        <div id="mediaContainer"><img id="hiddenImage" /><video id="hiddenVideo" muted></video></div>
+        <div id="instructions">
+            <h2>Instructions:</h2>
+            <ul>
+                <li>Setup your preferred settings.</li>
+                <li>Upload a GIF or video.</li>
+                <li>Save every image to disk and upload to Second Life.</li>
+                <li>Copy the text into a notecard.</li>
+                <li>Copy your uploaded Texture UUID in the notecard on the right id line: "id":"uuid".</li>
+                <li>Drop the script and the notecard in an object.</li>
+            </ul>
+            <p>You can find the script here:</p>
+            <a href="https://marketplace.secondlife.com/p/Media-to-Prim-v10/27079803">Media to Prim v1.0</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/libgif@0.0.3/libgif.min.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="./js/lang.js"></script>
+</body>
+
+</html>

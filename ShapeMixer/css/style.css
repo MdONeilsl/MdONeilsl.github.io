@@ -1,6 +1,8 @@
 .text-white,
+.tiltle,
 body,
-input[type=file] {
+input[type=file],
+label {
     color: #f7fafc
 }
 
@@ -161,11 +163,6 @@ body {
     color: #1a202c
 }
 
-.tiltle,
-label {
-    color: #f7fafc
-}
-
 .font-bold {
     font-weight: 700
 }
@@ -262,13 +259,14 @@ label span {
     box-shadow: 0 0 5px #48bb78
 }
 
-.main_container button:hover {
-    background-color: #48bb78
+.instructions-title,
+.loaderrow span {
+    font-weight: 600;
+    color: #f7fafc
 }
 
-.loaderrow span {
-    color: #f7fafc;
-    font-weight: 600
+.main_container button:hover {
+    background-color: #48bb78
 }
 
 .instructions-container {
@@ -277,14 +275,12 @@ label span {
     padding: 1.5rem;
     background-color: #2d3748;
     border-radius: .5rem;
-    box-shadow: 0 4px 6px -1px #0000001a;
+    box-shadow: 0 4px 6px -1px #0000001a
 }
 
 .instructions-title {
     font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #f7fafc
+    margin-bottom: 1rem
 }
 
 .instructions-list {
@@ -293,10 +289,10 @@ label span {
 }
 
 .instructions-list li {
-    margin-bottom: 0.5rem
+    margin-bottom: .5rem
 }
 
 .instructions-sublist {
     padding-left: 1.5rem;
-    margin-top: 0.25rem
+    margin-top: .25rem
 }

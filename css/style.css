@@ -1,0 +1,138 @@
+.container,
+.links,
+body {
+    display: flex
+}
+
+.link-button,
+body {
+    overflow: hidden;
+    color: #fff
+}
+
+.name,
+.separator,
+body {
+    color: #fff
+}
+
+#canvas,
+.link-button::before,
+.social-icon img {
+    height: 100%;
+    width: 100%
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Inter, sans-serif;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #000
+}
+
+.container {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .5);
+    transition: transform .2s ease-in-out
+}
+
+.profile-picture:hover {
+    transform: scale(1.1)
+}
+
+.name {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, .7)
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 15px;
+    transition: transform .2s ease-in-out, filter .2s ease-in-out;
+    filter: grayscale(70%)
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+    filter: grayscale(0%)
+}
+
+.links {
+    flex-direction: column;
+    width: 100%
+}
+
+.link-button {
+    padding: 15px 30px;
+    margin-bottom: 15px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform .2s ease-in-out, background-size .5s;
+    background-size: 200% auto;
+    background-image: linear-gradient(to right, #e91e63, #9c27b0, #e91e63);
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+    position: relative
+}
+
+.link-button:hover {
+    transform: scale(1.05);
+    background-position: right center
+}
+
+.link-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255, 255, 255, .1);
+    opacity: 0;
+    transition: opacity .3s;
+    border-radius: 10px
+}
+
+.link-button:hover::before {
+    opacity: 1
+}
+
+.separator {
+    margin: 0 5px
+}
+
+#canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    z-index: 1
+}
