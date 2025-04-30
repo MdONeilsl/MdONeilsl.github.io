@@ -1,48 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
     <title>Normal Map Scaler</title>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
+
 <body>
-    <link rel="stylesheet" href="./css/style.css">
-    <div class="container">
+    <link rel=stylesheet href=./css/style.css>
+    <div class=container>
         <h1>Normal Map Scaler</h1>
-        <div class="drop-zone" id="dropZone">
+        <div class=drop-zone id=dropZone>
             Drag and drop normal maps here or click to select
         </div>
-        <input type="file" id="fileInput" multiple accept="image/png,image/jpeg" style="display: none;">
-        <div class="size-select-group">
-            <label for="widthSelect">Width:</label>
-            <select id="widthSelect">
-                <option value="0">Original</option>
-                <option value="128">128</option>
-                <option value="256">256</option>
-                <option value="512" selected>512</option>
-                <option value="1024">1024</option>
-                <option value="2048">2048</option>
+        <input type=file id=fileInput multiple accept=image/png,image/jpeg style=display:none>
+        <div class=size-select-group>
+            <label for=widthSelect>Width:</label>
+            <select id=widthSelect>
+                <option value=0>Original</option>
+                <option value=128>128</option>
+                <option value=256>256</option>
+                <option value=512 selected>512</option>
+                <option value=1024>1024</option>
+                <option value=2048>2048</option>
             </select>
-            <label for="heightSelect">Height:</label>
-            <select id="heightSelect">
-                <option value="0">Original</option>
-                <option value="128">128</option>
-                <option value="256">256</option>
-                <option value="512" selected>512</option>
-                <option value="1024">1024</option>
-                <option value="2048">2048</option>
+            <label for=heightSelect>Height:</label>
+            <select id=heightSelect>
+                <option value=0>Original</option>
+                <option value=128>128</option>
+                <option value=256>256</option>
+                <option value=512 selected>512</option>
+                <option value=1024>1024</option>
+                <option value=2048>2048</option>
             </select>
         </div>
-        <button id="processButton" disabled>Process Normal Maps</button>
-        <progress class="progress" id="progressBar" value="0" max="100"></progress>
-        <div class="error" id="errorMessage"></div>
-        <div class="preview-container" id="previewContainer"></div>
-        <button id="downloadButton"></button>
-        <button id="resetButton" style="margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Reset</button>
+        <button id=processButton disabled>Process Normal Maps</button>
+        <progress class=progress id=progressBar value=0 max=100></progress>
+        <div class=error id=errorMessage></div>
+        <div class=preview-container id=previewContainer></div>
+        <button id=downloadButton></button>
+        <button id=resetButton
+            style="margin-top:20px;padding:10px 20px;background-color:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:16px">Reset</button>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="./js/main.js"></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js></script>
+    <script src=./js/main.js></script>
 </body>
+
 </html>

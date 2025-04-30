@@ -1,66 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset=UTF-8>
     <title>Bad Apple Video Maker</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="./css/style.css" rel="stylesheet">
-    
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel=stylesheet>
+    <link href=./css/style.css rel=stylesheet>
 </head>
+
 <body class="bg-gray-100 p-8">
     <div class="container bg-white rounded-lg shadow-md p-6">
-        <div class="header">
+        <div class=header>
             <h1 class="text-2xl font-semibold text-blue-600 mb-4">Bad Apple Video Maker</h1>
         </div>
-
-        <div class="mask_inputs">
-            <div class="input-row">
-                <label for="badAppleFile" class="text-gray-700 text-sm font-bold">Video (Mask + Audio)</label>
-                <input type="text" id="badAppleUrl" placeholder="Enter direct MP4 URL (YouTube links not supported)" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0">
-                <input type="file" id="badAppleFile" accept="video/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
+        <div class=mask_inputs>
+            <div class=input-row><label for=badAppleFile class="text-gray-700 text-sm font-bold">Video (Mask +
+                    Audio)</label><input id=badAppleUrl placeholder="Enter direct MP4 URL (YouTube links not supported)"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0"><input
+                    type=file id=badAppleFile accept=video/*
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
             </div>
         </div>
-
-        <div class="black_inputs">
-            <div class="input-row">
-                <label for="blackFile" class="text-gray-700 text-sm font-bold">Black Source</label>
-                <input type="text" id="blackUrl" placeholder="Enter direct MP4 or image URL" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0">
-                <input type="file" id="blackFile" accept="image/*,video/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
+        <div class=black_inputs>
+            <div class=input-row><label for=blackFile class="text-gray-700 text-sm font-bold">Black Source</label><input
+                    id=blackUrl placeholder="Enter direct MP4 or image URL"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0"><input
+                    type=file id=blackFile accept=image/*,video/*
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
             </div>
         </div>
-
-        <div class="white_inputs">
-            <div class="input-row">
-                <label for="whiteFile" class="text-gray-700 text-sm font-bold">White Source</label>
-                <input type="text" id="whiteUrl" placeholder="Enter direct MP4 or image URL" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0">
-                <input type="file" id="whiteFile" accept="image/*,video/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
+        <div class=white_inputs>
+            <div class=input-row><label for=whiteFile class="text-gray-700 text-sm font-bold">White Source</label><input
+                    id=whiteUrl placeholder="Enter direct MP4 or image URL"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-0"><input
+                    type=file id=whiteFile accept=image/*,video/*
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ml-2">
             </div>
         </div>
-
-        <div class="previews">
-            <div class="mask_prev">
-                <video id="badApplePreview" controls class="rounded-md shadow-md" style="display: none;"></video>
-            </div>
-            <div class="black_prev">
-                <video id="blackPreview" controls style="display: none;" class="rounded-md shadow-md"></video>
-                <img id="blackPreviewImg" style="display: none;" class="rounded-md shadow-md">
-            </div>
-            <div class="white_prev">
-                <video id="whitePreview" controls style="display: none;" class="rounded-md shadow-md"></video>
-                <img id="whitePreviewImg" style="display: none;" class="rounded-md shadow-md">
-            </div>
+        <div class=previews>
+            <div class=mask_prev><video id=badApplePreview controls class="rounded-md shadow-md"
+                    style=display:none></video></div>
+            <div class=black_prev><video id=blackPreview controls style=display:none
+                    class="rounded-md shadow-md"></video><img id=blackPreviewImg style=display:none
+                    class="rounded-md shadow-md"></div>
+            <div class=white_prev><video id=whitePreview controls style=display:none
+                    class="rounded-md shadow-md"></video><img id=whitePreviewImg style=display:none
+                    class="rounded-md shadow-md"></div>
         </div>
-
-        <div class="play_btn">
-            <button onclick="playCustomVideo()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Play Custom Bad Apple Video</button>
-        </div>
-
-        <div class="output">
-            <canvas id="outputCanvas" width="800" height="600" class="border rounded-md shadow-md"></canvas>
+        <div class=play_btn><button onclick=playCustomVideo()
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Play
+                Custom Bad Apple Video</button></div>
+        <div class=output><canvas id=outputCanvas width=800 height=600 class="border rounded-md shadow-md"></canvas>
         </div>
     </div>
-
-    <script src="./js/main.js"></script>
+    <script src=./js/main.js></script>
 </body>
+
 </html>

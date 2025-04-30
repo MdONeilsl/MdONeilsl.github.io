@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang=en>
+
+<head>
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>Normal Map Merger</title>
+</head>
+
+<body>
+    <link rel=stylesheet href=./css/style.css>
+    <div class=container>
+        <h2>Normal Map Merger</h2>
+        <div class=input-row><input type=file id=baseInput accept=image/* title="Base Normal Map (e.g., fabric)"
+                aria-label="Base Normal Map"><input type=file id=addInput accept=image/*
+                title="Add Normal Map (e.g., wrinkles)" aria-label="Additional Normal Map"></div>
+        <div class=input-row><label for=convention>Convention:</label><select id=convention
+                aria-label="Normal Map Convention">
+                <option value=opengl selected>OpenGL (Y+, default)</option>
+                <option value=directx>DirectX (Y-)</option>
+            </select></div>
+        <div class=input-row><label for=intensity>Intensity:</label><input type=range id=intensity min=0 max=1 step=0.01
+                value=1 aria-label=Intensity></div>
+        <div class=input-row><label for=fallbackAlpha>Fallback Alpha (if inputs lack alpha):</label><input type=range
+                id=fallbackAlpha min=0 max=255 step=1 value=255 aria-label="Fallback Alpha"></div><button
+            onclick=mergeNormalMaps()>Merge Normal Maps</button>
+        <div id=progress-container>
+            <div id=progress-bar></div>
+        </div><canvas id=preview></canvas>
+        <div id=error-message></div><button id=download onclick=downloadResult()>Download Result</button>
+        <div id=info>
+            <p>This tool merges two normal maps, blending their alpha channels for per-pixel specular exponent values
+                (brighter = shinier). Ensure the Advanced Lighting Model is enabled to see effects. Use OpenGL (Y+) for
+                compatibility.</p>
+            <p>Examples: Combine "brick details" with "wall texture" for buildings, or "wrinkles" with "fabric".
+                Intensity controls the blend of both normals and alpha channels.</p>
+            <p>Note: Per-pixel specular exponent is experimental and may not work as expected in some systems. Consider
+                PBR Materials for modern projects.</p>
+        </div>
+    </div>
+    <script src=./js/main.js></script>
+</body>
+
+</html>

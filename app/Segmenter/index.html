@@ -1,23 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Segmenter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-</head>
-<body>
-    <link rel="stylesheet" href="./css/style.css">
-    <div class="container">
-        <h1>Audio Segmenter</h1>
-        <p>Upload an audio file to split it into 30-second WAV segments.</p>
-        <input type="file" id="mediaInput" accept="audio/*">
-        <button id="processButton" disabled>Process Audio</button>
-        <div id="progress"></div>
-        <div id="error"></div>
-    </div>
+<!doctype html>
+<html lang=en>
 
-    <script src="./js/main.js"></script>
+<head>
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>Audio Segmenter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js></script>
+</head>
+
+<body>
+    <link rel=stylesheet href=./css/style.css>
+    <div class=container>
+        <h1>Audio Segmenter</h1>
+        <p>Upload an audio file to split it into 30-second WAV segments.</p><input type=file id=mediaInput
+            accept=audio/*><button id=processButton disabled>Process Audio</button>
+        <div id=progress></div>
+        <div id=error></div>
+    </div>
+    <script src=./js/main.js></script>
 </body>
+
 </html>

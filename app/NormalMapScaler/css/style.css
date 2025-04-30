@@ -1,3 +1,8 @@
+.container,
+.preview {
+    text-align: center
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -6,17 +11,16 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #333;
+    color: #333
 }
 
 .container {
-    background: white;
+    background: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
     max-width: 800px;
-    width: 100%;
-    text-align: center;
+    width: 100%
 }
 
 .drop-zone {
@@ -24,39 +28,43 @@ body {
     padding: 20px;
     margin: 10px 0;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background .2s
 }
 
-.drop-zone:hover,
-.drop-zone.dragover {
-    background: #e7f3ff;
+.drop-zone.dragover,
+.drop-zone:hover {
+    background: #e7f3ff
 }
 
-select,
-button {
+button,
+select {
     padding: 10px;
     margin: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 16px
+}
+
+#downloadButton,
+button {
+    color: #fff;
+    border: none;
+    cursor: pointer
 }
 
 button {
-    background: #007bff;
-    color: white;
-    cursor: pointer;
-    border: none;
+    background: #007bff
 }
 
 button:hover {
-    background: #0056b3;
+    background: #0056b3
 }
 
 .progress {
     width: 100%;
     height: 20px;
     margin: 10px 0;
-    display: none;
+    display: none
 }
 
 .preview-container {
@@ -64,37 +72,30 @@ button:hover {
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
-    margin-top: 20px;
-}
-
-.preview {
-    text-align: center;
+    margin-top: 20px
 }
 
 canvas {
     border: 1px solid #ccc;
-    image-rendering: pixelated;
+    image-rendering: pixelated
 }
 
 .error {
     color: red;
-    margin: 10px 0;
+    margin: 10px 0
 }
 
 #downloadButton {
     margin-top: 20px;
     padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+    background-color: #4caf50;
     border-radius: 5px;
-    cursor: pointer;
     font-size: 16px;
-    display: none;
+    display: none
 }
 
 #downloadButton:hover {
-    background-color: #367c39;
+    background-color: #367c39
 }
 
 .size-select-group {
@@ -102,11 +103,11 @@ canvas {
     flex-direction: row;
     align-items: center;
     margin-bottom: 10px;
-    justify-content: center;
+    justify-content: center
 }
 
 .size-select-group label {
-    margin-right: 5px;
+    margin-right: 5px
 }
 
 .size-select-group select {
@@ -114,5 +115,5 @@ canvas {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    width: 80px;
+    width: 80px
 }
