@@ -1,0 +1,221 @@
+#upload-image:hover,
+.tool-btn:hover {
+    transform: translateY(-2px);
+    background-color: #9ca3af
+}
+
+.container,
+canvas {
+    background-color: #fff
+}
+
+.container,
+.tutorial {
+    max-width: 90%;
+    box-sizing: border-box
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color .5s
+}
+
+.container {
+    text-align: center;
+    padding: 24px;
+    border-radius: .75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    transition: box-shadow .3s;
+    width: 800px
+}
+
+.toolbar {
+    background-color: #4a5568;
+    padding: 16px;
+    border-radius: .5rem .5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-rows: auto auto;
+    gap: 8px;
+    align-items: center
+}
+
+#upload-image,
+.tool-btn {
+    background-color: #6b7280
+}
+
+#export-mesh,
+.tool-btn {
+    padding: 10px 16px;
+    transition: background-color .3s, transform .2s
+}
+
+.toolbar-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    overflow: visible;
+    align-items: center;
+    grid-column: 1/-1
+}
+
+.toolbar-buttons::-webkit-scrollbar {
+    height: 8px
+}
+
+.toolbar-buttons::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: .5rem
+}
+
+.toolbar-buttons::-webkit-scrollbar-thumb {
+    background-color: #9ca3af;
+    border-radius: .5rem;
+    border: 2px solid #e5e7eb
+}
+
+.toolbar-buttons::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280
+}
+
+.tool-btn {
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: .375rem;
+    font-size: .9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    white-space: nowrap;
+    flex: none
+}
+
+#export-mesh,
+#upload-image {
+    color: #fff;
+    cursor: pointer;
+    font-size: .9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    flex: none;
+    white-space: nowrap
+}
+
+.tool-btn.active {
+    background-color: #3b82f6;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .15)
+}
+
+#upload-image {
+    padding: 10px;
+    border: 2px dashed #9ca3af;
+    border-radius: .375rem;
+    transition: background-color .3s, transform .2s, border-color .3s;
+    text-align: center;
+    line-height: 2.2;
+    width: fit-content;
+    margin: 0 auto;
+    grid-column: 1/-1
+}
+
+#upload-image:hover {
+    border-color: #6b7280
+}
+
+#upload-image.dragover {
+    background-color: #9ca3af;
+    border-color: #3b82f6;
+    color: #fff
+}
+
+#export-mesh {
+    background-color: #22c55e;
+    border: none;
+    border-radius: .375rem
+}
+
+#export-mesh:hover {
+    background-color: #16a34a;
+    transform: translateY(-2px)
+}
+
+canvas {
+    border: 1px solid #e5e7eb;
+    border-radius: .375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+    transition: border-color .3s, box-shadow .3s;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    aspect-ratio: 8/6
+}
+
+canvas:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, .15);
+    border-color: #d1d5db
+}
+
+.tutorial {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-radius: 0 0 .5rem .5rem;
+    padding: 20px;
+    text-align: left;
+    width: 800px;
+    margin-top: -.375rem
+}
+
+.tutorial h3 {
+    margin: 0 0 16px;
+    font-size: 1.5rem;
+    color: #1f2937;
+    font-weight: 700
+}
+
+.tutorial ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc
+}
+
+.tutorial li {
+    margin-bottom: 12px;
+    font-size: 1rem;
+    color: #374151;
+    line-height: 1.75
+}
+
+.tutorial kbd {
+    background-color: #e5e7eb;
+    border: 1px solid #d1d5db;
+    border-radius: .375rem;
+    padding: 4px 8px;
+    font-size: .875rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+}
+
+#language-selector {
+    padding: .5rem 1rem;
+    border-radius: .375rem;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    color: #4b5563;
+    transition: border-color .2s;
+    white-space: nowrap;
+    flex: none;
+    margin-left: 8px
+}
+
+#language-selector:focus {
+    outline: 0;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .2)
+}

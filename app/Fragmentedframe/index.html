@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">Fragmented frame</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-buttons">
+                <button id="circle" class="tool-btn active" data-shape="circle" data-i18n="circle">Circle</button>
+                <button id="rectangle" class="tool-btn" data-shape="rectangle" data-i18n="rectangle">Rectangle</button>
+                <button id="triangle" class="tool-btn" data-shape="triangle" data-i18n="triangle">Triangle</button>
+                <button id="pentagon" class="tool-btn" data-shape="pentagon" data-i18n="pentagon">Pentagon</button>
+                <button id="hexagon" class="tool-btn" data-shape="hexagon" data-i18n="hexagon">Hexagon</button>
+                <button id="export-mesh" class="tool-btn" data-i18n="export-mesh">Export Mesh</button>
+                <select id="language-selector">
+                    <option value="en" data-i18n="lang-en">English</option>
+                    <option value="es" data-i18n="lang-es">Spanish</option>
+                    <option value="fr" data-i18n="lang-fr">French</option>
+                    <option value="ja" data-i18n="lang-ja">Japanese</option>
+                    <option value="de" data-i18n="lang-de">German</option>
+                    <option value="pt" data-i18n="lang-pt">Portuguese</option>
+                </select>
+            </div>
+            <input type="file" id="upload-image" accept="image/*" title data-i18n="upload-texture" title="Upload Texture">
+        </div>
+        <canvas id="canvas" width="800" height="600"></canvas>
+        <div class="tutorial">
+            <h3 data-i18n="tutorial-heading">Fragmented frame App Tutorial</h3>
+            <ul>
+                <li data-i18n="tutorial-purpose">Draw 2D shapes, apply a texture, and export as a 3D mesh (.dae) for Blender.</li>
+                <li data-i18n="tutorial-draw">Select a shape from the toolbar, then click and drag on the canvas.</li>
+                <li data-i18n="tutorial-select">Click a shape to select it (highlighted in red).</li>
+                <li data-i18n="tutorial-move">Drag a selected shape to reposition it.</li>
+                <li data-i18n="tutorial-scale">Hold <kbd>S</kbd> and drag to scale a selected shape.</li>
+                <li data-i18n="tutorial-rotate">Hold <kbd>R</kbd> and drag to rotate a selected shape.</li>
+                <li data-i18n="tutorial-copy-paste">Press <kbd>Ctrl + C</kbd> to copy a selected shape, <kbd>Ctrl + V</kbd> to paste it.</li>
+                <li data-i18n="tutorial-delete">Press <kbd>Delete</kbd> to remove a selected shape.</li>
+                <li data-i18n="tutorial-texture">Upload an image to apply as the canvas texture.</li>
+                <li data-i18n="tutorial-export">Click "Export Mesh" to download the 3D mesh. Save the texture image in the same directory as the .dae file.</li>
+            </ul>
+        </div>
+    </div>
+    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="./js/lang.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
