@@ -1,5 +1,5 @@
 {
-  "version": "1.16",
+  "version": "1.15",
   "module": "lsl_basics",
   "description": "Foundational elements of Linden Scripting Language (LSL) for Second Life, covering script structure, keywords, operators, states, events, wiki search, data types, flow control, user-defined entities, constants, pre-defined functions, and efficiency to guide AI in generating correct and idiomatic LSL code. LSL is a strongly typed language, requiring explicit type declarations for variables and function parameters, with type mismatches causing compilation errors",
   "last_updated": "2025-05-03",
