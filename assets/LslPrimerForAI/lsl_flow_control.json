@@ -3,80 +3,86 @@
   "id": "flow_control",
   "description": "Overview of LSL flow control constructs, which manage the execution order of script logic using conditional statements, loops, jumps, and state transitions",
   "details": {
-    "purpose": "To guide AI in using LSL’s flow control keywords to structure script execution, ensuring logical and efficient control flow within event handlers and functions",
-    "flow_control_mechanics": {
-      "description": "LSL flow control is managed by reserved keywords that direct script execution. Conditional statements ('if', 'else') evaluate boolean expressions to execute code blocks. Loops ('for', 'while', 'do') enable iterative execution based on conditions. The 'return' statement exits functions, optionally returning a value, while 'jump' redirects execution to a labeled point in the same scope (similar to goto). The 'state' keyword transitions between states, triggering the new state’s 'state_entry' event and halting the current state’s execution. All types are immutable, changed only via assignment operators (=, +=, -=, *=, /=, %=, ++, --), and function parameters are passed by value, ensuring no side effects outside the function scope. Flow control keywords are case-sensitive and cannot be used as identifiers",
-      "recommendation": "Use conditionals and loops for event-driven logic, 'state' for behavioral shifts, and avoid 'jump' unless necessary for complex control flow"
+    "purpose": "To guide AI in using LSL flow control constructs to manage script execution, ensuring correct conditional logic, looping, and state transitions while adhering to LSL’s syntax and constraints",
+    "conditional_statements": {
+      "description": "Conditional statements in LSL use if, else if, and else to control execution based on boolean conditions. LSL does not support a ternary operator (e.g., condition ? value1 : value2); use if-else statements or simple conditionals for conditional assignments. Conditions must evaluate to a boolean (e.g., integer x = 5; if (x > 3) {...})",
+      "rules": [
+        "Use if (condition) { ... } for single conditions.",
+        "Use else if (condition) { ... } and else { ... } for multiple conditions.",
+        "Conditions must be boolean; non-boolean values (e.g., if (5)) cause compilation errors.",
+        "Do not use ternary operators (e.g., x = condition ? value1 : value2); they are not supported in LSL.",
+        "Simplify conditionals for speed (e.g., if (x) instead of if (x == 1)), per lsl_efficiency.json."
+      ],
+      "examples": [
+        {
+          "description": "Conditional assignment using if-else",
+          "code": "default\n{\n    state_entry()\n    {\n        integer x = 5;\n        string message;\n        if (x > 3)\n        {\n            message = \"High\";\n        }\n        else\n        {\n            message = \"Low\";\n        }\n        llSay(0, message);\n    }\n}",
+          "context": "Assigns a string based on a condition using if-else, avoiding ternary operator, per lsl_flow_control.json"
+        },
+        {
+          "description": "Simple conditional check",
+          "code": "default\n{\n    touch_start(integer num_detected)\n    {\n        if (llDetectedKey(0) == llGetOwner())\n        {\n            llSay(0, \"Owner touched\");\n        }\n    }\n}",
+          "context": "Checks a condition without else, per lsl_flow_control.json"
+        }
+      ]
     },
-    "all_flow_control_keywords": [
-      {
-        "name": "if",
-        "description": "Executes a code block if a boolean expression is true"
-      },
-      {
-        "name": "else",
-        "description": "Executes a code block if the preceding 'if' condition is false"
-      },
-      {
-        "name": "for",
-        "description": "Iterates a code block with an initialization, condition, and increment expression"
-      },
-      {
-        "name": "while",
-        "description": "Iterates a code block while a boolean condition is true"
-      },
-      {
-        "name": "do",
-        "description": "Executes a code block at least once, iterating while a condition is true"
-      },
-      {
-        "name": "return",
-        "description": "Exits a function, optionally returning a value"
-      },
-      {
-        "name": "jump",
-        "description": "Redirects execution to a labeled point in the same scope"
-      },
-      {
-        "name": "state",
-        "description": "Transitions to a named state, triggering its 'state_entry' event"
-      }
-    ],
+    "loops": {
+      "description": "Loops in LSL include for, while, and do-while to repeat code execution. Use integer counters for speed, per lsl_efficiency.json",
+      "rules": [
+        "For loops: for (init; condition; update) { ... }.",
+        "While loops: while (condition) { ... }.",
+        "Do-while loops: do { ... } while (condition);.",
+        "Ensure conditions eventually terminate to avoid infinite loops.",
+        "Use integer for loop counters to optimize speed, per lsl_efficiency.json."
+      ],
+      "examples": [
+        {
+          "description": "For loop with integer counter",
+          "code": "default\n{\n    state_entry()\n    {\n        integer i;\n        for (i = 0; i < 5; ++i)\n        {\n            llSay(0, (string)i);\n        }\n    }\n}",
+          "context": "Uses integer counter for speed, per lsl_efficiency.json"
+        }
+      ]
+    },
+    "jumps": {
+      "description": "Jumps in LSL use @label; and jump label; to redirect execution within the same scope. Use sparingly due to readability concerns",
+      "rules": [
+        "Define labels with @label;.",
+        "Use jump label; to redirect to a label.",
+        "Jumps must be within the same scope (e.g., event or function).",
+        "Avoid overuse; prefer loops or conditionals for clarity."
+      ],
+      "examples": [
+        {
+          "description": "Jump to skip code",
+          "code": "default\n{\n    state_entry()\n    {\n        integer x = 0;\n        if (x == 0) jump end;\n        llSay(0, \"Skipped\");\n        @end;\n        llSay(0, \"Done\");\n    }\n}",
+          "context": "Uses jump to skip a statement, per lsl_flow_control.json"
+        }
+      ]
+    },
+    "state_transitions": {
+      "description": "State transitions in LSL use state new_state; to switch between states defined in the script. Each state has its own event handlers",
+      "rules": [
+        "Use state new_state; to transition to a defined state.",
+        "States are defined with state name { ... }.",
+        "State transitions reset local variables but preserve global variables.",
+        "Ensure states are defined before transitioning."
+      ],
+      "examples": [
+        {
+          "description": "State transition",
+          "code": "default\n{\n    touch_start(integer num_detected)\n    {\n        state active;\n    }\n}\nstate active\n{\n    state_entry()\n    {\n        llSay(0, \"Active state\");\n    }\n}",
+          "context": "Transitions from default to active state, per lsl_flow_control.json"
+        }
+      ]
+    },
     "best_practices": [
-      "Use 'if-else' for clear decision-making in event handlers",
-      "Prefer 'for' or 'while' over 'jump' for iteration to maintain readability",
-      "Minimize nested conditionals and loops to reduce complexity",
-      "Use 'state' transitions for significant behavioral changes, not minor logic",
-      "Avoid 'jump' unless essential, as it can obscure control flow",
-      "Ensure boolean expressions in conditionals and loops are type-compatible",
-      "Leverage immutability by reassigning variables explicitly in flow control"
-    ],
-    "examples": [
-      {
-        "description": "Conditional logic in an event handler",
-        "code": "default\n{\n    touch_start(integer num_detected)\n    {\n        if (num_detected > 0)\n        {\n            llSay(0, \"Touched by \" + llDetectedName(0));\n        }\n        else\n        {\n            llSay(0, \"No touch detected\");\n        }\n    }\n}",
-        "context": "Uses 'if-else' to handle touch events based on the number of detected avatars"
-      },
-      {
-        "description": "State transition with a loop",
-        "code": "default\n{\n    state_entry()\n    {\n        integer i;\n        for (i = 0; i < 3; ++i)\n        {\n            llSay(0, \"Counting: \" + (string)i);\n        }\n        state active;\n    }\n}\nstate active\n{\n    state_entry()\n    {\n        llSay(0, \"Active state entered\");\n    }\n}",
-        "context": "Uses a 'for' loop to count, then transitions to 'active' state with 'state'"
-      }
-    ],
-    "references": [
-      {
-        "url": "https://wiki.secondlife.com/wiki/Category:LSL_Flow_Control",
-        "title": "LSL Wiki: LSL Flow Control Category"
-      },
-      {
-        "url": "https://wiki.secondlife.com/wiki/LSL_Operators",
-        "title": "LSL Wiki: LSL Operators"
-      },
-      {
-        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
-        "title": "LSL Wiki: LSL Portal"
-      }
+      "Use if-else for conditional logic; avoid non-existent constructs like ternary operators.",
+      "Simplify conditions (e.g., if (x) instead of if (x == TRUE)) for speed, per lsl_efficiency.json.",
+      "Use integer counters in loops to optimize performance, per lsl_efficiency.json.",
+      "Avoid infinite loops by ensuring termination conditions.",
+      "Use jumps sparingly; prefer structured loops or conditionals for readability.",
+      "Ensure state transitions target defined states to avoid compilation errors.",
+      "Test flow control logic in-world to verify behavior, per lsl_efficiency.json."
     ]
   }
 }
-

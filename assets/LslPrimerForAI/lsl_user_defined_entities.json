@@ -3,46 +3,53 @@
   "id": "user_defined_entities",
   "description": "Overview of user-defined variables and functions in LSL, including declaration, scope, and usage for custom logic",
   "details": {
-    "purpose": "To guide AI in declaring and using user-defined variables and functions in LSL, ensuring correct syntax, scope, and adherence to strong typing",
-    "entity_mechanics": {
-      "description": "LSL allows user-defined variables and functions to implement custom logic. Variables are declared with a type (e.g., integer, quaternion) and name, either globally (outside states) or locally (within functions, events, or states). Variables have no block-level scoping; local variables are scoped to their function or event. All variables are immutable, changed only via assignment operators (=, +=, -=, *=, /=, %=, ++, --), and require explicit type declarations to enforce strong typing. Functions are declared globally with an optional return type, a name, and typed parameters (e.g., integer add(integer a, integer b)). Void functions omit the return type (e.g., say_hello(string name)). Functions cannot be overloaded, and their names must not conflict with built-in functions or keywords. Functions are called within events or other functions, and parameters are passed by value, ensuring no side effects outside the function scope. Variable and function names are case-sensitive and must avoid reserved keywords",
-      "recommendation": "Use descriptive names for variables and functions, declare variables close to their use, and define single-purpose functions with clear return types"
+    "purpose": "To guide AI in defining and using variables and functions in LSL scripts, ensuring proper declaration, scope management, and adherence to LSL’s strong typing for custom logic implementation",
+    "variable_declarations": {
+      "description": "Variables in LSL are user-defined storage for data, requiring explicit type declarations (e.g., integer, float, string) due to LSL’s strong typing. Variables can be global (defined outside states) or local (defined within states, events, or functions). LSL does not support a ‘const’ keyword; constants are pre-defined (e.g., PI, TRUE) and listed in lsl_constants.json. Using ‘const’ or other non-existent keywords causes compilation errors",
+      "rules": [
+        "Declare variables with a type and name (e.g., integer x = 5;).",
+        "Global variables are accessible across all states and events; local variables are scoped to their block (state, event, or function).",
+        "Initialize variables at declaration to avoid undefined behavior (e.g., integer x = 0; instead of integer x;).",
+        "Type mismatches (e.g., assigning a string to an integer) cause compilation errors.",
+        "Do not use ‘const’ or other non-existent keywords; LSL only supports pre-defined constants (see lsl_constants.json)."
+      ],
+      "examples": [
+        {
+          "description": "Global variable declaration",
+          "code": "integer counter = 0; // Correct: No ‘const’, initialized at declaration\ndefault\n{\n    state_entry()\n    {\n        counter++;\n        llSay(0, (string)counter);\n    }\n}",
+          "context": "Declares a global integer without ‘const’, initialized to 0, incremented in state_entry, per lsl_user_defined_entities.json"
+        },
+        {
+          "description": "Local variable in an event",
+          "code": "default\n{\n    touch_start(integer num_detected)\n    {\n        string message = \"Touched by \" + llDetectedName(0); // Local variable, initialized\n        llSay(0, message);\n    }\n}",
+          "context": "Declares a local string in touch_start, initialized with a concatenated value, per lsl_user_defined_entities.json"
+        }
+      ]
+    },
+    "function_declarations": {
+      "description": "Functions in LSL are user-defined blocks of reusable code, requiring explicit return types (including void) and parameter types. Functions are declared globally, outside states, and can be called from events or other functions within the same script",
+      "rules": [
+        "Declare functions with a return type, name, and typed parameters (e.g., integer add(integer a, integer b)).",
+        "Use void for functions that do not return a value (e.g., void log(string message)).",
+        "Functions are global in scope and accessible from any state or event.",
+        "Parameter and return type mismatches cause compilation errors.",
+        "Functions cannot be defined inside states or events."
+      ],
+      "examples": [
+        {
+          "description": "Function to calculate sum",
+          "code": "integer add(integer a, integer b)\n{\n    return a + b;\n}\ndefault\n{\n    state_entry()\n    {\n        integer result = add(3, 4);\n        llSay(0, (string)result);\n    }\n}",
+          "context": "Declares a global function with integer return type and parameters, called in state_entry, per lsl_user_defined_entities.json"
+        }
+      ]
     },
     "best_practices": [
-      "Use descriptive, unique names for variables and functions, avoiding reserved keywords",
-      "Declare variables locally when possible to conserve memory and improve readability",
-      "Define global variables only for data shared across states or functions",
-      "Create single-purpose functions with explicit return types for clarity",
-      "Prefer 'quaternion' over 'rotation' in variable and function declarations for consistency",
-      "Ensure type compatibility in function parameters and return values",
-      "Minimize user-defined functions to conserve memory; prefer inline code snippets in events for small to medium tasks, reserving functions for complex or reusable logic"
-    ],
-    "examples": [
-      {
-        "description": "Global and local variable declarations with a function",
-        "code": "integer global_count = 0;\n\nsay_hello(string name)\n{\n    string greeting = \"Hello, \" + name;\n    llSay(0, greeting);\n    global_count += 1;\n}\n\ndefault\n{\n    state_entry()\n    {\n        say_hello(\"World\");\n        llSay(0, \"Global count: \" + (string)global_count);\n    }\n}",
-        "context": "Shows a global variable (global_count), a local variable (greeting) in a void function, and function usage in an event"
-      },
-      {
-        "description": "Function with return value",
-        "code": "integer add_numbers(integer a, integer b)\n{\n    return a + b;\n}\n\ndefault\n{\n    touch_start(integer num_detected)\n    {\n        integer sum = add_numbers(5, 3);\n        llSay(0, \"Sum: \" + (string)sum);\n    }\n}",
-        "context": "Demonstrates a function with an integer return type, called within an event handler"
-      }
-    ],
-    "references": [
-      {
-        "url": "https://wiki.secondlife.com/wiki/Category:LSL_Functions",
-        "title": "LSL Wiki: LSL Functions Category"
-      },
-      {
-        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
-        "title": "LSL Wiki: LSL Portal"
-      },
-      {
-        "url": "https://wiki.secondlife.com/wiki/Getting_started_with_LSL",
-        "title": "LSL Wiki: Getting Started with LSL"
-      }
+      "Always initialize variables at declaration to avoid undefined behavior.",
+      "Use descriptive variable names to improve code readability (e.g., player_count instead of pc).",
+      "Declare variables in the smallest scope possible (e.g., local within events) to optimize memory, per lsl_efficiency.json.",
+      "Avoid non-existent keywords like ‘const’; use pre-defined constants from lsl_constants.json for fixed values.",
+      "Define functions for reusable logic to reduce code duplication, but use inline code for small tasks to prioritize speed, per lsl_efficiency.json.",
+      "Validate function parameter and return types to prevent compilation errors."
     ]
   }
 }
-
