@@ -1,0 +1,48 @@
+{
+  "name": "user_defined_entities",
+  "id": "user_defined_entities",
+  "description": "Overview of user-defined variables and functions in LSL, including declaration, scope, and usage for custom logic",
+  "details": {
+    "purpose": "To guide AI in declaring and using user-defined variables and functions in LSL, ensuring correct syntax, scope, and adherence to strong typing",
+    "entity_mechanics": {
+      "description": "LSL allows user-defined variables and functions to implement custom logic. Variables are declared with a type (e.g., integer, quaternion) and name, either globally (outside states) or locally (within functions, events, or states). Variables have no block-level scoping; local variables are scoped to their function or event. All variables are immutable, changed only via assignment operators (=, +=, -=, *=, /=, %=, ++, --), and require explicit type declarations to enforce strong typing. Functions are declared globally with an optional return type, a name, and typed parameters (e.g., integer add(integer a, integer b)). Void functions omit the return type (e.g., say_hello(string name)). Functions cannot be overloaded, and their names must not conflict with built-in functions or keywords. Functions are called within events or other functions, and parameters are passed by value, ensuring no side effects outside the function scope. Variable and function names are case-sensitive and must avoid reserved keywords",
+      "recommendation": "Use descriptive names for variables and functions, declare variables close to their use, and define single-purpose functions with clear return types"
+    },
+    "best_practices": [
+      "Use descriptive, unique names for variables and functions, avoiding reserved keywords",
+      "Declare variables locally when possible to conserve memory and improve readability",
+      "Define global variables only for data shared across states or functions",
+      "Create single-purpose functions with explicit return types for clarity",
+      "Prefer 'quaternion' over 'rotation' in variable and function declarations for consistency",
+      "Ensure type compatibility in function parameters and return values",
+      "Minimize user-defined functions to conserve memory; prefer inline code snippets in events for small to medium tasks, reserving functions for complex or reusable logic"
+    ],
+    "examples": [
+      {
+        "description": "Global and local variable declarations with a function",
+        "code": "integer global_count = 0;\n\nsay_hello(string name)\n{\n    string greeting = \"Hello, \" + name;\n    llSay(0, greeting);\n    global_count += 1;\n}\n\ndefault\n{\n    state_entry()\n    {\n        say_hello(\"World\");\n        llSay(0, \"Global count: \" + (string)global_count);\n    }\n}",
+        "context": "Shows a global variable (global_count), a local variable (greeting) in a void function, and function usage in an event"
+      },
+      {
+        "description": "Function with return value",
+        "code": "integer add_numbers(integer a, integer b)\n{\n    return a + b;\n}\n\ndefault\n{\n    touch_start(integer num_detected)\n    {\n        integer sum = add_numbers(5, 3);\n        llSay(0, \"Sum: \" + (string)sum);\n    }\n}",
+        "context": "Demonstrates a function with an integer return type, called within an event handler"
+      }
+    ],
+    "references": [
+      {
+        "url": "https://wiki.secondlife.com/wiki/Category:LSL_Functions",
+        "title": "LSL Wiki: LSL Functions Category"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
+        "title": "LSL Wiki: LSL Portal"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/Getting_started_with_LSL",
+        "title": "LSL Wiki: Getting Started with LSL"
+      }
+    ]
+  }
+}
+

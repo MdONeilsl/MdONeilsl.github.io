@@ -1,0 +1,35 @@
+{
+  "name": "script_structure",
+  "id": "script_structure",
+  "description": "Overview of the basic structure of an LSL script, comprising global declarations followed by states with event handlers",
+  "details": {
+    "purpose": "To define the essential components of an LSL script, ensuring AI generates valid, modular scripts with a clear structure",
+    "components": {
+      "description": "Scripts begin with optional global declarations (variables and functions, defined outside states), followed by a mandatory 'default' state and optional additional states. Each state contains only top-level event handlers that respond to triggers",
+      "recommendation": "Create small, single-purpose scripts with one state unless state transitions are needed for distinct behaviors"
+    },
+    "best_practices": [
+      "Always include the 'default' state",
+      "Place global declarations before states",
+      "Design scripts to handle a single task for modularity and maintainability"
+    ],
+    "examples": [
+      {
+        "description": "Minimal LSL script with a single state and event handler",
+        "code": "default\n{\n    state_entry()\n    {\n        llSay(0, \"Hello, World!\");\n    }\n}",
+        "context": "Demonstrates the simplest valid LSL script, with the 'default' state and a 'state_entry' event handler"
+      }
+    ],
+    "references": [
+      {
+        "url": "https://wiki.secondlife.com/wiki/Getting_started_with_LSL",
+        "title": "LSL Wiki: Getting Started with LSL"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/A_Basic_LSL_Tutorial",
+        "title": "LSL Wiki: A Basic LSL Tutorial"
+      }
+    ]
+  }
+}
+

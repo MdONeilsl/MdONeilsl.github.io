@@ -1,0 +1,44 @@
+{
+  "name": "wiki_search",
+  "id": "wiki_search",
+  "description": "Guide to searching the Second Life LSL Wiki for keyword-specific information using a standardized URL syntax, ensuring LSL-specific content",
+  "details": {
+    "purpose": "To enable AI to efficiently locate detailed LSL documentation by constructing wiki URLs for specific keywords, avoiding SLua content",
+    "search_mechanics": {
+      "description": "The Second Life LSL Wiki can be searched using the URL syntax 'https://wiki.secondlife.com/wiki/<keyword>', where '<keyword>' is the exact name of an LSL keyword (e.g., function, event, type, constant). If the page is not found, try 'https://wiki.secondlife.com/wiki/LSL_<keyword>'. Keywords are case-sensitive and must match the wiki page name precisely. Ensure the page pertains to LSL and not SLua, as SLua uses Lua-based scripting and is unrelated to this primer",
+      "recommendation": "Use the LSL Portal as a starting point to identify valid keywords, then construct URLs for specific documentation"
+    },
+    "best_practices": [
+      "Use exact, case-sensitive keyword names to ensure valid URLs",
+      "If a page is not found, prepend 'LSL_' to the keyword and retry (e.g., 'LSL_integer' if 'integer' fails)",
+      "Verify the page content is about LSL, not SLua, by checking for Lua-specific references",
+      "Confirm the keyword corresponds to an LSL feature (e.g., 'llSay', 'state_entry', 'integer')",
+      "Start with the LSL Portal to browse categories if the keyword is unknown",
+      "Test constructed URLs to confirm the wiki page exists"
+    ],
+    "examples": [
+      {
+        "description": "Wiki URL for the 'llSay' function",
+        "code": "https://wiki.secondlife.com/wiki/llSay",
+        "context": "Accesses documentation for the 'llSay' function"
+      },
+      {
+        "description": "Wiki URL for the 'touch_start' event",
+        "code": "https://wiki.secondlife.com/wiki/touch_start",
+        "context": "Accesses documentation for the 'touch_start' event"
+      },
+      {
+        "description": "Wiki URL for the 'integer' type with 'LSL_' prefix",
+        "code": "https://wiki.secondlife.com/wiki/LSL_integer",
+        "context": "Accesses documentation for the 'integer' data type, using 'LSL_' prefix as a fallback"
+      }
+    ],
+    "references": [
+      {
+        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
+        "title": "LSL Wiki: LSL Portal"
+      }
+    ]
+  }
+}
+

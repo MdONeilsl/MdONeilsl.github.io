@@ -1,0 +1,65 @@
+{
+  "name": "llfunctions",
+  "id": "llfunctions",
+  "description": "Overview of LSL pre-defined functions, which provide built-in functionality for script operations",
+  "details": {
+    "purpose": "To guide AI in using LSL’s pre-defined functions (prefixed with 'll') for tasks like communication, physics, and inventory management, ensuring correct signatures and type usage",
+    "function_mechanics": {
+      "description": "LSL pre-defined functions, all starting with 'll' (e.g., llSay, llSetTimer), are case-sensitive, have fixed signatures, and provide built-in functionality. They cover categories like communication (e.g., llSay, llRegionSay), physics (e.g., llSetPos, llApplyImpulse), inventory (e.g., llGetInventoryName), and timers (e.g., llSetTimer). Functions have strongly typed parameters and return values, detailed in the LSL Wiki. They cannot be redefined or overloaded, and their names are reserved. The full list is extensive (hundreds of functions); a subset of common functions is provided here, with the LSL Wiki as the definitive reference",
+      "recommendation": "Use specific functions for intended tasks, verify signatures in the LSL Wiki, and minimize calls in performance-critical loops"
+    },
+    "all_functions": [
+      {
+        "name": "llSay",
+        "signature": "llSay(integer channel, string msg)",
+        "description": "Sends a chat message on the specified channel (0 for public chat)"
+      },
+      {
+        "name": "llSetTimer",
+        "signature": "llSetTimer(float sec, integer repeat)",
+        "description": "Sets a timer that triggers the timer event after sec seconds, repeating if repeat is TRUE"
+      },
+      {
+        "name": "llGetPos",
+        "signature": "vector llGetPos()",
+        "description": "Returns the object’s position in the region"
+      },
+      {
+        "name": "llDetectedName",
+        "signature": "string llDetectedName(integer number)",
+        "description": "Returns the name of the detected entity (e.g., avatar) from an event"
+      }
+    ],
+    "best_practices": [
+      "Use specific functions for tasks (e.g., llRegionSay for region-wide communication)",
+      "Verify parameter and return types in the LSL Wiki to avoid type mismatches",
+      "Minimize function calls in loops to optimize script performance",
+      "Use llSay for simple communication and llRegionSay for broader reach",
+      "Ensure event context for functions like llDetectedName (e.g., in touch_start)",
+      "Check function documentation for restrictions (e.g., channel limits in llSay)"
+    ],
+    "examples": [
+      {
+        "description": "Using llSay in an event",
+        "code": "default\n{\n    touch_start(integer num_detected)\n    {\n        llSay(0, \"Hello, \" + llDetectedName(0));\n    }\n}",
+        "context": "Uses llSay and llDetectedName to greet the touching avatar"
+      },
+      {
+        "description": "Setting a timer with llSetTimer",
+        "code": "default\n{\n    state_entry()\n    {\n        llSetTimer(5.0, TRUE);\n    }\n    timer()\n    {\n        llSay(0, \"Position: \" + (string)llGetPos());\n    }\n}",
+        "context": "Uses llSetTimer to periodically report the object’s position with llGetPos"
+      }
+    ],
+    "references": [
+      {
+        "url": "https://wiki.secondlife.com/wiki/Category:LSL_Functions",
+        "title": "LSL Wiki: LSL Functions Category"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
+        "title": "LSL Wiki: LSL Portal"
+      }
+    ]
+  }
+}
+

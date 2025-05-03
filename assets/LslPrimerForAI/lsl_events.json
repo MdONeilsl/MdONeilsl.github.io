@@ -1,0 +1,238 @@
+{
+  "name": "events",
+  "id": "events",
+  "description": "Complete list of all LSL events, which are fixed handlers defined only within states to drive interactivity",
+  "details": {
+    "purpose": "To enable AI to implement event handlers that respond to specific triggers, ensuring correct placement and adherence to fixed event signatures",
+    "event_types": {
+      "description": "Events are predefined, fixed handlers (e.g., state_entry(), touch_start(integer num_detected)) that can only be defined inside states, with one instance per signature per state. Different states can have their own instance of the same event. Event handlers are top-level, non-nestable, and new events cannot be defined. The following list includes all available LSL events",
+      "all_events": [
+        {
+          "name": "at_rot_target",
+          "signature": "at_rot_target(integer tnum, rotation targetrot, rotation ourrot)",
+          "description": "Triggered when a rotational target is reached"
+        },
+        {
+          "name": "at_target",
+          "signature": "at_target(integer tnum, vector targetpos, vector ourpos)",
+          "description": "Triggered when a positional target is reached"
+        },
+        {
+          "name": "attach",
+          "signature": "attach(key id)",
+          "description": "Triggered when an object is attached or detached from an avatar"
+        },
+        {
+          "name": "changed",
+          "signature": "changed(integer change)",
+          "description": "Triggered when object properties (e.g., inventory, scale) change"
+        },
+        {
+          "name": "collision",
+          "signature": "collision(integer num_detected)",
+          "description": "Triggered during a collision with another object"
+        },
+        {
+          "name": "collision_end",
+          "signature": "collision_end(integer num_detected)",
+          "description": "Triggered when a collision with another object ends"
+        },
+        {
+          "name": "collision_start",
+          "signature": "collision_start(integer num_detected)",
+          "description": "Triggered when a collision with another object starts"
+        },
+        {
+          "name": "control",
+          "signature": "control(key id, integer level, integer edge)",
+          "description": "Triggered when control inputs (e.g., keyboard, mouse) are detected"
+        },
+        {
+          "name": "dataserver",
+          "signature": "dataserver(key queryid, string data)",
+          "description": "Triggered when data is received from a dataserver request"
+        },
+        {
+          "name": "email",
+          "signature": "email(string time, string address, string subj, string message, integer num_left)",
+          "description": "Triggered when an email is received"
+        },
+        {
+          "name": "experience_permissions",
+          "signature": "experience_permissions(key agent_id)",
+          "description": "Triggered when experience permissions are granted"
+        },
+        {
+          "name": "experience_permissions_denied",
+          "signature": "experience_permissions_denied(key agent_id, integer reason)",
+          "description": "Triggered when experience permissions are denied"
+        },
+        {
+          "name": "http_request",
+          "signature": "http_request(key id, string method, string body)",
+          "description": "Triggered when an HTTP request is received"
+        },
+        {
+          "name": "http_response",
+          "signature": "http_response(key request_id, integer status, list metadata, string body)",
+          "description": "Triggered when an HTTP response is received"
+        },
+        {
+          "name": "land_collision",
+          "signature": "land_collision(vector pos)",
+          "description": "Triggered during a collision with land"
+        },
+        {
+          "name": "land_collision_end",
+          "signature": "land_collision_end(vector pos)",
+          "description": "Triggered when a collision with land ends"
+        },
+        {
+          "name": "land_collision_start",
+          "signature": "land_collision_start(vector pos)",
+          "description": "Triggered when a collision with land starts"
+        },
+        {
+          "name": "link_message",
+          "signature": "link_message(integer sender_num, integer num, string str, key id)",
+          "description": "Triggered when a message is received from another script in the linkset"
+        },
+        {
+          "name": "listen",
+          "signature": "listen(integer channel, string name, key id, string message)",
+          "description": "Triggered when a chat message is detected on a specified channel"
+        },
+        {
+          "name": "money",
+          "signature": "money(key id, integer amount)",
+          "description": "Triggered when money is paid to the object"
+        },
+        {
+          "name": "moving_end",
+          "signature": "moving_end()",
+          "description": "Triggered when the object stops moving"
+        },
+        {
+          "name": "moving_start",
+          "signature": "moving_start()",
+          "description": "Triggered when the object starts moving"
+        },
+        {
+          "name": "no_sensor",
+          "signature": "no_sensor()",
+          "description": "Triggered when a sensor detects no objects"
+        },
+        {
+          "name": "not_at_rot_target",
+          "signature": "not_at_rot_target()",
+          "description": "Triggered when not at a rotational target"
+        },
+        {
+          "name": "not_at_target",
+          "signature": "not_at_target()",
+          "description": "Triggered when not at a positional target"
+        },
+        {
+          "name": "object_rez",
+          "signature": "object_rez(key id)",
+          "description": "Triggered when an object is rezzed by the script"
+        },
+        {
+          "name": "on_rez",
+          "signature": "on_rez(integer start_param)",
+          "description": "Triggered when the object is rezzed"
+        },
+        {
+          "name": "path_update",
+          "signature": "path_update(integer type, list reserved)",
+          "description": "Triggered when a pathfinding update occurs"
+        },
+        {
+          "name": "remote_data",
+          "signature": "remote_data(integer event_type, key channel, key message_id, string sender, integer idata, string sdata)",
+          "description": "Triggered when remote data is received"
+        },
+        {
+          "name": "run_time_permissions",
+          "signature": "run_time_permissions(integer perm)",
+          "description": "Triggered when permissions are granted or changed"
+        },
+        {
+          "name": "sensor",
+          "signature": "sensor(integer num_detected)",
+          "description": "Triggered when a sensor detects objects"
+        },
+        {
+          "name": "state_entry",
+          "signature": "state_entry()",
+          "description": "Triggered when a state becomes active, including on script start in 'default'"
+        },
+        {
+          "name": "state_exit",
+          "signature": "state_exit()",
+          "description": "Triggered when a state is exited"
+        },
+        {
+          "name": "timer",
+          "signature": "timer()",
+          "description": "Triggered on each tick of a timer set by llSetTimer"
+        },
+        {
+          "name": "touch",
+          "signature": "touch(integer num_detected)",
+          "description": "Triggered while an avatar touches the object"
+        },
+        {
+          "name": "touch_end",
+          "signature": "touch_end(integer num_detected)",
+          "description": "Triggered when an avatar stops touching the object"
+        },
+        {
+          "name": "touch_start",
+          "signature": "touch_start(integer num_detected)",
+          "description": "Triggered when an avatar starts touching the object"
+        },
+        {
+          "name": "transaction_result",
+          "signature": "transaction_result(key id, integer success, string data)",
+          "description": "Triggered when a transaction result is received"
+        }
+      ],
+      "recommendation": "Use common events like 'state_entry' and 'touch_start' for basic scripts; employ specialized events (e.g., 'path_update', 'experience_permissions') only when required"
+    },
+    "best_practices": [
+      "Match event signatures exactly as listed",
+      "Use common events like 'state_entry' and 'touch_start' for basic interactivity",
+      "Ensure only one event per signature per state",
+      "Place event handlers at the top level of each state",
+      "Avoid unused event handlers to reduce script complexity",
+      "Use specialized events only when their specific triggers are needed"
+    ],
+    "examples": [
+      {
+        "description": "Script with multiple events in a single state",
+        "code": "default\n{\n    state_entry()\n    {\n        llSay(0, \"Script started!\");\n    }\n    touch_start(integer num_detected)\n    {\n        llSay(0, \"Touched!\");\n    }\n}",
+        "context": "Shows 'default' state with 'state_entry' and 'touch_start' events, two of the fixed events listed"
+      }
+    ],
+    "references": [
+      {
+        "url": "https://wiki.secondlife.com/wiki/Category:LSL_Events",
+        "title": "LSL Wiki: LSL Events Category"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/Getting_started_with_LSL",
+        "title": "LSL Wiki: Getting Started with LSL"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/A_Basic_LSL_Tutorial",
+        "title": "LSL Wiki: A Basic LSL Tutorial"
+      },
+      {
+        "url": "https://wiki.secondlife.com/wiki/LSL_Portal",
+        "title": "LSL Wiki: LSL Portal"
+      }
+    ]
+  }
+}
+
