@@ -1,0 +1,369 @@
+.container,
+.sidebar,
+body {
+    display: flex
+}
+
+.main,
+.toolbar {
+    box-sizing: border-box
+}
+
+.sidebar img,
+canvas.pbr {
+    object-fit: contain
+}
+
+.clear-btn,
+.save-btn,
+dialog button {
+    cursor: pointer;
+    transition: background-color .2s ease-in-out
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+    color: #333
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px
+}
+
+.sidebar {
+    width: 180px;
+    background-color: #fff;
+    padding: 20px;
+    height: auto;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, .05);
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+    border-radius: 8px
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555
+}
+
+.neutral-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%
+}
+
+.neutral-label {
+    font-size: .85rem;
+    text-align: center;
+    margin-bottom: 5px;
+    color: #777
+}
+
+.instructions,
+.section h2 {
+    text-align: left
+}
+
+.sections,
+.toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    width: 100%
+}
+
+.sidebar img {
+    width: 60px;
+    height: 60px;
+    cursor: grab;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: transform .1s ease-in-out
+}
+
+.sidebar img:hover {
+    transform: scale(1.05)
+}
+
+.sidebar img.transparent {
+    border: 2px dashed #f44336
+}
+
+.toolbar {
+    background-color: #e0e7ed;
+    padding: 15px;
+    gap: 15px;
+    border-bottom: 1px solid #d6dbe0;
+    border-radius: 4px
+}
+
+.main,
+dialog {
+    padding: 20px
+}
+
+.toolbar label {
+    font-size: .9rem;
+    color: #555;
+    display: flex;
+    align-items: center
+}
+
+.toolbar input[type=checkbox],
+.toolbar select {
+    margin-left: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: .9rem
+}
+
+.toolbar input[type=checkbox] {
+    padding: 0;
+    width: auto;
+    height: auto;
+    margin-right: 3px
+}
+
+.main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%
+}
+
+.sections {
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch
+}
+
+.section {
+    margin-bottom: 30px;
+    width: 100%
+}
+
+.section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px
+}
+
+.canvas-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    width: 100%
+}
+
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative
+}
+
+.canvas	container span {
+    font-size: .9rem;
+    margin-bottom: 8px;
+    color: #555;
+    text-align: center
+}
+
+.canvas-container .tooltip {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, .8);
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    position: absolute;
+    top: -35px;
+    z-index: 10;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .2s ease-in-out
+}
+
+.canvas-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1
+}
+
+canvas {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-width: min(100%, 150px);
+    max-height: min(100%, 150px);
+    width: 100%;
+    height: auto;
+    cursor: crosshair;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, .05)
+}
+
+canvas.active {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, .5)
+}
+
+@media (max-width: 768px) {
+    .canvas-row {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+    canvas {
+        max-width: min(100%, 100px);
+        max-height: min(100%, 100px);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .sidebar {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+    .canvas-row {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+    canvas {
+        max-width: min(100%, 80px);
+        max-height: min(100%, 80px);
+    }
+}
+
+.clear-btn,
+.save-btn {
+    padding: 12px 24px;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: .95rem
+}
+
+.save-btn {
+    background-color: #28a745
+}
+
+.save-btn:hover {
+    background-color: #218838
+}
+
+.clear-btn {
+    background-color: #dc3545
+}
+
+.clear-btn:hover {
+    background-color: #c82333
+}
+
+.progress-bar {
+    display: none;
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden
+}
+
+.progress-bar div {
+    height: 100%;
+    background-color: #007bff;
+    width: 0%;
+    border-radius: 4px;
+    transition: width .2s ease-in-out
+}
+
+dialog {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, .5)
+}
+
+dialog p {
+    margin-bottom: 15px;
+    color: #555
+}
+
+.file-assignment {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px
+}
+
+.file-assignment span {
+    flex: 1;
+    font-size: .9rem;
+    color: #555
+}
+
+.file-assignment select {
+    width: 180px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: .9rem
+}
+
+dialog button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: .9rem
+}
+
+dialog #applyAssignments {
+    background-color: #007bff;
+    color: #fff
+}
+
+dialog #applyAssignments:hover {
+    background-color: #0056b3
+}
+
+dialog button:last/child {
+    background-color: #6c757d;
+    color: #fff;
+    margin-left: 10px
+}
+
+dialog button:last-child:hover {
+    background-color: #545b62
+}
+
+.instructions ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+    color: #555
+}
+
+.instructions li {
+    margin-bottom: 12px;
+    font-size: .9rem;
+    line-height: 1.6
+}

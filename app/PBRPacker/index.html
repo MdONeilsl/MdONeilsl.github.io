@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBR Packer</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <h2>Neutral</h2>
+            <div class="neutral-image-container">
+                <span class="neutral-label">Placeholder</span>
+                <img id="def_tex_placeholder_img" data-origine="placeholder" draggable="true" width="512" height="512" src="./assets/placeholder.png" alt="Placeholder texture" ondragstart="event.dataTransfer.setData('text', 'placeholder')">
+            </div>
+            <div class="neutral-image-container">
+                <span class="neutral-label">White</span>
+                <img id="def_tex_white_img" data-origine="white" draggable="true" width="8" height="8" src="./assets/white.png" alt="White texture" ondragstart="event.dataTransfer.setData('text', 'white')">
+            </div>
+            <div class="neutral-image-container">
+                <span class="neutral-label">Black</span>
+                <img id="def_tex_black_img" data-origine="black" draggable="true" width="8" height="8" src="./assets/black.png" alt="Black texture" ondragstart="event.dataTransfer.setData('text', 'black')">
+            </div>
+            <div class="neutral-image-container">
+                <span class="neutral-label">Normal</span>
+                <img id="def_tex_normal_img" data-origine="normal" draggable="true" width="8" height="8" src="./assets/normal.png" alt="Normal texture" ondragstart="event.dataTransfer.setData('text', 'normal')">
+            </div>
+            <div class="neutral-image-container">
+                <span class="neutral-label">Transparent</span>
+                <img id="def_tex_transparent_img" data-origine="transparent" class="transparent" draggable="true" width="8" height="8" src="./assets/transparent.png" alt="Transparent texture" ondragstart="event.dataTransfer.setData('text', 'transparent')">
+            </div>
+        </div>
+        <div class="main">
+            <div class="toolbar">
+                <label for="maxSize">Max Size:
+                    <select id="maxSize" title="Set maximum texture size">
+                        <option value="8">8</option>
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                        <option value="128">128</option>
+                        <option value="256">256</option>
+                        <option value="512" selected>512</option>
+                        <option value="1024">1024</option>
+                        <option value="2048">2048</option>
+                    </select>
+                </label>
+                <label for="format">Format:
+                    <select id="format" title="Select export format">
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
+                    </select>
+                </label>
+                <label for="lossless">
+                    <input type="checkbox" id="lossless" checked title="Enable lossless export"> Lossless
+                </label>
+            </div>
+            <div class="sections">
+                <div class="section">
+                    <h2>Components Section</h2>
+                    <div class="canvas-row" id="components">
+                        <div class="canvas-container">
+                            <span>Albedo</span>
+                            <canvas id="albedo"></canvas>
+                            <span class="tooltip">Base color of the material</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Transparency</span>
+                            <canvas id="transparency"></canvas>
+                            <span class="tooltip">Alpha channel or grayscale opacity</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Occlusion</span>
+                            <canvas id="occlusion"></canvas>
+                            <span class="tooltip">Ambient occlusion for shadows</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Roughness</span>
+                            <canvas id="roughness"></canvas>
+                            <span class="tooltip">Surface roughness (0=smooth, 1=rough)</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Metalness</span>
+                            <canvas id="metalness"></canvas>
+                            <span class="tooltip">Metallic property (0=non-metal, 1=metal)</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Emissive</span>
+                            <canvas id="emissive"></canvas>
+                            <span class="tooltip">Self-illuminating parts of the material</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Normal</span>
+                            <canvas id="normal"></canvas>
+                            <span class="tooltip">Surface normal for lighting</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-bar" id="progressBar">
+                    <div></div>
+                </div>
+                <div class="section">
+                    <h2>PBR Material Maps Section</h2>
+                    <div class="canvas-row" id="pbr">
+                        <div class="canvas-container">
+                            <span>Color</span>
+                            <canvas id="color" class="pbr"></canvas>
+                            <span class="tooltip">Combined albedo and transparency</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Metal</span>
+                            <canvas id="metal" class="pbr"></canvas>
+                            <span class="tooltip">Occlusion (R), Roughness (G), Metalness (B)</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Emissive</span>
+                            <canvas id="emissiveOut" class="pbr"></canvas>
+                            <span class="tooltip">Emissive output</span>
+                        </div>
+                        <div class="canvas-container">
+                            <span>Normal</span>
+                            <canvas id="normalOut" class="pbr"></canvas>
+                            <span class="tooltip">Normal map output</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button class="save-btn" onclick="saveGltf()" aria-label="Save glTF file">Save glTF</button>
+                    <button class="clear-btn" onclick="clearApp()" aria-label="Clear all canvases">Clear</button>
+                </div>
+                <div class="section instructions">
+                    <h2>Usage Instructions</h2>
+                    <ul>
+                        <li>Drag neutral images (white, black, normal, transparent, placeholder) from the sidebar to Component canvases (Albedo, Transparency, etc.) to set default textures.</li>
+                        <li>Drag and drop image files (PNG/JPEG), glTF files (.gltf/.glb), or folders onto Component or PBR canvases to load textures. Use the dialog to assign unknown textures.</li>
+                        <li>Drop a .gltf or .glb file onto a PBR canvas (Color, Metal, Emissive, Normal) to load textures into corresponding Component canvases.</li>
+                        <li>Adjust settings in the toolbar: select Max Size (8-2048 pixels), Format (PNG/JPEG), and toggle Lossless for export quality.</li>
+                        <li>Click "Save glTF" to export a glTF file with textures packed for Second Life (Metal map: Occlusion in R, Roughness in G, Metalness in B).</li>
+                        <li>Click "Clear" to reset all canvases to placeholder images.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="debugLog"></div>
+        <dialog id="assignDialog" role="dialog" aria-labelledby="assignDialogTitle">
+            <h3 id="assignDialogTitle" style="display: none;">Assign Textures</h3>
+            <form>
+                <p>Assign textures to canvases:</p>
+                <div id="fileAssignments"></div>
+                <button type="submit" id="applyAssignments" aria-label="Apply texture assignments">Apply</button>
+                <button type="button" onclick="document.getElementById('assignDialog').close()" aria-label="Cancel texture assignment">Cancel</button>
+            </form>
+        </dialog>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="./js/worker.js"></script>
+</body>
+</html>
