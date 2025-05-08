@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Sound</title>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine.css"> -->
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 2rem;
+            color: #333;
+        }
+        header p {
+            color: #666;
+        }
+        main {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+        #canvas {
+            background-color: #000;
+            border: 2px solid #333;
+            width: 100%;
+            height: 400px;
+            border-radius: 4px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .controls div {
+            display: flex;
+            flex-direction: column;
+        }
+        .controls .sliders {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .controls label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        button, select, input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        button#pauseBtn {
+            background: #ffc107;
+        }
+        button#resetBtn {
+            background: #dc3545;
+        }
+        button:hover:not(:disabled) {
+            filter: brightness(90%);
+        }
+        .stats {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            #canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sorting Algorithm Visualizer</h1>
+        <p>Explore and visualize sorting algorithms with real-time feedback</p>
+    </header>
+    <main>
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <div>
+                <label for="algorithm">Algorithm</label>
+                <select id="algorithm">
+                    <option value="bubble">Bubble Sort</option>
+                    <option value="quick">Quick Sort</option>
+                    <option value="merge">Merge Sort</option>
+                    <option value="insertion">Insertion Sort</option>
+                    <option value="selection">Selection Sort</option>
+                    <option value="heap">Heap Sort</option>
+                    <option value="radix">Radix Sort</option>
+                </select>
+            </div>
+            <div>
+                <label>Actions</label>
+                <div style="display: flex; gap: 10px;">
+                    <button id="startBtn">Start</button>
+                    <button id="pauseBtn" disabled>Pause</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+            </div>
+            <div class="sliders">
+                <div>
+                    <label for="speed">Speed (ms)</label>
+                    <input type="range" id="speed" min="1" max="500" value="20">
+                </div>
+                <div>
+                    <label for="size">Array Size</label>
+                    <input type="range" id="size" min="10" max="1000" value="35">
+                </div>
+                <div>
+                    <label for="volume">Volume</label>
+                    <input type="range" id="volume" min="0" max="0.5" step="0.001" value="0.05">
+                </div>
+            </div>
+        </div>
+        <div class="stats">
+            <span>Comparisons: <span id="comparisons">0</span></span> |
+            <span>Array Accesses: <span id="accesses">0</span></span>
+        </div>
+        <div class="info">
+            <p id="algorithmInfo"></p>
+            <p id="sortingStatus"></p>
+        </div>
+    </main>
+
+    <!-- Jasmine Unit Tests 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine-html.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/boot0.js"></script>
+    <script>
+        window.onload = () => {
+            const isSorted = (arr) => arr.every((val, i) => i === 0 || val >= arr[i - 1]);
+
+            const bubbleSortTest = (arr) => {
+                const a = [...arr];
+                for (let i = 0; i < a.length; i++) {
+                    for (let j = 0; j < a.length - i - 1; j++) {
+                        if (a[j] > a[j + 1]) {
+                            [a[j], a[j + 1]] = [a[j + 1], a[j]];
+                        }
+                    }
+                }
+                return a;
+            };
+
+            const quickSortTest = (arr) => {
+                const a = [...arr];
+                const qs = (start, end) => {
+                    if (start >= end) return;
+                    const pivotIndex = partitionTest(start, end, a);
+                    qs(start, pivotIndex - 1);
+                    qs(pivotIndex + 1, end);
+                };
+                qs(0, a.length - 1);
+                return a;
+            };
+
+            const partitionTest = (start, end, a) => {
+                const pivotValue = a[end];
+                let pivotIndex = start;
+                for (let i = start; i < end; i++) {
+                    if (a[i] < pivotValue) {
+                        [a[i], a[pivotIndex]] = [a[pivotIndex], a[i]];
+                        pivotIndex++;
+                    }
+                }
+                [a[pivotIndex], a[end]] = [a[end], a[pivotIndex]];
+                return pivotIndex;
+            };
+
+            const mergeSortTest = (arr) => {
+                const a = [...arr];
+                const ms = (start, end) => {
+                    if (start >= end) return;
+                    const mid = Math.floor((start + end) / 2);
+                    ms(start, mid);
+                    ms(mid + 1, end);
+                    mergeTest(start, mid, end, a);
+                };
+                ms(0, a.length - 1);
+                return a;
+            };
+
+            const mergeTest = (start, mid, end, a) => {
+                const left = a.slice(start, mid + 1);
+                const right = a.slice(mid + 1, end + 1);
+                let i = 0, j = 0, k = start;
+                while (i < left.length && j < right.length) {
+                    if (left[i] <= right[j]) {
+                        a[k] = left[i];
+                        i++;
+                    } else {
+                        a[k] = right[j];
+                        j++;
+                    }
+                    k++;
+                }
+                while (i < left.length) {
+                    a[k] = left[i];
+                    i++;
+                    k++;
+                }
+                while (j < right.length) {
+                    a[k] = right[j];
+                    j++;
+                    k++;
+                }
+            };
+
+            const insertionSortTest = (arr) => {
+                const a = [...arr];
+                for (let i = 1; i < a.length; i++) {
+                    let key = a[i];
+                    let j = i - 1;
+                    while (j >= 0 && a[j] > key) {
+                        a[j + 1] = a[j];
+                        j--;
+                    }
+                    a[j + 1] = key;
+                }
+                return a;
+            };
+
+            const selectionSortTest = (arr) => {
+                const a = [...arr];
+                for (let i = 0; i < a.length; i++) {
+                    let minIdx = i;
+                    for (let j = i + 1; j < a.length; j++) {
+                        if (a[j] < a[minIdx]) {
+                            minIdx = j;
+                        }
+                    }
+                    if (minIdx !== i) {
+                        [a[i], a[minIdx]] = [a[minIdx], a[i]];
+                    }
+                }
+                return a;
+            };
+
+            const heapSortTest = (arr) => {
+                const a = [...arr];
+                for (let i = Math.floor(a.length / 2) - 1; i >= 0; i--) {
+                    heapifyTest(a.length, i, a);
+                }
+                for (let i = a.length - 1; i > 0; i--) {
+                    [a[0], a[i]] = [a[i], a[0]];
+                    heapifyTest(i, 0, a);
+                }
+                return a;
+            };
+
+            const heapifyTest = (n, i, a) => {
+                let largest = i;
+                const left = 2 * i + 1;
+                const right = 2 * i + 2;
+                if (left < n && a[left] > a[largest]) largest = left;
+                if (right < n && a[right] > a[largest]) largest = right;
+                if (largest !== i) {
+                    [a[i], a[largest]] = [a[largest], a[i]];
+                    heapifyTest(n, largest, a);
+                }
+            };
+
+            const radixSortTest = (arr) => {
+                const a = [...arr];
+                const max = Math.max(...a, 0);
+                let exp = 1;
+                while (Math.floor(max / exp) > 0) {
+                    countingSortForRadixTest(a, exp);
+                    exp *= 10;
+                }
+                return a;
+            };
+
+            const countingSortForRadixTest = (arr, exp) => {
+                const output = new Array(arr.length).fill(0);
+                const count = new Array(10).fill(0);
+                for (let i = 0; i < arr.length; i++) {
+                    const digit = Math.floor(arr[i] / exp) % 10;
+                    count[digit]++;
+                }
+                for (let i = 1; i < 10; i++) {
+                    count[i] += count[i - 1];
+                }
+                for (let i = arr.length - 1; i >= 0; i--) {
+                    const digit = Math.floor(arr[i] / exp) % 10;
+                    output[count[digit] - 1] = arr[i];
+                    count[digit]--;
+                }
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = output[i];
+                }
+            };
+
+            describe('Sorting Algorithms', () => {
+                const testArray = [5, 2, 8, 1, 9, 0, 7, 3];
+                const expected = [0, 1, 2, 3, 5, 7, 8, 9];
+
+                it('Bubble Sort should sort correctly', () => {
+                    const result = bubbleSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Quick Sort should sort correctly', () => {
+                    const result = quickSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Merge Sort should sort correctly', () => {
+                    const result = mergeSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Insertion Sort should sort correctly', () => {
+                    const result = insertionSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Selection Sort should sort correctly', () => {
+                    const result = selectionSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Heap Sort should sort correctly', () => {
+                    const result = heapSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+
+                it('Radix Sort should sort correctly', () => {
+                    const result = radixSortTest(testArray);
+                    expect(result).toBeDefined();
+                    expect(isSorted(result)).toBe(true);
+                    expect(result).toEqual(expected);
+                });
+            });
+
+            jasmine.getEnv().execute();
+        };
+    </script>
+    -->
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const algorithmSelect = document.getElementById('algorithm');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const speedInput = document.getElementById('speed');
+        const sizeInput = document.getElementById('size');
+        const volumeInput = document.getElementById('volume');
+        const comparisonsSpan = document.getElementById('comparisons');
+        const accessesSpan = document.getElementById('accesses');
+        const algorithmInfo = document.getElementById('algorithmInfo');
+        const sortingStatus = document.getElementById('sortingStatus');
+
+        let array = [];
+        let comparisons = 0;
+        let accesses = 0;
+        let isSorting = false;
+        let isPaused = false;
+        let animationFrameId;
+        let lastDraw = 0;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const MIN_FREQ = 120;
+        const MAX_FREQ = 1212;
+        let soundQueue = [];
+
+        const algorithmDescriptions = {
+            bubble: 'Bubble Sort: O(n²) time complexity. Simple but inefficient for large datasets.',
+            quick: 'Quick Sort: O(n log n) average time complexity. Efficient for most datasets.',
+            merge: 'Merge Sort: O(n log n) time complexity. Stable and efficient for large datasets.',
+            insertion: 'Insertion Sort: O(n²) time complexity. Good for small or nearly sorted datasets.',
+            selection: 'Selection Sort: O(n²) time complexity. Simple but inefficient for large datasets.',
+            heap: 'Heap Sort: O(n log n) time complexity. In-place but not stable.',
+            radix: 'Radix Sort: O(nk) time complexity, where k is the number of digits. Efficient for integers.'
+        };
+
+        const generateArray = (size) => {
+            array = Array.from({ length: size }, () => Math.floor(Math.random() * 201));
+            drawArray();
+        };
+
+        const resizeCanvas = () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            generateArray(sizeInput.value);
+        };
+
+        const drawArray = (highlightIndices = [], action = 'compare') => {
+            const now = performance.now();
+            if (now - lastDraw < 16) return;
+            lastDraw = now;
+
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = canvas.width / array.length;
+            const maxHeight = canvas.height * 0.9;
+
+            array.forEach((value, i) => {
+                const height = (value / 200) * maxHeight;
+                const x = i * barWidth;
+                const y = canvas.height - height;
+
+                ctx.fillStyle = highlightIndices.includes(i)
+                    ? (action === 'compare' ? 'red' : action === 'swap' ? 'green' : 'blue')
+                    : 'white';
+                ctx.fillRect(x, y, barWidth - 2, height);
+            });
+        };
+
+        const playSound = (value) => {
+            if (!isFinite(value) || !audioCtx || soundQueue.length > 5) return;
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'triangle';
+            const freq = MIN_FREQ + (value / 200) * (MAX_FREQ - MIN_FREQ);
+            if (!isFinite(freq)) return;
+
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            const volume = parseFloat(volumeInput.value);
+            if (!isFinite(volume)) return;
+
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2);
+
+            soundQueue.push(oscillator);
+            oscillator.onended = () => {
+                soundQueue = soundQueue.filter(o => o !== oscillator);
+            };
+        };
+
+        const delay = (ms) => new Promise(resolve => {
+            let start = null;
+            const step = (now) => {
+                if (!start) start = now;
+                const elapsed = now - start;
+                if (elapsed >= ms) {
+                    resolve();
+                } else {
+                    animationFrameId = requestAnimationFrame(step);
+                }
+            };
+            animationFrameId = requestAnimationFrame(step);
+        });
+
+        const updateStats = () => {
+            comparisonsSpan.textContent = comparisons;
+            accessesSpan.textContent = accesses;
+        };
+
+        const bubbleSort = async () => {
+            for (let i = 0; i < array.length; i++) {
+                for (let j = 0; j < array.length - i - 1; j++) {
+                    comparisons++;
+                    accesses += 2;
+                    if (array[j] > array[j + 1]) {
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        accesses += 2;
+                        playSound(array[j]);
+                        playSound(array[j + 1]);
+                        drawArray([j, j + 1], 'swap');
+                    } else {
+                        drawArray([j, j + 1], 'compare');
+                    }
+                    updateStats();
+                    await delay(parseInt(speedInput.value));
+                    if (!isSorting || isPaused) return { i, j };
+                }
+            }
+            return null;
+        };
+
+        const quickSort = async (start = 0, end = array.length - 1) => {
+            if (start >= end) return null;
+
+            const pivotIndex = await partition(start, end);
+            if (!isSorting || isPaused) return { start, end, pivotIndex };
+            await quickSort(start, pivotIndex - 1);
+            await quickSort(pivotIndex + 1, end);
+            return null;
+        };
+
+        const partition = async (start, end) => {
+            const pivotValue = array[end];
+            accesses++;
+            let pivotIndex = start;
+
+            for (let i = start; i < end; i++) {
+                comparisons++;
+                accesses += 2;
+                if (array[i] < pivotValue) {
+                    [array[i], array[pivotIndex]] = [array[pivotIndex], array[i]];
+                    accesses += 2;
+                    playSound(array[i]);
+                    playSound(array[pivotIndex]);
+                    drawArray([i, pivotIndex, end], 'swap');
+                    pivotIndex++;
+                } else {
+                    drawArray([i, pivotIndex, end], 'compare');
+                }
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return pivotIndex;
+            }
+
+            [array[pivotIndex], array[end]] = [array[end], array[pivotIndex]];
+            accesses += 2;
+            drawArray([pivotIndex, end], 'swap');
+            await delay(parseInt(speedInput.value));
+
+            return pivotIndex;
+        };
+
+        const mergeSort = async (start = 0, end = array.length - 1) => {
+            if (start >= end) return null;
+
+            const mid = Math.floor((start + end) / 2);
+            await mergeSort(start, mid);
+            if (!isSorting || isPaused) return { start, end, mid };
+            await mergeSort(mid + 1, end);
+            if (!isSorting || isPaused) return { start, end, mid };
+            await merge(start, mid, end);
+            return null;
+        };
+
+        const merge = async (start, mid, end) => {
+            const left = array.slice(start, mid + 1);
+            const right = array.slice(mid + 1, end + 1);
+            let i = 0, j = 0, k = start;
+
+            while (i < left.length && j < right.length) {
+                comparisons++;
+                accesses += 2;
+                if (left[i] <= right[j]) {
+                    array[k] = left[i];
+                    i++;
+                    drawArray([k], 'merge');
+                } else {
+                    array[k] = right[j];
+                    j++;
+                    if (i < left.length && j < right.length) {
+                        playSound(left[i]);
+                        playSound(right[j]);
+                    }
+                    drawArray([k], 'merge');
+                }
+                accesses++;
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { start, mid, end, i, j, k };
+                k++;
+            }
+
+            while (i < left.length) {
+                array[k] = left[i];
+                accesses++;
+                drawArray([k], 'merge');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { start, mid, end, i, j, k };
+                i++;
+                k++;
+            }
+
+            while (j < right.length) {
+                array[k] = right[j];
+                accesses++;
+                drawArray([k], 'merge');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { start, mid, end, i, j, k };
+                j++;
+                k++;
+            }
+            return null;
+        };
+
+        const insertionSort = async () => {
+            for (let i = 1; i < array.length; i++) {
+                let key = array[i];
+                let j = i - 1;
+                accesses++;
+
+                while (j >= 0 && array[j] > key) {
+                    comparisons++;
+                    accesses += 2;
+                    array[j + 1] = array[j];
+                    accesses++;
+                    playSound(array[j]);
+                    playSound(key);
+                    drawArray([j, j + 1], 'swap');
+                    updateStats();
+                    await delay(parseInt(speedInput.value));
+                    if (!isSorting || isPaused) return { i, j, key };
+                    j--;
+                }
+                array[j + 1] = key;
+                accesses++;
+                drawArray([j + 1], 'merge');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { i, j, key };
+            }
+            return null;
+        };
+
+        const selectionSort = async () => {
+            for (let i = 0; i < array.length; i++) {
+                let minIdx = i;
+                for (let j = i + 1; j < array.length; j++) {
+                    comparisons++;
+                    accesses += 2;
+                    if (array[j] < array[minIdx]) {
+                        minIdx = j;
+                    }
+                    drawArray([i, minIdx, j], 'compare');
+                    updateStats();
+                    await delay(parseInt(speedInput.value));
+                    if (!isSorting || isPaused) return { i, minIdx };
+                }
+                if (minIdx !== i) {
+                    [array[i], array[minIdx]] = [array[minIdx], array[i]];
+                    accesses += 2;
+                    playSound(array[i]);
+                    playSound(array[minIdx]);
+                    drawArray([i, minIdx], 'swap');
+                }
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { i, minIdx };
+            }
+            return null;
+        };
+
+        const heapSort = async () => {
+            for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
+                await heapify(array.length, i);
+                if (!isSorting || isPaused) return { i };
+            }
+
+            for (let i = array.length - 1; i > 0; i--) {
+                [array[0], array[i]] = [array[i], array[0]];
+                accesses += 2;
+                playSound(array[0]);
+                playSound(array[i]);
+                drawArray([0, i], 'swap');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return { i };
+
+                await heapify(i, 0);
+                if (!isSorting || isPaused) return { i };
+            }
+            return null;
+        };
+
+        const heapify = async (n, i) => {
+            let largest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+
+            if (left < n) {
+                comparisons++;
+                accesses += 2;
+                if (array[left] > array[largest]) largest = left;
+            }
+
+            if (right < n) {
+                comparisons++;
+                accesses += 2;
+                if (array[right] > array[largest]) largest = right;
+            }
+
+            if (largest !== i) {
+                [array[i], array[largest]] = [array[largest], array[i]];
+                accesses += 2;
+                playSound(array[i]);
+                playSound(array[largest]);
+                drawArray([i, largest], 'swap');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return;
+
+                await heapify(n, largest);
+            }
+        };
+
+        const radixSort = async () => {
+            await radixSortPositive(array);
+            drawArray();
+            updateStats();
+        };
+
+        const radixSortPositive = async (arr) => {
+            const max = Math.max(...arr, 0);
+            let exp = 1;
+
+            while (Math.floor(max / exp) > 0) {
+                await countingSortForRadix(arr, exp);
+                exp *= 10;
+                if (!isSorting || isPaused) return;
+            }
+        };
+
+        const countingSortForRadix = async (arr, exp) => {
+            const output = new Array(arr.length).fill(0);
+            const count = new Array(10).fill(0);
+
+            for (let i = 0; i < arr.length; i++) {
+                const digit = Math.floor(arr[i] / exp) % 10;
+                count[digit]++;
+                accesses++;
+            }
+
+            for (let i = 1; i < 10; i++) {
+                count[i] += count[i - 1];
+            }
+
+            for (let i = arr.length - 1; i >= 0; i--) {
+                const digit = Math.floor(arr[i] / exp) % 10;
+                output[count[digit] - 1] = arr[i];
+                count[digit]--;
+                accesses++;
+            }
+
+            for (let i = 0; i < arr.length; i++) {
+                arr[i] = output[i];
+                accesses++;
+                drawArray([i], 'merge');
+                updateStats();
+                await delay(parseInt(speedInput.value));
+                if (!isSorting || isPaused) return;
+            }
+        };
+
+        algorithmSelect.addEventListener('change', () => {
+            algorithmInfo.textContent = algorithmDescriptions[algorithmSelect.value];
+        });
+        algorithmInfo.textContent = algorithmDescriptions[algorithmSelect.value];
+
+        startBtn.addEventListener('click', async () => {
+            if (isSorting && !isPaused) return;
+            if (audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
+            isSorting = true;
+            isPaused = false;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            pauseBtn.textContent = 'Pause';
+            resetBtn.disabled = true;
+            sortingStatus.textContent = `Sorting with ${algorithmSelect.options[algorithmSelect.selectedIndex].text}...`;
+
+            comparisons = 0;
+            accesses = 0;
+            updateStats();
+
+            const algorithm = algorithmSelect.value;
+            let state = null;
+
+            switch (algorithm) {
+                case 'bubble':
+                    state = await bubbleSort();
+                    break;
+                case 'quick':
+                    state = await quickSort();
+                    break;
+                case 'merge':
+                    state = await mergeSort();
+                    break;
+                case 'insertion':
+                    state = await insertionSort();
+                    break;
+                case 'selection':
+                    state = await selectionSort();
+                    break;
+                case 'heap':
+                    state = await heapSort();
+                    break;
+                case 'radix':
+                    await radixSort();
+                    break;
+            }
+
+            if (!isSorting && !isPaused) {
+                isSorting = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                resetBtn.disabled = false;
+                sortingStatus.textContent = '';
+                drawArray();
+            }
+        });
+
+        pauseBtn.addEventListener('click', async () => {
+            if (!isSorting) return;
+            if (isPaused) {
+                isPaused = false;
+                pauseBtn.textContent = 'Pause';
+                startBtn.disabled = true;
+                resetBtn.disabled = true;
+                sortingStatus.textContent = `Sorting with ${algorithmSelect.options[algorithmSelect.selectedIndex].text}...`;
+
+                const algorithm = algorithmSelect.value;
+                switch (algorithm) {
+                    case 'bubble':
+                        await resumeBubbleSort();
+                        break;
+                    case 'quick':
+                        await resumeQuickSort();
+                        break;
+                    case 'merge':
+                        await resumeMergeSort();
+                        break;
+                    case 'insertion':
+                        await resumeInsertionSort();
+                        break;
+                    case 'selection':
+                        await resumeSelectionSort();
+                        break;
+                    case 'heap':
+                        await resumeHeapSort();
+                        break;
+                    case 'radix':
+                        await radixSort();
+                        break;
+                }
+                if (!isSorting && !isPaused) {
+                    isSorting = false;
+                    startBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                    resetBtn.disabled = false;
+                    sortingStatus.textContent = '';
+                    drawArray();
+                }
+            } else {
+                isPaused = true;
+                pauseBtn.textContent = 'Resume';
+                startBtn.disabled = false;
+                resetBtn.disabled = false;
+                sortingStatus.textContent = 'Paused';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+        });
+
+        const resumeBubbleSort = async () => await bubbleSort();
+        const resumeQuickSort = async () => await quickSort();
+        const resumeMergeSort = async () => await mergeSort();
+        const resumeInsertionSort = async () => await insertionSort();
+        const resumeSelectionSort = async () => await selectionSort();
+        const resumeHeapSort = async () => await heapSort();
+
+        resetBtn.addEventListener('click', () => {
+            if (isSorting) {
+                isSorting = false;
+                isPaused = false;
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                pauseBtn.textContent = 'Pause';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+            generateArray(sizeInput.value);
+            comparisons = 0;
+            accesses = 0;
+            updateStats();
+            sortingStatus.textContent = '';
+        });
+
+        sizeInput.addEventListener('input', () => {
+            if (!isSorting) {
+                generateArray(sizeInput.value);
+            }
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+        generateArray(sizeInput.value);
+    </script>
+</body>
+</html>
