@@ -1,3 +1,35 @@
+#controls label,
+#instructions a {
+    font-weight: 500
+}
+
+#messageContainer,
+footer {
+    margin-top: 20px
+}
+
+#controls button:hover,
+.language-menu li:hover,
+footer {
+    background-color: #f0f0f0
+}
+
+#instructions p,
+footer p {
+    margin-bottom: 10px
+}
+
+#instructions a,
+footer a {
+    color: #007bff;
+    text-decoration: none
+}
+
+#instructions a:hover,
+footer a:hover {
+    text-decoration: underline
+}
+
 #canvasInfo,
 #langButton {
     box-shadow: 0 1px 3px rgba(0, 0, 0, .05)
@@ -36,7 +68,6 @@ body {
 }
 
 #controls label {
-    font-weight: 500;
     color: #555;
     margin-bottom: 5px
 }
@@ -53,11 +84,6 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
     transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
     margin: 0
-}
-
-#controls button:hover,
-.language-menu li:hover {
-    background-color: #f0f0f0
 }
 
 #controls button:focus,
@@ -141,10 +167,6 @@ canvas:hover {
     transition: width .2s ease-in-out
 }
 
-#messageContainer {
-    margin-top: 20px
-}
-
 #errorMessage,
 #successMessage {
     font-weight: 500;
@@ -197,18 +219,10 @@ canvas:hover {
 
 #instructions p {
     color: #7f8c8d;
-    font-size: 14px;
-    margin-bottom: 10px
-}
-
-#instructions a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500
+    font-size: 14px
 }
 
 #instructions a:hover {
-    text-decoration: underline;
     color: #0056b3
 }
 
@@ -261,4 +275,13 @@ canvas:hover {
 .language-menu li.selected {
     background-color: #e0e0e0;
     font-weight: 700
+}
+
+footer {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    font-size: .9em;
+    color: #555;
+    text-align: center;
+    border-radius: 8px
 }

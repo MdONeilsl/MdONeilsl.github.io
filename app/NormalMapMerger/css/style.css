@@ -1,3 +1,20 @@
+#info,
+footer {
+    padding: 1rem
+}
+
+#error-message,
+.container,
+footer {
+    text-align: center
+}
+
+footer,
+input[type=range]:focus,
+input[type=range]:hover {
+    background-color: #f9fafb
+}
+
 .container,
 body {
     flex-direction: column;
@@ -39,7 +56,6 @@ body {
     gap: 24px;
     max-width: 600px;
     width: 90%;
-    text-align: center;
     padding: 2rem;
     background-color: #fff;
     border-radius: .75rem;
@@ -55,7 +71,6 @@ h2 {
 #info {
     font-size: .875rem;
     background-color: #f7fafc;
-    padding: 1rem;
     border-radius: .5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px -1px rgba(0, 0, 0, .1);
     line-height: 1.5rem
@@ -92,6 +107,11 @@ select {
     font-size: 1rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     width: 100%
+}
+
+footer,
+label {
+    font-size: .875rem
 }
 
 #download,
@@ -189,10 +209,10 @@ input[type=range]::-moz-range-thumb {
     border: none
 }
 
-#error-message,
+#download,
 canvas {
-    border-radius: .375rem;
     margin-top: 1.5rem;
+    border-radius: .375rem;
     display: none
 }
 
@@ -206,11 +226,6 @@ input[type=range]:focus::-moz-range-thumb {
     outline: #fff solid 2px;
     outline-offset: 2px;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, .15)
-}
-
-input[type=range]:focus,
-input[type=range]:hover {
-    background-color: #f9fafb
 }
 
 canvas {
@@ -241,19 +256,18 @@ canvas {
 #error-message {
     color: #dc2626;
     font-size: 1rem;
-    text-align: center;
     padding: 1rem;
     background-color: #fee2e2;
-    border: 1px solid #fecaca
+    border: 1px solid #fecaca;
+    border-radius: .375rem;
+    margin-top: 1.5rem;
+    display: none
 }
 
 #download {
-    margin-top: 1.5rem;
     padding: .75rem 1.5rem;
-    border-radius: .375rem;
     font-size: 1rem;
     transition: background-color .2s ease-in-out, transform .1s;
-    display: none;
     border: none
 }
 
@@ -268,8 +282,23 @@ canvas {
 }
 
 label {
-    font-size: .875rem;
     display: block;
     margin-bottom: .5rem;
     font-weight: 500
+}
+
+footer {
+    margin-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+    border-radius: .375rem;
+    color: #6b7280
+}
+
+footer a {
+    color: #3b82f6;
+    text-decoration: underline
+}
+
+footer a:hover {
+    color: #2563eb
 }

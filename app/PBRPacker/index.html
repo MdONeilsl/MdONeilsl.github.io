@@ -1,34 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBR Packer</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <meta name="description"
+        content="PBR Packer: A web-based tool for Second Life content creators and 3D artists to pack PBR map textures into glTF files for virtual world use.">
+    <meta name="keywords" content="Second Life tool, PBR, gltf, texture packer, 3D artist, virtual world">
+    <meta name="author" content="MdONeil">
+    <meta name="robots" content="index, follow">
+    <title>PBR Web Packer</title>
 </head>
+
 <body>
+    <link rel="stylesheet" href="./css/style.css">
     <div class="container">
         <div class="sidebar" id="sidebar">
             <h2>Neutral</h2>
             <div class="neutral-image-container">
                 <span class="neutral-label">Placeholder</span>
-                <img id="def_tex_placeholder_img" data-origine="placeholder" draggable="true" width="512" height="512" src="./assets/placeholder.png" alt="Placeholder texture" ondragstart="event.dataTransfer.setData('text', 'placeholder')">
+                <img id="def_tex_placeholder_img" data-origine="placeholder" draggable="true" width="512" height="512"
+                    src="./assets/placeholder.png" alt="Placeholder texture"
+                    ondragstart="event.dataTransfer.setData('text', 'placeholder')">
             </div>
             <div class="neutral-image-container">
                 <span class="neutral-label">White</span>
-                <img id="def_tex_white_img" data-origine="white" draggable="true" width="8" height="8" src="./assets/white.png" alt="White texture" ondragstart="event.dataTransfer.setData('text', 'white')">
+                <img id="def_tex_white_img" data-origine="white" draggable="true" width="8" height="8"
+                    src="./assets/white.png" alt="White texture"
+                    ondragstart="event.dataTransfer.setData('text', 'white')">
             </div>
             <div class="neutral-image-container">
                 <span class="neutral-label">Black</span>
-                <img id="def_tex_black_img" data-origine="black" draggable="true" width="8" height="8" src="./assets/black.png" alt="Black texture" ondragstart="event.dataTransfer.setData('text', 'black')">
+                <img id="def_tex_black_img" data-origine="black" draggable="true" width="8" height="8"
+                    src="./assets/black.png" alt="Black texture"
+                    ondragstart="event.dataTransfer.setData('text', 'black')">
             </div>
             <div class="neutral-image-container">
                 <span class="neutral-label">Normal</span>
-                <img id="def_tex_normal_img" data-origine="normal" draggable="true" width="8" height="8" src="./assets/normal.png" alt="Normal texture" ondragstart="event.dataTransfer.setData('text', 'normal')">
+                <img id="def_tex_normal_img" data-origine="normal" draggable="true" width="8" height="8"
+                    src="./assets/normal.png" alt="Normal texture"
+                    ondragstart="event.dataTransfer.setData('text', 'normal')">
             </div>
             <div class="neutral-image-container">
                 <span class="neutral-label">Transparent</span>
-                <img id="def_tex_transparent_img" data-origine="transparent" class="transparent" draggable="true" width="8" height="8" src="./assets/transparent.png" alt="Transparent texture" ondragstart="event.dataTransfer.setData('text', 'transparent')">
+                <img id="def_tex_transparent_img" data-origine="transparent" class="transparent" draggable="true"
+                    width="8" height="8" src="./assets/transparent.png" alt="Transparent texture"
+                    ondragstart="event.dataTransfer.setData('text', 'transparent')">
             </div>
         </div>
         <div class="main">
@@ -132,11 +149,16 @@
                 <div class="section instructions">
                     <h2>Usage Instructions</h2>
                     <ul>
-                        <li>Drag neutral images (white, black, normal, transparent, placeholder) from the sidebar to Component canvases (Albedo, Transparency, etc.) to set default textures.</li>
-                        <li>Drag and drop image files (PNG/JPEG), glTF files (.gltf/.glb), or folders onto Component or PBR canvases to load textures. Use the dialog to assign unknown textures.</li>
-                        <li>Drop a .gltf or .glb file onto a PBR canvas (Color, Metal, Emissive, Normal) to load textures into corresponding Component canvases.</li>
-                        <li>Adjust settings in the toolbar: select Max Size (8-2048 pixels), Format (PNG/JPEG), and toggle Lossless for export quality.</li>
-                        <li>Click "Save glTF" to export a glTF file with textures packed for Second Life (Metal map: Occlusion in R, Roughness in G, Metalness in B).</li>
+                        <li>Drag neutral images (white, black, normal, transparent, placeholder) from the sidebar to
+                            Component canvases (Albedo, Transparency, etc.) to set default textures.</li>
+                        <li>Drag and drop image files (PNG/JPEG), glTF files (.gltf/.glb), or folders onto Component or
+                            PBR canvases to load textures. Use the dialog to assign unknown textures.</li>
+                        <li>Drop a .gltf or .glb file onto a PBR canvas (Color, Metal, Emissive, Normal) to load
+                            textures into corresponding Component canvases.</li>
+                        <li>Adjust settings in the toolbar: select Max Size (8-2048 pixels), Format (PNG/JPEG), and
+                            toggle Lossless for export quality.</li>
+                        <li>Click "Save glTF" to export a glTF file with textures packed for Second Life (Metal map:
+                            Occlusion in R, Roughness in G, Metalness in B).</li>
                         <li>Click "Clear" to reset all canvases to placeholder images.</li>
                     </ul>
                 </div>
@@ -149,13 +171,44 @@
                 <p>Assign textures to canvases:</p>
                 <div id="fileAssignments"></div>
                 <button type="submit" id="applyAssignments" aria-label="Apply texture assignments">Apply</button>
-                <button type="button" onclick="document.getElementById('assignDialog').close()" aria-label="Cancel texture assignment">Cancel</button>
+                <button type="button" onclick="document.getElementById('assignDialog').close()"
+                    aria-label="Cancel texture assignment">Cancel</button>
             </form>
         </dialog>
     </div>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PBR Web Packer",
+        "description": "A web-based tool for Second Life content creators and 3D artists to pack PBR map textures into glTF files for virtual world applications.",
+        "applicationCategory": "Multimedia",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "keywords": "Second Life tool, PBR, gltf, texture packer, 3D artist, virtual world",
+         "author": {
+        "@type": "Person",
+        "name": "MdONeil",
+        "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+      }
+    }
+    </script>
+    <footer>
+        <p>PBR Web Packer is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden Research, Inc.</p>
+        <p>© 2025 <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a>. All rights
+            reserved.</p>
+        <p>Built with <a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener">JSZip</a> (MIT License) by
+            Stuart Knightley and <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a> (MIT
+            License) by Three.js Authors. See <a href="/licenses">Licenses</a> for details.</p>
+    </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="./js/worker.js"></script>
 </body>
+
 </html>

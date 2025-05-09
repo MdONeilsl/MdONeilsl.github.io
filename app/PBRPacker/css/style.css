@@ -1,5 +1,14 @@
-.container,
 .sidebar,
+body {
+    flex-direction: column
+}
+
+.container,
+.main,
+.sections,
+.sidebar,
+.toolbar,
+.toolbar label,
 body {
     display: flex
 }
@@ -24,7 +33,6 @@ dialog button {
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    justify-content: center;
     align-items: center;
     min-height: 100vh;
     background-color: #f4f6f8;
@@ -43,7 +51,6 @@ body {
     height: auto;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, .05);
-    flex-direction: column;
     align-items: center;
     margin-right: 20px;
     border-radius: 8px
@@ -80,7 +87,6 @@ body {
 .sections,
 .toolbar {
     margin-bottom: 20px;
-    display: flex;
     width: 100%
 }
 
@@ -117,7 +123,6 @@ dialog {
 .toolbar label {
     font-size: .9rem;
     color: #555;
-    display: flex;
     align-items: center
 }
 
@@ -139,7 +144,6 @@ dialog {
 
 .main {
     flex-grow: 1;
-    display: flex;
     flex-direction: column;
     align-items: stretch;
     width: 100%
@@ -179,7 +183,7 @@ dialog {
     position: relative
 }
 
-.canvas	container span {
+.canvas-container span {
     font-size: .9rem;
     margin-bottom: 8px;
     color: #555;
@@ -221,32 +225,36 @@ canvas.active {
     box-shadow: 0 0 5px rgba(0, 123, 255, .5)
 }
 
-@media (max-width: 768px) {
+@media (max-width:768px) {
     .canvas-row {
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr))
     }
+
     canvas {
         max-width: min(100%, 100px);
-        max-height: min(100%, 100px);
+        max-height: min(100%, 100px)
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
     .container {
         flex-direction: column;
-        align-items: center;
+        align-items: center
     }
+
     .sidebar {
         width: 100%;
         margin-right: 0;
-        margin-bottom: 20px;
+        margin-bottom: 20px
     }
+
     .canvas-row {
-        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr))
     }
+
     canvas {
         max-width: min(100%, 80px);
-        max-height: min(100%, 80px);
+        max-height: min(100%, 80px)
     }
 }
 
@@ -345,7 +353,7 @@ dialog #applyAssignments:hover {
     background-color: #0056b3
 }
 
-dialog button:last/child {
+dialog button:last-child {
     background-color: #6c757d;
     color: #fff;
     margin-left: 10px
@@ -366,4 +374,14 @@ dialog button:last-child:hover {
     margin-bottom: 12px;
     font-size: .9rem;
     line-height: 1.6
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    color: #777;
+    font-size: .8em;
+    margin-top: 20px
 }

@@ -1,24 +1,55 @@
 <!doctype html>
-<html lang=en>
-
+<html lang="en">
 <head>
-    <meta charset=UTF-8>
-    <meta name=viewport content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Audio Segmenter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js></script>
-</head>
-
-<body>
+    <meta name="description" content="Tool for Second Life users to split audio files into 30-second WAV segments.">
+    <meta name="keywords" content="audio, sound, wav format, Second Life tool, audio processing, sound segmentation">
+    <meta name="author" content="MdONeil">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel=stylesheet href=./css/style.css>
-    <div class=container>
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Audio Segmenter",
+        "operatingSystem": "Web",
+        "applicationCategory": "Audio Processing",
+        "description": "Tool for Second Life users to split audio files into 30-second WAV segments.",
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
         <h1>Audio Segmenter</h1>
-        <p>Upload an audio file to split it into 30-second WAV segments.</p><input type=file id=mediaInput
-            accept=audio/*><button id=processButton disabled>Process Audio</button>
-        <div id=progress></div>
-        <div id=error></div>
+        <p>Upload an audio file to split it into 30-second WAV segments.</p>
+        <input type="file" id="mediaInput" accept="audio/*">
+        <button id="processButton" disabled>Process Audio</button>
+        <div id="progress"></div>
+        <div id="error"></div>
     </div>
-    <script src=./js/main.js></script>
+    <script src="./js/main.js"></script>
+    <footer>
+        <p>© 2024 Audio Segmenter. All rights reserved.</p>
+        <p> Second Life® is a trademark of Linden Research, Inc. This tool is not affiliated with or sponsored by Linden Research.</p>
+        <p>Developed by MdONeil under the GNU v3 License. Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <p>Dependencies:</p>
+        <ul>
+            <li><a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener noreferrer">JSZip</a> (MIT License) by Stuart K.</li>
+        </ul>
+        <p><a href="../../LICENSE">View Licenses</a></p>
+    </footer>
 </body>
-
 </html>

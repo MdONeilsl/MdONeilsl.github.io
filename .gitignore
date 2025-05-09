@@ -2,3 +2,10 @@
 .vscode
 index_dum.html
 assets/LslPrimerForAI
+app/PBR_img/tmp_idx.html
+app/ShapeMixer/tmp_idx.html
+app/prim_gif/tmp_idx.html
+app/Segmenter/tmp_idx.html
+app/NormalMapScaler/tmp_idx.html
+app/NormalMapMerger/tmp_idx.html
+app/Fragmentedframe/tmp_idx.html

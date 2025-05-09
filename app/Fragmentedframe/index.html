@@ -1,12 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title">Fragmented frame</title>
+    <title>Fragmented Frame Tool</title>
+    <meta name="description"
+        content="Create unique fragmented frame designs for Second Life with custom textures.  This tool allows you to draw 2D shapes, apply a texture, and export as a 3D mesh for use in Second Life.">
+    <meta name="keywords"
+        content="Second Life, frame, fragment, texture, mesh, 3D design, content creation, virtual world, avatar design, Second Life tool">
+    <meta name="author" content="MdONeil">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Fragmented Frame Tool",
+            "operatingSystem": "Web",
+            "applicationCategory": "Graphics Application",
+            "description": "Create unique fragmented frame designs for Second Life with custom textures. This tool allows you to draw 2D shapes, apply a texture, and export them as 3D meshes for use in Second Life.",
+            "author": {
+                "@type": "Person",
+                "name": "MdONeil",
+                "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+            },
+            "url": "URL_OF_YOUR_WEBPAGE",
+            "softwareVersion": "1.0",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
 </head>
+
 <body>
     <div class="container">
         <div class="toolbar">
@@ -26,13 +54,15 @@
                     <option value="pt" data-i18n="lang-pt">Portuguese</option>
                 </select>
             </div>
-            <input type="file" id="upload-image" accept="image/*" title data-i18n="upload-texture" title="Upload Texture">
+            <input type="file" id="upload-image" accept="image/*" title data-i18n="upload-texture"
+                title="Upload Texture">
         </div>
         <canvas id="canvas" width="800" height="600"></canvas>
         <div class="tutorial">
-            <h3 data-i18n="tutorial-heading">Fragmented frame App Tutorial</h3>
+            <h3 data-i18n="tutorial-heading">Fragmented Frame App Tutorial</h3>
             <ul>
-                <li data-i18n="tutorial-purpose">Draw 2D shapes, apply a texture, and export as a 3D mesh (.dae) for Blender.</li>
+                <li data-i18n="tutorial-purpose">Draw 2D shapes, apply a texture, and export as a 3D mesh (.dae) for
+                    Blender.</li>
                 <li data-i18n="tutorial-draw">Select a shape from the toolbar, then click and drag on the canvas.</li>
                 <li data-i18n="tutorial-select">Click a shape to select it (highlighted in red).</li>
                 <li data-i18n="tutorial-move">Drag a selected shape to reposition it.</li>
@@ -41,12 +71,22 @@
                 <li data-i18n="tutorial-copy-paste">Press <kbd>Ctrl + C</kbd> to copy a selected shape, <kbd>Ctrl + V</kbd> to paste it.</li>
                 <li data-i18n="tutorial-delete">Press <kbd>Delete</kbd> to remove a selected shape.</li>
                 <li data-i18n="tutorial-texture">Upload an image to apply as the canvas texture.</li>
-                <li data-i18n="tutorial-export">Click "Export Mesh" to download the 3D mesh. Save the texture image in the same directory as the .dae file.</li>
+                <li data-i18n="tutorial-export">Click "Export Mesh" to download the 3D mesh. Save the texture image in
+                    the same directory as the .dae file.</li>
             </ul>
         </div>
     </div>
+    <footer style="margin-top: auto; text-align: center; font-size: 0.9em; color: #555;">
+        <p>Second Life is a trademark of Linden Research, Inc. This tool, Fragmented Frame, is not affiliated with or sponsored by Linden Research.</p>
+        <p>Uses: JSZip (MIT) by Stuart Korneychuk.</p>
+        <p>Developed by MdONeil under the GNU v3 License. Contact:
+            <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil in Second Life</a>
+        </p>
+        <p><a href="../../LICENSE">View Licenses</a></p>
+    </footer>
     <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="./js/lang.js"></script>
     <script src="./js/main.js"></script>
 </body>
+
 </html>

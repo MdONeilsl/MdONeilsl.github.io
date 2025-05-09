@@ -1,48 +1,73 @@
 <!doctype html>
-<html lang=en>
+<html lang="en">
 
 <head>
-    <meta charset=UTF-8>
-    <meta name=viewport content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Normal Map Scaler</title>
+    <meta name="description"
+        content="Scale normal maps for use by Second Life content creators.  This tool uses vector operations to resize normal maps.">
+    <meta name="keywords"
+        content="normal map, scaling, vector, interpolation, Second Life tool, virtual world app, 3D texture">
+    <meta name="author" content="MdONeil">
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Normal Map Scaler",
+        "operatingSystem": "Web",
+        "applicationCategory": "Graphics Application",
+        "description": "Scale normal maps for use by Second Life content creators using vector operations.",
+        "author": {
+          "@type": "Person",
+          "name": "MdONeil",
+          "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "softwareVersion": "1.0.0",
+        "url": "https://your-tool-url.com"
+      }
+    </script>
 </head>
 
 <body>
     <link rel=stylesheet href=./css/style.css>
     <div class=container>
         <h1>Normal Map Scaler</h1>
-        <div class=drop-zone id=dropZone>
-            Drag and drop normal maps here or click to select
-        </div>
-        <input type=file id=fileInput multiple accept=image/png,image/jpeg style=display:none>
-        <div class=size-select-group>
-            <label for=widthSelect>Width:</label>
-            <select id=widthSelect>
+        <div class=drop-zone id=dropZone> Drag and drop normal maps here or click to select </div><input type=file
+            id=fileInput multiple accept=image/png,image/jpeg style=display:none>
+        <div class=size-select-group><label for=widthSelect>Width:</label><select id=widthSelect>
                 <option value=0>Original</option>
                 <option value=128>128</option>
                 <option value=256>256</option>
                 <option value=512 selected>512</option>
                 <option value=1024>1024</option>
                 <option value=2048>2048</option>
-            </select>
-            <label for=heightSelect>Height:</label>
-            <select id=heightSelect>
+            </select><label for=heightSelect>Height:</label><select id=heightSelect>
                 <option value=0>Original</option>
                 <option value=128>128</option>
                 <option value=256>256</option>
                 <option value=512 selected>512</option>
                 <option value=1024>1024</option>
                 <option value=2048>2048</option>
-            </select>
-        </div>
-        <button id=processButton disabled>Process Normal Maps</button>
-        <progress class=progress id=progressBar value=0 max=100></progress>
+            </select></div><button id=processButton disabled>Process Normal Maps</button><progress class=progress
+            id=progressBar value=0 max=100></progress>
         <div class=error id=errorMessage></div>
-        <div class=preview-container id=previewContainer></div>
-        <button id=downloadButton></button>
-        <button id=resetButton
-            style="margin-top:20px;padding:10px 20px;background-color:#f44336;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:16px">Reset</button>
+        <div class=preview-container id=previewContainer></div><button id=downloadButton></button><button
+            id=resetButton>Reset</button>
     </div>
+    <footer style="margin-top: 20px; font-size: 0.9em; color: #555; text-align: center;">
+        <p>Second Life and SL are trademarks of Linden Research, Inc. Normal Map Scaler is not affiliated with or
+            sponsored by Linden Research.</p>
+        <p>Uses: JSZip (MIT) by Stuart K. Bradshaw.</p>
+        <p>Developed by MdONeil under the GNU v3 License. Contact: <a
+                href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <p><a href="../../LICENSE">Licenses</a></p>
+    </footer>
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js></script>
     <script src=./js/main.js></script>
 </body>

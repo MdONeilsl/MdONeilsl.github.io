@@ -1,3 +1,13 @@
+body,
+footer {
+    text-align: center
+}
+
+footer p,
+footer ul li a {
+    font-size: inherit
+}
+
 #downloadLink,
 #error,
 #progress {
@@ -9,7 +19,6 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    text-align: center;
     background-color: #f9f9f9;
     color: #333
 }
@@ -90,13 +99,42 @@ button:disabled {
     font-weight: 500
 }
 
-#downloadLink {
+#downloadLink,
+footer ul li a {
     color: #3498db;
     text-decoration: none;
     font-weight: 600
 }
 
-#downloadLink:hover {
+#downloadLink:hover,
+footer ul li a:hover {
     text-decoration: underline;
     color: #2980b9
+}
+
+footer {
+    margin-top: 40px;
+    padding: 10px;
+    background-color: #ecf0f1;
+    border-top: 1px solid #d3d3d3;
+    color: #555;
+    border-radius: 8px;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, .05);
+    font-size: .8em
+}
+
+footer p {
+    margin-bottom: 5px
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+    display: inline-block
+}
+
+footer ul li {
+    display: inline-block;
+    margin: 0 5px
 }

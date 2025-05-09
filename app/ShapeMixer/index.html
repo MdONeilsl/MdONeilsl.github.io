@@ -1,38 +1,60 @@
-<!doctypehtml>
-    <html lang=en>
-
-    <head>
-        <meta charset=UTF-8>
-        <meta content="width=device-width,initial-scale=1" name=viewport>
-        <title>Shape Mixer</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel=stylesheet>
-    </head>
-
-    <body class="bg-gray-800 text-white">
-        <link href="./css/style.css" rel=stylesheet>
-        <div class=main_container>
-            <div class=loaderframe id=loaderframe>
-                <div class=tiltle>MIXER</div>
-            </div><button id=save_btn>Save</button>
-            <div class="instructions-container">
-                <h2 class="instructions-title">Instructions:</h2>
-                <ol class="instructions-list">
-                    <li>To export a shape: Navigate to Develop > Avatar > Character Tests > Appearance and export to XML
-                        format.</li>
-                    <li>To import a shape:
-                        <ul class="instructions-sublist">
-                            <li>From the shape editor window:</li>
-                            <li>Locate the "Import" button in the bottom right corner of the "Editing Shape" window.
-                            </li>
-                            <li>Select the button, choose the saved XML file, and the exported shape will be applied to
-                                your character.</li>
-                        </ul>
-                    </li>
-                </ol>
-            </div>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Mixer</title>
+    <meta name="description" content="Tool for Second Life users to mix shape data from different shapes and create uploadable XML files.">
+    <meta name="keywords" content="Second Life tool, shape mixer, appearance editor, XML file, avatar customization">
+    <meta name="author" content="MdONeil">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Shape Mixer",
+        "operatingSystem": "Web",
+        "applicationCategory": "Game",
+        "description": "Tool for Second Life users to mix shape data from different shapes and create uploadable XML files.",
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    <link href="./css/style.css" rel=stylesheet>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="main_container">
+        <div class="loaderframe" id="loaderframe">
+            <div class="tiltle">Shape Mixer</div>
         </div>
-        <script src="./js/main.js" type="module"></script>
-    </body>
-
-    </html>
-    
+        <button id="save_btn">Save</button>
+        <div class="instructions-container">
+            <h2 class="instructions-title">Instructions:</h2>
+            <ol class="instructions-list">
+                <li>To export a shape: Navigate to Develop > Avatar > Character Tests > Appearance and export to XML format.</li>
+                <li>To import a shape:
+                    <ul class="instructions-sublist">
+                        <li>From the shape editor window:</li>
+                        <li>Locate the "Import" button in the bottom right corner of the "Editing Shape" window.</li>
+                        <li>Select the button, choose the saved XML file, and the exported shape will be applied to your character.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <footer>
+        <p>Shape Mixer is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden Research, Inc.</p>
+        <p>Developed by MdONeil under the GNU v3 License. Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <p><a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a></p>
+    </footer>
+    <script src="./js/main.js" type="module"></script>
+</body>
+</html>
