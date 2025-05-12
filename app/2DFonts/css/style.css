@@ -1,0 +1,214 @@
+:root {
+    font-size: 100%;
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --muted-text-color: #555;
+    --border-color: #ddd;
+    --background-color: #f7f7f7;
+    --white: #fff;
+    --shadow-color: rgba(0, 0, 0, 0.1)
+}
+
+* {
+    box-sizing: border-box
+}
+
+.tool_item,
+body {
+    margin: 0
+}
+
+.status_bar,
+.tool_btn,
+.tool_pan label,
+body {
+    color: var(--text-color)
+}
+
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, sans-serif;
+    background-color: var(--background-color)
+}
+
+.container {
+    display: grid;
+    grid-template-rows: min-content 1fr min-content;
+    height: 100vh;
+    max-height: 100vh;
+    gap: 0
+}
+
+.nav_pan {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .625rem 1.25rem;
+    background-color: var(--white);
+    box-shadow: 0 .125rem .25rem var(--shadow-color)
+}
+
+.nav_tool {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    flex-grow: 1
+}
+
+.nav_tool>div {
+    display: flex;
+    align-items: center;
+    gap: .5rem
+}
+
+.nav_tool label,
+.nav_tool span {
+    font-size: .875rem;
+    color: var(--text-color)
+}
+
+.nav_tool input[type=checkbox]+label,
+.nav_tool select,
+.tool_pan input[type=range],
+.tool_pan input[type=text],
+.tool_pan select {
+    font-size: .875rem;
+    padding: .25rem;
+    border: 1px solid var(--border-color);
+    border-radius: .25rem;
+    background-color: var(--white);
+    transition: border-color .2s;
+    outline: 0
+}
+
+.nav_tool input[type=checkbox]:focus+label,
+.nav_tool select:focus,
+.tool_pan input[type=color]:focus,
+.tool_pan input[type=range]:focus,
+.tool_pan input[type=text]:focus,
+.tool_pan select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
+}
+
+.view_canv {
+    background-color: #e0e0e0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.status_bar {
+    padding: .3125rem 1.25rem;
+    background-color: var(--white);
+    box-shadow: 0 -.125rem .25rem var(--shadow-color);
+    font-size: .875rem
+}
+
+.tool_pan {
+    position: fixed;
+    top: 3.125rem;
+    left: .625rem;
+    border-radius: .5rem;
+    background-color: rgba(255, 255, 255, .95);
+    box-shadow: 0 .25rem .75rem var(--shadow-color);
+    transition: visibility .3s, opacity .3s;
+    display: grid;
+    gap: .5rem;
+    padding: 1rem;
+    width: 18.75rem;
+    backdrop-filter: blur(0.5rem)
+}
+
+.tool_row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: .5rem
+}
+
+.tool_pan label {
+    width: 4.6875rem;
+    font-size: .875rem;
+    margin-right: .5rem
+}
+
+.tool_pan input[type=color] {
+    width: 3.4375rem;
+    height: 2rem;
+    padding: .25rem;
+    border: 1px solid var(--border-color);
+    border-radius: .25rem;
+    background-color: var(--white);
+    cursor: pointer;
+    outline: 0
+}
+
+.tool_btn,
+button {
+    padding: .5rem 1rem;
+    border: none;
+    cursor: pointer
+}
+
+.item_grow {
+    flex-grow: 1
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1
+}
+
+.tool_btn {
+    font-size: 1rem;
+    transition: color .2s;
+    background-color: transparent
+}
+
+.tool_btn:focus,
+.tool_btn:hover {
+    color: var(--primary-color);
+    outline: 0
+}
+
+button {
+    font-size: .875rem;
+    color: var(--white);
+    background-color: var(--primary-color);
+    border-radius: .25rem;
+    transition: background-color .2s;
+    outline: 0
+}
+
+button:focus,
+button:hover {
+    background-color: var(--primary-dark);
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
+}
+
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100%
+}
+
+footer {
+    margin-top: 20px;
+    padding: 1rem;
+    background-color: var(--secondary-color);
+    border-top: 1px solid var(--border-color);
+    font-size: .8rem;
+    color: var(--muted-text-color);
+    text-align: center;
+    border-radius: .25rem
+}
