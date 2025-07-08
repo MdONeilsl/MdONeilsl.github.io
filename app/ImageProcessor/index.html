@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.">
+    <meta name="keywords" content="image converter, PNG, JPEG, WebP, GLTF, Second Life tool, image optimization, web">
+    <meta name="author" content="MdONeil">
+    <title>Image Processor</title>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Image Processor",
+        "operatingSystem": "Web",
+        "applicationCategory": "UtilityApplication",
+        "description": "A web-based tool for optimizing and converting images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.",
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
+    }
+    </script>
+</head>
+
+<body>
+    <link rel="stylesheet" href="./css/styles.css">
+    <div class="container">
+        <div class="upload-area" id="uploadArea">
+            Drag and drop an image here or click to select
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+        <div class="controls">
+            <div class="slider-container">
+                <label>Quality (JPEG/WebP): <span id="qualityValue">80.00%</span></label>
+                <input type="range" id="qualitySlider" min="1" max="100" step="0.01" value="80">
+            </div>
+            <div class="slider-container">
+                <label>Scale: <span id="scaleValue">100.00%</span></label>
+                <input type="range" id="scaleSlider" min="1" max="100" step="0.01" value="100">
+            </div>
+            <div class="dimension-controls">
+                <div>
+                    <label>Max Width:</label>
+                    <input type="number" id="maxWidth" min="1" value="1920">
+                </div>
+                <div>
+                    <label>Max Height:</label>
+                    <input type="number" id="maxHeight" min="1" value="1080">
+                </div>
+            </div>
+            <div class="dimension-controls">
+                <div>
+                    <label>Format Compatibility:</label>
+                    <select id="formatCompatibility">
+                        <option value="modern">Modern Browsers</option>
+                        <option value="gltf">GLTF</option>
+                        <option value="slupload">SL Upload</option>
+                    </select>
+                </div>
+                <div>
+                    <label>File Type:</label>
+                    <select id="fileType"></select>
+                </div>
+            </div>
+        </div>
+        <div class="preview-container" id="previewContainer">
+            <div class="original-image" id="originalPreview"></div>
+            <div class="optimized-image" id="optimizedPreview"></div>
+            <div class="preview-divider" id="previewDivider"></div>
+        </div>
+        <div class="info">
+            Original Size: <span id="originalSize">0</span> bytes<br>
+            Optimized Size: <span id="optimizedSize">0</span> bytes<br>
+            Space Saved: <span id="spaceSaved">0</span>%<br>
+            Size: <span id="prowidth">0</span> X <span id="proheight">0</span> px
+        </div>
+        <textarea id="base64Uri" readonly placeholder="Base64 URI will appear here after processing"></textarea>
+        <button id="saveButton">Save Optimized Image</button>
+
+        <footer>
+            <p>Second Life and SL are trademarks of Linden Research, Inc. Image Processor is not affiliated with or
+                sponsored by Linden Research.</p>
+            <p>Powered by <a href="https://www.npmjs.com/package/browser-image-compression"
+                    target="_blank">browser-image-compression</a> (MIT License) by Donald <span
+                    style="font-family: monospace;">C</span>.</p>
+            <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL-3.0
+                    License</a>. Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                    target="_blank">Second Life Profile</a>. See full license texts at <a href="https://www.gnu.org/licenses/gpl-3.0.html">Licenses</a>.
+            </p>
+        </footer>
+    </div>
+
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>

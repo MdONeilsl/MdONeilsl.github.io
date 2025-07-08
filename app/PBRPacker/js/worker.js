@@ -1038,7 +1038,7 @@ async function loadGltfFile(file, canvasId) {
 
 /**
  * Saves the current PBR maps as a glTF file.
- */
+ 
 async function saveGltf() {
     const format = document.getElementById('format').value;
     const lossless = document.getElementById('lossless').checked;
@@ -1161,6 +1161,120 @@ async function saveGltf() {
     a.download = 'material.gltf';
     a.click();
     URL.revokeObjectURL(url);
+}*/
+async function saveGltf() {
+    const format = document.getElementById('format').value;
+    const lossless = document.getElementById('lossless').checked;
+    const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+    const ext = format === 'jpeg' ? 'jpg' : 'png';
+    const quality = lossless && format !== 'jpeg' ? 1 : 0.8;
+
+    const gltf = {
+        asset: { version: '2.0', generator: 'PBR Material Packer', copyright: '2025' },
+        scenes: [{ nodes: [0] }],
+        nodes: [{ mesh: 0 }],
+        meshes: [{ primitives: [{ attributes: { POSITION: 0, NORMAL: 1, TEXCOORD_0: 2, TANGENT: 3 }, material: 0, indices: 4 }] }],
+        buffers: [],
+        bufferViews: [],
+        accessors: [],
+        materials: [{}],
+        textures: [],
+        images: [],
+        samplers: [{ magFilter: 9729, minFilter: 9987, wrapS: 10497, wrapT: 10497 }]
+    };
+
+    // Placeholder mesh with vertices, normals, UVs, tangents, and indices
+    const vertices = new Float32Array([-0.5, -0.5, 0,  0.5, -0.5, 0,  -0.5, 0.5, 0,  0.5, 0.5, 0]);
+    const normals = new Float32Array([0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1]);
+    const uvs = new Float32Array([0, 0,  1, 0,  0, 1,  1, 1]);
+    const tangents = new Float32Array([1, 0, 0, 1,  1, 0, 0, 1,  1, 0, 0, 1,  1, 0, 0, 1]);
+    const indices = new Uint16Array([0, 1, 2, 2, 1, 3]);
+
+    // Combine data into a single buffer
+    const vertexByteLength = vertices.byteLength;
+    const normalByteLength = normals.byteLength;
+    const uvByteLength = uvs.byteLength;
+    const tangentByteLength = tangents.byteLength;
+    const indexByteLength = indices.byteLength;
+    const buffer = new ArrayBuffer(vertexByteLength + normalByteLength + uvByteLength + tangentByteLength + indexByteLength);
+    new Float32Array(buffer, 0, vertices.length).set(vertices);
+    new Float32Array(buffer, vertexByteLength, normals.length).set(normals);
+    new Float32Array(buffer, vertexByteLength + normalByteLength, uvs.length).set(uvs);
+    new Float32Array(buffer, vertexByteLength + normalByteLength + uvByteLength, tangents.length).set(tangents);
+    new Uint16Array(buffer, vertexByteLength + normalByteLength + uvByteLength + tangentByteLength, indices.length).set(indices);
+
+    const base64Buffer = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    gltf.buffers.push({ byteLength: buffer.byteLength, uri: `data:application/octet-stream;base64,${base64Buffer}` });
+
+    gltf.bufferViews.push(
+        { buffer: 0, byteOffset: 0, byteLength: vertexByteLength, target: 34962 }, // Vertices
+        { buffer: 0, byteOffset: vertexByteLength, byteLength: normalByteLength, target: 34962 }, // Normals
+        { buffer: 0, byteOffset: vertexByteLength + normalByteLength, byteLength: uvByteLength, target: 34962 }, // UVs
+        { buffer: 0, byteOffset: vertexByteLength + normalByteLength + uvByteLength, byteLength: tangentByteLength, target: 34962 }, // Tangents
+        { buffer: 0, byteOffset: vertexByteLength + normalByteLength + uvByteLength + tangentByteLength, byteLength: indexByteLength, target: 34963 } // Indices
+    );
+
+    gltf.accessors.push(
+        { bufferView: 0, componentType: 5126, count: 4, type: 'VEC3', min: [-0.5, -0.5, 0], max: [0.5, 0.5, 0] }, // POSITION
+        { bufferView: 1, componentType: 5126, count: 4, type: 'VEC3', min: [0, 0, 1], max: [0, 0, 1] }, // NORMAL
+        { bufferView: 2, componentType: 5126, count: 4, type: 'VEC2', min: [0, 0], max: [1, 1] }, // TEXCOORD_0
+        { bufferView: 3, componentType: 5126, count: 4, type: 'VEC4', min: [1, 0, 0, 1], max: [1, 0, 0, 1] }, // TANGENT
+        { bufferView: 4, componentType: 5123, count: 6, type: 'SCALAR' } // Indices
+    );
+
+    // Prepare ZIP
+    const zip = new JSZip();
+
+    // Helper to add image to ZIP and glTF
+    async function addImageToZip(canvasId, imageName) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return false;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, quality));
+        const filePath = `image/${imageName}.${ext}`;
+        zip.file(filePath, blob);
+        gltf.images.push({ uri: filePath });
+        gltf.textures.push({ sampler: 0, source: gltf.images.length - 1 });
+        return true;
+    }
+
+    let textureIndex = 0;
+    if (canvs_flags & PBR_COLOR) {
+        gltf.materials[0].pbrMetallicRoughness = gltf.materials[0].pbrMetallicRoughness || {};
+        gltf.materials[0].pbrMetallicRoughness.baseColorTexture = { index: textureIndex };
+        await addImageToZip('color', 'baseColor');
+        textureIndex++;
+    }
+    if (canvs_flags & PBR_METAL) {
+        gltf.materials[0].pbrMetallicRoughness = gltf.materials[0].pbrMetallicRoughness || {};
+        gltf.materials[0].pbrMetallicRoughness.metallicRoughnessTexture = { index: textureIndex };
+        await addImageToZip('metal', 'metallicRoughness');
+        textureIndex++;
+    }
+    if (canvs_flags & PBR_EMISS) {
+        gltf.materials[0].emissiveTexture = { index: textureIndex };
+        gltf.materials[0].emissiveFactor = [1, 1, 1];
+        await addImageToZip('emissiveOut', 'emissive');
+        textureIndex++;
+    }
+    if (canvs_flags & PBR_NORM) {
+        gltf.materials[0].normalTexture = { index: textureIndex };
+        await addImageToZip('normalOut', 'normal');
+        textureIndex++;
+    }
+    if (canvs_flags & CMP_TRANS) {
+        gltf.materials[0].alphaMode = 'BLEND';
+    }
+
+    // Save glTF JSON
+    zip.file('scene.gltf', JSON.stringify(gltf, null, 2));
+    zip.generateAsync({ type: 'blob' }).then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'material.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
 }
 
 // Initialize

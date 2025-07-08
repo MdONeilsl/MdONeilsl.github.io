@@ -4,7 +4,7 @@ Welcome to my portfolio, showcasing creative tools and projects primarily for Se
 
 ## Tools
 
-Below is a list of tools available on the webpage, each with a brief description of its functionality:
+Below is a list of tools available on the webpage:
 
 - [PBR Packer](./app/PBRPacker/): Packs Physically Based Rendering (PBR) textures for Second Life material creation, streamlining texture preparation.
 - [PBR Image](./app/PBR_img/): Generates and edits PBR texture images for Second Life, supporting material customization.
@@ -15,3 +15,4 @@ Below is a list of tools available on the webpage, each with a brief description
 - [2D Fonts](./app/2DFonts/): Creates 2D font textures for use in Second Life, supporting custom text displays.
 - [Fragmented Frame](./app/Fragmentedframe/): Generates fragmented frame effects for Second Life animations or textures.
 - [Audio Segmenter](./app/Segmenter/): Splits audio files into segments for Second Life sound effects or sequences.
+- [Image Processor](./app/ImageProcessor/): Optimize and convert images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.

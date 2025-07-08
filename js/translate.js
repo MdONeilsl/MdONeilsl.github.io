@@ -13,6 +13,7 @@ const translations = {
             donation: "Donation",
             pbr_packer: "PBR Packer",
             pbr_image: "PBR Image",
+            img_pro: "Image Processor",
             shape_mixer: "Shape Mixer",
             media_to_prim: "Media to Prim",
             normal_map_scaler: "Normal Map Scaler",
@@ -38,6 +39,7 @@ const translations = {
             donation: "寄付",
             pbr_packer: "PBRパッカー",
             pbr_image: "PBR画像",
+            img_pro: "画像プロセッサ",
             shape_mixer: "シェイプミキサー",
             media_to_prim: "メディアからプリムへ",
             normal_map_scaler: "ノーマルマップスケーラー",
@@ -63,6 +65,7 @@ const translations = {
             donation: "Spende",
             pbr_packer: "PBR Packer",
             pbr_image: "PBR Bild",
+            img_pro: "Bildprozessor",
             shape_mixer: "Formmischer",
             media_to_prim: "Medien zu Prim",
             normal_map_scaler: "Normalenmap-Skalierer",
@@ -88,6 +91,7 @@ const translations = {
             donation: "Don",
             pbr_packer: "PBR Packer",
             pbr_image: "Image PBR",
+            img_pro: "Processeur d'Images",
             shape_mixer: "Mélangeur de formes",
             media_to_prim: "Médias vers Prim",
             normal_map_scaler: "Échelleur de texture normale",
@@ -113,6 +117,7 @@ const translations = {
             donation: "Donación",
             pbr_packer: "PBR Packer",
             pbr_image: "Imagen PBR",
+            img_pro: "Procesador de Imágenes",
             shape_mixer: "Mezclador de formas",
             media_to_prim: "Medios a Prim",
             normal_map_scaler: "Escalador de textura normal",
@@ -138,6 +143,7 @@ const translations = {
             donation: "Doação",
             pbr_packer: "PBR Packer",
             pbr_image: "Imagem PBR",
+            img_pro: "Processador de Imagens",
             shape_mixer: "Misturador de formas",
             media_to_prim: "Mídia para Prim",
             normal_map_scaler: "Escalador de textura normal",
@@ -163,6 +169,7 @@ const translations = {
             donation: "捐款",
             pbr_packer: "PBR打包器",
             pbr_image: "PBR图像",
+            img_pro: "图像处理器",
             shape_mixer: "形状混合器",
             media_to_prim: "媒体到Prim",
             normal_map_scaler: "法线贴图缩放器",
@@ -188,6 +195,7 @@ const translations = {
             donation: "दान",
             pbr_packer: "PBR पैकर",
             pbr_image: "PBR छवि",
+            img_pro: "छवि प्रोसेसर",
             shape_mixer: "आकार मिक्सर",
             media_to_prim: "मीडिया से प्रिम",
             normal_map_scaler: "नॉर्मल मैप स्केलर",
@@ -213,6 +221,7 @@ const translations = {
             donation: "التبرع",
             pbr_packer: "حزمة PBR",
             pbr_image: "صورة PBR",
+            img_pro: "معالج الصور",
             shape_mixer: "خلاط الأشكال",
             media_to_prim: "الوسائط إلى Prim",
             normal_map_scaler: "مقياس نسيج عادي",
@@ -238,6 +247,7 @@ const translations = {
             donation: "দান",
             pbr_packer: "PBR প্যাকার",
             pbr_image: "PBR ছবি",
+            img_pro: "চিত্র প্রসেসর",
             shape_mixer: "আকৃতি মিক্সার",
             media_to_prim: "মিডিয়া থেকে প্রিম",
             normal_map_scaler: "নরমাল ম্যাপ স্কেলার",
@@ -263,6 +273,7 @@ const translations = {
             donation: "Пожертвование",
             pbr_packer: "PBR Пакер",
             pbr_image: "PBR Изображение",
+            img_pro: "Процессор Изображений",
             shape_mixer: "Микшер форм",
             media_to_prim: "Медиа в Prim",
             normal_map_scaler: "Масштабатор нормальной текстуры",
@@ -288,6 +299,7 @@ const translations = {
             donation: "عطیہ",
             pbr_packer: "PBR پیکر",
             pbr_image: "PBR تصویر",
+            img_pro: "تصویر پروسیسر",
             shape_mixer: "شکل مکسر",
             media_to_prim: "میڈیا سے پرم",
             normal_map_scaler: "نارمل ٹیکسچر اسکیلر",
@@ -323,15 +335,16 @@ function translatePage(lang) {
     linkButtons[1].textContent = t.links.donation;
     linkButtons[2].textContent = t.links.pbr_packer;
     linkButtons[3].textContent = t.links.pbr_image;
-    linkButtons[4].textContent = t.links.shape_mixer;
-    linkButtons[5].textContent = t.links.media_to_prim;
-    linkButtons[6].textContent = t.links.normal_map_scaler;
-    linkButtons[7].textContent = t.links.normal_map_merger;
-    linkButtons[8].textContent = t.links.two_d_fonts;
-    linkButtons[9].textContent = t.links.fragmented_frame;
-    linkButtons[10].textContent = t.links.audio_segmenter;
-    linkButtons[11].textContent = t.links.bad_apple_video;
-    linkButtons[12].textContent = t.links.sorting_sound;
+    linkButtons[4].textContent = t.links.img_pro;
+    linkButtons[5].textContent = t.links.shape_mixer;
+    linkButtons[6].textContent = t.links.media_to_prim;
+    linkButtons[7].textContent = t.links.normal_map_scaler;
+    linkButtons[8].textContent = t.links.normal_map_merger;
+    linkButtons[9].textContent = t.links.two_d_fonts;
+    linkButtons[10].textContent = t.links.fragmented_frame;
+    linkButtons[11].textContent = t.links.audio_segmenter;
+    linkButtons[12].textContent = t.links.bad_apple_video;
+    linkButtons[13].textContent = t.links.sorting_sound;
 }
 
 // Initialize with English
