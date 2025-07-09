@@ -16,3 +16,4 @@ Below is a list of tools available on the webpage:
 - [Fragmented Frame](./app/Fragmentedframe/): Generates fragmented frame effects for Second Life animations or textures.
 - [Audio Segmenter](./app/Segmenter/): Splits audio files into segments for Second Life sound effects or sequences.
 - [Image Processor](./app/ImageProcessor/): Optimize and convert images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.
+- [Data Compacter](./app/DataCompacter/): Optimize your data management with ease.

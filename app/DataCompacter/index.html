@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Compacter</title>
+    <meta name="description"
+        content="Data Compacter is a powerful tool designed for Second Life creators to efficiently compact and format data, supporting various input styles and custom delimiters. Optimize your data management with ease.">
+    <meta name="keywords"
+        content="Second Life tool, virtual world app, data compaction, Second Life creators, data management, SL data tool">
+    <meta name="author" content="MdONeil">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Data Compacter",
+      "description": "A tool designed for Second Life creators to efficiently compact and format data.",
+      "operatingSystem": "Web",
+      "developer": {
+        "@type": "Person",
+        "name": "MdONeil",
+        "sameAs": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+      }
+    }
+    </script>
+</head>
+
+<body class="app-body">
+    <link rel="stylesheet" href="./css/style.css">
+    <div class="app-container">
+        <h1 class="app-title">Data Compacter</h1>
+        <div class="form-group">
+            <label class="form-label" for="input-style">Input Style</label>
+            <div class="tooltip-container">
+                <select class="form-select" id="select-style">
+                    <option value="raw" selected>Raw</option>
+                    <option value="list">List</option>
+                    <option value="kvp">KVP</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group-inline form-group">
+            <div>
+                <label class="form-label" for="input-delimiter">Entry Delimiter</label>
+                <input class="form-text-input" id="input-delimiter" value="\n" maxlength="4">
+            </div>
+            <div>
+                <label class="form-label" for="input-keyval">Separator</label>
+                <input class="form-text-input" id="input-keyval" value="=" maxlength="1" disabled>
+            </div>
+        </div>
+        <div class="form-group-inline">
+            <div>
+                <label class="form-label" for="input-maxbytes">Max Bytes per Line</label>
+                <input class="form-number-input" id="input-maxbytes" value="1024" type="number" min="1">
+            </div>
+            <div>
+                <label class="form-label" for="input-maxlines">Max Number of Lines</label>
+                <input class="form-number-input" id="input-maxlines" value="256" type="number" min="1">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="textarea-input">Input Data</label>
+            <textarea class="form-textarea" id="textarea-input" placeholder="Enter your data here"></textarea>
+        </div>
+        <div class="error-message" id="error-message"></div>
+        <div class="form-group">
+            <label class="form-label" for="textarea-output">Output Result</label>
+            <textarea class="form-textarea" id="textarea-output" readonly
+                placeholder="Output will appear here"></textarea>
+        </div>
+        <div class="button-group">
+            <button class="form-button button-primary" id="button-process" disabled>Process</button>
+            <button class="form-button button-secondary" id="button-copy">Copy</button>
+        </div>
+
+        <footer>
+            <p>Data Compacter is not affiliated with or sponsored by Linden Research, Inc.</p>
+            <p>Developed by MdONeil under the GNU v3 License. Contact: <a
+                    href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+            <p><a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a></p>
+        </footer>
+    </div>
+    <script src="./js/main.js"></script>
+    <!-- <script src="./js/test.js"></script> -->
+
+</body>
+
+</html>

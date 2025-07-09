@@ -21,6 +21,7 @@ const translations = {
             two_d_fonts: "2D Fonts",
             fragmented_frame: "Fragmented Frame",
             audio_segmenter: "Audio Segmenter",
+            data_comp: "Data Compacter",
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sorting Sound"
         }
@@ -47,6 +48,7 @@ const translations = {
             two_d_fonts: "2Dフォント",
             fragmented_frame: "フラグメントフレーム",
             audio_segmenter: "オーディオセグメンター",
+            data_comp: "データ圧縮機",
             bad_apple_video: "バッドアップルビデオ",
             sorting_sound: "ソーティングサウンド"
         }
@@ -73,6 +75,7 @@ const translations = {
             two_d_fonts: "2D Schriftarten",
             fragmented_frame: "Fragmentierter Rahmen",
             audio_segmenter: "Audiosegmentierer",
+            data_comp: "Datenkomprimierer",
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sortiergeräusch"
         }
@@ -99,6 +102,7 @@ const translations = {
             two_d_fonts: "Polices 2D",
             fragmented_frame: "Cadre fragmenté",
             audio_segmenter: "Segmenteur audio",
+            data_comp: "Compacteur de données",
             bad_apple_video: "Vidéo Bad Apple",
             sorting_sound: "Son de tri"
         }
@@ -125,6 +129,7 @@ const translations = {
             two_d_fonts: "Fuentes 2D",
             fragmented_frame: "Marco fragmentado",
             audio_segmenter: "Segmentador de audio",
+            data_comp: "Compactador de datos",
             bad_apple_video: "Video Bad Apple",
             sorting_sound: "Sonido de ordenación"
         }
@@ -151,6 +156,7 @@ const translations = {
             two_d_fonts: "Fontes 2D",
             fragmented_frame: "Quadro fragmentado",
             audio_segmenter: "Segmentador de áudio",
+            data_comp: "Compactador de dados",
             bad_apple_video: "Vídeo Bad Apple",
             sorting_sound: "Som de ordenação"
         }
@@ -177,6 +183,7 @@ const translations = {
             two_d_fonts: "2D字体",
             fragmented_frame: "碎片框架",
             audio_segmenter: "音频分割器",
+            data_comp: "数据压缩器",
             bad_apple_video: "坏苹果视频",
             sorting_sound: "排序声音"
         }
@@ -203,6 +210,7 @@ const translations = {
             two_d_fonts: "2D फ़ॉन्ट",
             fragmented_frame: "खंडित फ्रेम",
             audio_segmenter: "ऑडियो सेगमेंटर",
+            data_comp: "डेटा संपीड़क",
             bad_apple_video: "बैड एप्पल वीडियो",
             sorting_sound: "सॉर्टिंग ध्वनि"
         }
@@ -229,6 +237,7 @@ const translations = {
             two_d_fonts: "خطوط ثنائية الأبعاد",
             fragmented_frame: "إطار مجزأ",
             audio_segmenter: "مقسم الصوت",
+            data_comp: "مدمج البيانات",
             bad_apple_video: "فيديو Bad Apple",
             sorting_sound: "صوت الفرز"
         }
@@ -255,6 +264,7 @@ const translations = {
             two_d_fonts: "2D ফন্ট",
             fragmented_frame: "খণ্ডিত ফ্রেম",
             audio_segmenter: "অডিও সেগমেন্টার",
+            data_comp: "ডেটা কম্প্যাক্টর ",
             bad_apple_video: "ব্যাড অ্যাপল ভিডিও",
             sorting_sound: "সাজানোর শব্দ"
         }
@@ -281,6 +291,7 @@ const translations = {
             two_d_fonts: "2D Шрифты",
             fragmented_frame: "Фрагментированный кадр",
             audio_segmenter: "Сегментатор аудио",
+            data_comp: "Уплотнитель данных",
             bad_apple_video: "Видео Bad Apple",
             sorting_sound: "Звук сортировки"
         }
@@ -307,6 +318,7 @@ const translations = {
             two_d_fonts: "2D فونٹس",
             fragmented_frame: "ٹکڑوں والا فریم",
             audio_segmenter: "آڈیو سیگمنٹر",
+            data_comp: "ڈیٹا کمپیکٹر",
             bad_apple_video: "بیڈ ایپل ویڈیو",
             sorting_sound: "ترتیب دینے کی آواز"
         }
@@ -343,8 +355,9 @@ function translatePage(lang) {
     linkButtons[9].textContent = t.links.two_d_fonts;
     linkButtons[10].textContent = t.links.fragmented_frame;
     linkButtons[11].textContent = t.links.audio_segmenter;
-    linkButtons[12].textContent = t.links.bad_apple_video;
-    linkButtons[13].textContent = t.links.sorting_sound;
+    linkButtons[12].textContent = t.links.data_comp;
+    linkButtons[13].textContent = t.links.bad_apple_video;
+    linkButtons[14].textContent = t.links.sorting_sound;
 }
 
 // Initialize with English
