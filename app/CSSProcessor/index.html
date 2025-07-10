@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="An online CSS Processor® creators to optimize and minify CSS for in-world content creation.">
+    <meta name="keywords"
+        content="CSS Processor, Second Life CSS, SL creators, virtual world content creation, CSS optimization, Second Life tools, in-world CSS, content creation tool">
+    <meta name="author" content="MdONeil">
+    <title>CSS Processor</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Jasmine CSS 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.6.0/jasmine.min.css"> 
+    -->
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "CSS Processor",
+      "operatingSystem": "Web",
+      "applicationCategory": "DeveloperTool",
+      "description": "An online CSS processing tool designed to help Second Life® creators optimize and minify their CSS for efficient in-world content development.",
+      "url": "https://mdoneilsl.github.io/app/CSSProcessor/",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+</head>
+
+<body>
+    <div class="a">
+        <!-- Language Selector -->
+        <div class="g">
+            <label for="language" class="h" aria-label="Select Language">Select Language:</label>
+            <select id="language" aria-label="Language Selector" class="i">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="zh">Mandarin Chinese</option>
+                <option value="hi">Hindi</option>
+                <option value="ar">Arabic</option>
+                <option value="pt">Portuguese</option>
+                <option value="bn">Bengali</option>
+                <option value="ru">Russian</option>
+                <option value="ja">Japanese</option>
+                <option value="pa">Punjabi</option>
+                <option value="de">German</option>
+                <option value="jv">Javanese</option>
+                <option value="wuu">Wu Chinese</option>
+                <option value="ms">Malay/Indonesian</option>
+                <option value="te">Telugu</option>
+                <option value="vi">Vietnamese</option>
+                <option value="ko">Korean</option>
+                <option value="fr">French</option>
+                <option value="mr">Marathi</option>
+                <option value="ta">Tamil</option>
+            </select>
+        </div>
+
+        <!-- Input Section -->
+        <div>
+            <h2 data-i18n="inputLabel" class="j">Input CSS and HTML:</h2>
+            <textarea id="input" aria-label="Input CSS and HTML" class="m"></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="n">
+            <button id="process" data-i18n="process" data-i18n-aria="processAria" aria-label="Process the CSS input"
+                class="o p">
+                Process CSS
+            </button>
+            <button id="copy" data-i18n="copy" data-i18n-aria="copyAria" aria-label="Copy the output" class="o q">
+                Copy Output
+            </button>
+            <span id="copy-status" class="r" aria-live="polite" data-i18n="copyStatus">Copied to
+                clipboard!</span>
+        </div>
+
+        <!-- Output Section -->
+        <div>
+            <h2 data-i18n="outputLabel" class="j">Processed Output:</h2>
+            <pre id="output" aria-label="Processed Output" class="f"></pre>
+        </div>
+
+        <!-- How to Use Section -->
+        <div>
+            <h2 data-i18n="howToUse" class="j l">How to use:</h2>
+            <ul class="s">
+                <li data-i18n="useDefineUid">Use <code class="t">#define word __UID__</code> to define any
+                    word as a unique short ID</li>
+                <li data-i18n="useDefineReplacement">Use <code class="t">#define word replacement</code> for
+                    custom replacements</li>
+                <li data-i18n="classNameReplacements">Class name replacements only affect <code
+                        class="t">class="..."</code> in HTML nodes</li>
+                <li data-i18n="unusedCssRules">Unused CSS rules are automatically removed</li>
+                <li data-i18n="uidDetails">UIDs contain letters and digits, but always start with a letter</li>
+            </ul>
+            <pre class="e">
+// Definition
+#define coolclass __UID__
+#define --main-clr __UID__
+
+// CSS Rules
+.coolclass { color: var(--main-clr); }
+
+// HTML (Optional)
+&lt;div class="coolclass" id="coolclass"&gt;Test&lt;/div&gt;</pre>
+        </div>
+    </div>
+
+    <!-- Jasmine JavaScript 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.6.0/jasmine.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.6.0/jasmine-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.6.0/boot0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.6.0/boot1.min.js"></script>
+    -->
+    <!-- Main JavaScript -->
+    <script type="module" src="js/main.js"></script>
+    <!-- <script type="module" src="js/test.js"></script> -->
+
+    <footer>
+        <p>&copy; 2025 CSS Processor. All rights reserved. This tool is not affiliated with or sponsored by Linden
+            Research.</p>
+        <p>Developed by MdONeil under the GNU v3 License. Contact: <a
+                href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <p><a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a></p>
+    </footer>
+</body>
+
+</html>

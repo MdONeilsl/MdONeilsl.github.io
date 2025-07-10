@@ -22,6 +22,7 @@ const translations = {
             fragmented_frame: "Fragmented Frame",
             audio_segmenter: "Audio Segmenter",
             data_comp: "Data Compacter",
+            css_pro:"CSS Processor",
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sorting Sound"
         }
@@ -49,6 +50,7 @@ const translations = {
             fragmented_frame: "フラグメントフレーム",
             audio_segmenter: "オーディオセグメンター",
             data_comp: "データ圧縮機",
+            css_pro:"CSSプロセッサー",
             bad_apple_video: "バッドアップルビデオ",
             sorting_sound: "ソーティングサウンド"
         }
@@ -76,6 +78,7 @@ const translations = {
             fragmented_frame: "Fragmentierter Rahmen",
             audio_segmenter: "Audiosegmentierer",
             data_comp: "Datenkomprimierer",
+            css_pro:" CSS-Prozessor",
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sortiergeräusch"
         }
@@ -103,6 +106,7 @@ const translations = {
             fragmented_frame: "Cadre fragmenté",
             audio_segmenter: "Segmenteur audio",
             data_comp: "Compacteur de données",
+            css_pro:"Processeur CSS",
             bad_apple_video: "Vidéo Bad Apple",
             sorting_sound: "Son de tri"
         }
@@ -130,6 +134,7 @@ const translations = {
             fragmented_frame: "Marco fragmentado",
             audio_segmenter: "Segmentador de audio",
             data_comp: "Compactador de datos",
+            css_pro:"Procesador CSS",
             bad_apple_video: "Video Bad Apple",
             sorting_sound: "Sonido de ordenación"
         }
@@ -157,6 +162,7 @@ const translations = {
             fragmented_frame: "Quadro fragmentado",
             audio_segmenter: "Segmentador de áudio",
             data_comp: "Compactador de dados",
+            css_pro:"Processador CSS",
             bad_apple_video: "Vídeo Bad Apple",
             sorting_sound: "Som de ordenação"
         }
@@ -184,6 +190,7 @@ const translations = {
             fragmented_frame: "碎片框架",
             audio_segmenter: "音频分割器",
             data_comp: "数据压缩器",
+            css_pro:"CSS处理器",
             bad_apple_video: "坏苹果视频",
             sorting_sound: "排序声音"
         }
@@ -211,6 +218,7 @@ const translations = {
             fragmented_frame: "खंडित फ्रेम",
             audio_segmenter: "ऑडियो सेगमेंटर",
             data_comp: "डेटा संपीड़क",
+            css_pro:"CSS प्रोसेसर",
             bad_apple_video: "बैड एप्पल वीडियो",
             sorting_sound: "सॉर्टिंग ध्वनि"
         }
@@ -238,6 +246,7 @@ const translations = {
             fragmented_frame: "إطار مجزأ",
             audio_segmenter: "مقسم الصوت",
             data_comp: "مدمج البيانات",
+            css_pro:"معالج CSS",
             bad_apple_video: "فيديو Bad Apple",
             sorting_sound: "صوت الفرز"
         }
@@ -265,6 +274,7 @@ const translations = {
             fragmented_frame: "খণ্ডিত ফ্রেম",
             audio_segmenter: "অডিও সেগমেন্টার",
             data_comp: "ডেটা কম্প্যাক্টর ",
+            css_pro:"CSS প্রসেসর",
             bad_apple_video: "ব্যাড অ্যাপল ভিডিও",
             sorting_sound: "সাজানোর শব্দ"
         }
@@ -292,6 +302,8 @@ const translations = {
             fragmented_frame: "Фрагментированный кадр",
             audio_segmenter: "Сегментатор аудио",
             data_comp: "Уплотнитель данных",
+            css_pro:"CSS-процессор",
+
             bad_apple_video: "Видео Bad Apple",
             sorting_sound: "Звук сортировки"
         }
@@ -319,6 +331,7 @@ const translations = {
             fragmented_frame: "ٹکڑوں والا فریم",
             audio_segmenter: "آڈیو سیگمنٹر",
             data_comp: "ڈیٹا کمپیکٹر",
+            css_pro:"CSS پروسیسر",
             bad_apple_video: "بیڈ ایپل ویڈیو",
             sorting_sound: "ترتیب دینے کی آواز"
         }
@@ -356,8 +369,9 @@ function translatePage(lang) {
     linkButtons[10].textContent = t.links.fragmented_frame;
     linkButtons[11].textContent = t.links.audio_segmenter;
     linkButtons[12].textContent = t.links.data_comp;
-    linkButtons[13].textContent = t.links.bad_apple_video;
-    linkButtons[14].textContent = t.links.sorting_sound;
+    linkButtons[13].textContent = t.links.css_pro;
+    linkButtons[14].textContent = t.links.bad_apple_video;
+    linkButtons[15].textContent = t.links.sorting_sound;
 }
 
 // Initialize with English
