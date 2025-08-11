@@ -126,6 +126,13 @@ const processData = () => {
 
             if (currentByteLength + charByteLength > maxBytes) {
                 outputLines.push(strWork);
+                if (outputLines.length >= maxLines) {
+                    console.log(outputLines);
+                    showError('Maximum number of lines exceeded.');
+                    outputTextarea.value = '';
+                    return;
+                }
+
                 strWork = '';
                 currentByteLength = 0;
             }
@@ -161,6 +168,44 @@ const processData = () => {
         if (currentLine) outputLines.push(currentLine);
 
     }
+    else if (style === 'uuidlist') {
+
+        const uuidRegex = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+
+        // Extract all UUIDs from input, preserve first occurrence’s case, ensure uniqueness (case-insensitive)
+        const seen = new Set();
+        const matches = [];
+
+        (input.match(uuidRegex) || []).forEach(u => {
+            const lower = u.toLowerCase();
+            if (!seen.has(lower)) {
+                seen.add(lower);
+                matches.push(u); // keep case as in text
+            }
+        });
+
+        for (let item of matches) {
+            const itemStr = item.trim();
+            const itemBytes = getByteLength(itemStr);
+            const delimiterBytes = currentLine && delimiter ? getByteLength(delimiter) : 0;
+
+            if (currentByteCount + itemBytes + delimiterBytes <= maxBytes) {
+                currentLine += currentLine && delimiter ? delimiter + itemStr : itemStr;
+                currentByteCount += itemBytes + delimiterBytes;
+            } else {
+                if (currentLine) outputLines.push(currentLine);
+                if (outputLines.length >= maxLines) {
+                    showError('Maximum number of lines exceeded.');
+                    outputTextarea.value = '';
+                    return;
+                }
+                currentLine = itemStr;
+                currentByteCount = itemBytes;
+            }
+        }
+
+        if (currentLine) outputLines.push(currentLine);
+    }
     else if (style === 'kvp') {
         const pairs = input.split(/\r?\n/).filter(pair => pair.trim());
         for (let pair of pairs) {
@@ -195,7 +240,7 @@ const processData = () => {
         }
         if (currentLine) outputLines.push(currentLine);
     }
-    
+
     if (outputLines.length > maxLines) {
         showError('Maximum number of lines exceeded.');
         outputTextarea.value = '';
@@ -203,13 +248,10 @@ const processData = () => {
     }
 
     outputTextarea.value = outputLines.join('\n');
-    maxLinesInput.value = outputLines.length;
+    //maxLinesInput.value = outputLines.length;
 }
 
 styleSelect.addEventListener('change', () => {
-    
-
-
     updateButtonState();
 });
 
