@@ -117,17 +117,20 @@ const processData = () => {
 
     if (style === 'raw') {
         const strInput = input.split(/\r?\n/).map(item => item.trim()).filter(Boolean).join('');
+
         let strWork = '';
         let currentByteLength = 0;
 
-        for (let i = 0; i < strInput.length; ++i) {
-            const curChar = strInput[i];
-            const charByteLength = getByteLength(curChar);
+        const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+        const graphemes = [...segmenter.segment(strInput)].map(seg => seg.segment);
+
+        for (const grapheme of graphemes) {
+            const charByteLength = getByteLength(grapheme);
 
             if (currentByteLength + charByteLength > maxBytes) {
                 outputLines.push(strWork);
+
                 if (outputLines.length >= maxLines) {
-                    console.log(outputLines);
                     showError('Maximum number of lines exceeded.');
                     outputTextarea.value = '';
                     return;
@@ -136,11 +139,15 @@ const processData = () => {
                 strWork = '';
                 currentByteLength = 0;
             }
-            strWork += curChar;
+
+            strWork += grapheme;
             currentByteLength += charByteLength;
         }
 
-        if (strWork) outputLines.push(strWork);
+        if (strWork) {
+            outputLines.push(strWork);
+        }
+
     }
     else if (style === 'list') {
         const items = input.split(/\r?\n/).filter(item => item.trim());
