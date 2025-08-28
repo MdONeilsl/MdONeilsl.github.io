@@ -285,3 +285,21 @@ footer {
     text-align: center;
     border-radius: 8px
 }
+
+.form-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px
+}
+
+.button-primary {
+    background-color: #4caf50;
+    color: #fff
+}
+
+.button-primary:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed-allowed
+}

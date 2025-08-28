@@ -33,6 +33,9 @@ const progressBar = document.getElementById('progressBar');
 const hiddenImage = document.getElementById('hiddenImage');
 const hiddenVideo = document.getElementById('hiddenVideo');
 const messageContainer = document.getElementById('messageContainer');
+const saveBtn = document.querySelector(`#button-save`);
+
+let out_datas = [];
 
 const showError = (message) => {
     container.innerHTML = '';
@@ -71,7 +74,12 @@ const clearMedia = () => {
     hiddenVideo.onloadedmetadata = null;
     hiddenVideo.onseeked = null;
     hiddenVideo.onerror = null;
+    saveBtn.disabled = true;
+    out_datas = {};
 };
+
+let input_type;
+let data_url;
 
 input.addEventListener('change', (event) => {
     const file = event.target.files[0];
@@ -86,17 +94,39 @@ input.addEventListener('change', (event) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        if (file.type.startsWith('image/gif')) {
-            processGif(dataUrl);
-        } else if (file.type.startsWith('video/')) {
-            processVideo(dataUrl);
+        data_url = e.target.result;
+        if (file.type.startsWith(`image/gif`)) {
+            input_type = `image/gif`;
+            processGif(data_url);
+        } else if (file.type.startsWith(`video/`)) {
+            input_type = `video/`;
+            processVideo(data_url);
         } else {
             showError('Please select a GIF or video file.');
         }
     };
     reader.readAsDataURL(file);
 });
+
+const process = () => {
+    clearMedia();
+    progressBar.style.display = 'block';
+    progressBar.value = 0;
+
+    if (input_type === `image/gif`) {
+        processGif(data_url);
+    }
+    else if (input_type === `video/`) {
+        processVideo(data_url);
+    }
+    else {
+        showError('Please select a GIF or video file.');
+    }
+};
+
+maxCanvasSizeSelect.addEventListener(`change`, process);
+maxFrameSizeSelect.addEventListener(`change`, process);
+videoFpsSelect.addEventListener(`change`, process);
 
 const processGif = (dataUrl) => {
     try {
@@ -133,6 +163,7 @@ const processGif = (dataUrl) => {
 
                 showSuccess();
                 drawFrames(frames, width, height, frameDelays, null);
+                saveBtn.disabled = false;
             }, (error) => {
                 console.error('libgif-js load error:', error);
                 showError('Error loading GIF. Please try another file.');
@@ -141,6 +172,8 @@ const processGif = (dataUrl) => {
         hiddenImage.onerror = () => {
             showError('Error loading GIF image data.');
         };
+
+
     } catch (error) {
         console.error('Error processing GIF:', error);
         showError('Error processing GIF file.');
@@ -203,6 +236,7 @@ const processVideo = async (dataUrl) => {
 
         showSuccess();
         drawFrames(frames, width, height, frameDelays, targetFps);
+        saveBtn.disabled = false;
     } catch (error) {
         console.error('Error processing video:', error);
         showError('Error processing video file. Please ensure it’s a valid video.');
@@ -304,6 +338,14 @@ const drawFrames = (frames, inputWidth, inputHeight, frameDelays, targetFps) => 
         container.appendChild(resizedCanvas);
         canvasIndex++;
 
+        out_datas.frames.push({
+            id: resizedCanvas.id,
+            time: framesToDraw * avgFrameDelay,
+            frame: framesToDraw,
+            row: framesPerCol,
+            col: framesPerRow
+        });
+        /*
         const canvasJson = {
             id: "",
             time: framesToDraw * avgFrameDelay,
@@ -313,7 +355,7 @@ const drawFrames = (frames, inputWidth, inputHeight, frameDelays, targetFps) => 
         };
         const currentText = canvasInfo.value;
         canvasInfo.value = currentText + (currentText ? '\n' : '') + JSON.stringify(canvasJson);
-
+        */
         if (startFrame + framesToDraw < frames.length) {
             drawCanvas(startFrame + framesToDraw, frames.length - (startFrame + framesToDraw));
         }
@@ -321,7 +363,9 @@ const drawFrames = (frames, inputWidth, inputHeight, frameDelays, targetFps) => 
 
     const selectedFps = parseInt(videoFpsSelect.value);
     const selectedSide = parseInt(document.getElementById('objectSide').value);
-    canvasInfo.value = JSON.stringify({ side: selectedSide, fps: selectedFps });
+    out_datas.global = { side: selectedSide, fps: selectedFps };
+    out_datas.frames = [];
+    //canvasInfo.value = JSON.stringify({ side: selectedSide, fps: selectedFps });
 
     drawCanvas(0, frames.length);
 };
@@ -350,3 +394,31 @@ const renderFrame = (frame, targetWidth, targetHeight) => {
 
     return output;
 };
+
+
+saveBtn.addEventListener(`click`, async e => {
+    const zip = new JSZip();
+
+    const target = out_datas.global.side;
+    const fps = out_datas.global.fps;
+
+    for (let index = 0; index < out_datas.frames.length; index++) {
+        const frame = out_datas.frames[index];
+
+        const canvas = document.querySelector(`#${frame.id}`);
+        const fname = 
+            `${frame.id.replace(`canvas`, `img`)}_${target}_${fps}_${frame.time.toFixed(4)}_${frame.frame}_${frame.row}_${frame.col}.png`;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, `image/png`, 1));
+        zip.file(fname, blob);
+    }
+
+    zip.generateAsync({ type: 'blob' }).then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'prim-media.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+});

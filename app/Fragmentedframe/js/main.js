@@ -38,6 +38,14 @@ let isRotating = false;
 let dragMode = 'none'; // 'none', 'draw', 'move', 'scale', 'rotate'
 let copiedShape = null; // Store copied shape properties
 
+let initialScaleDistance;
+let initialWidth;
+let initialHeight;
+let initialCenterX;
+let initialCenterY;
+let initialAngle;
+let initialRotation;
+
 // Shape class to store properties
 class Shape {
     constructor(type, x, y, width, height, rotation = 0) {
@@ -227,6 +235,21 @@ canvas.addEventListener('mousedown', (event) => {
         if (selectedShape) {
             dragMode = isScaling ? 'scale' : isRotating ? 'rotate' : 'move';
             isDragging = true;
+
+            // Initialize values for scale or rotate
+            const centerX = selectedShape.x + selectedShape.width / 2;
+            const centerY = selectedShape.y + selectedShape.height / 2;
+
+            if (dragMode === 'scale') {
+                initialScaleDistance = Math.sqrt((startX - centerX) ** 2 + (startY - centerY) ** 2);
+                initialWidth = selectedShape.width;
+                initialHeight = selectedShape.height;
+                initialCenterX = centerX;
+                initialCenterY = centerY;
+            } else if (dragMode === 'rotate') {
+                initialAngle = Math.atan2(startY - centerY, startX - centerX);
+                initialRotation = selectedShape.rotation;
+            }
         } else {
             dragMode = 'draw';
             isDragging = true;
@@ -261,22 +284,24 @@ canvas.addEventListener('mousemove', (e) => {
                 startX = x;
                 startY = y;
             } else if (dragMode === 'scale') {
-                // Scale shape
-                const centerX = selectedShape.x + selectedShape.width / 2;
-                const centerY = selectedShape.y + selectedShape.height / 2;
-                const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-                const scale = distance / (Math.abs(selectedShape.width) / 2);
-                selectedShape.width *= scale;
-                selectedShape.height *= scale;
-                // Reset start point to prevent abrupt jumps
-                startX = x;
-                startY = y;
+                // Scale shape incrementally relative to drag start, keeping center fixed
+                const newDistance = Math.sqrt((x - initialCenterX) ** 2 + (y - initialCenterY) ** 2);
+                if (initialScaleDistance > 0) {
+                    const scaleFactor = newDistance / initialScaleDistance;
+                    const newWidth = initialWidth * scaleFactor;
+                    const newHeight = initialHeight * scaleFactor;
+                    selectedShape.x = initialCenterX - newWidth / 2;
+                    selectedShape.y = initialCenterY - newHeight / 2;
+                    selectedShape.width = newWidth;
+                    selectedShape.height = newHeight;
+                }
             } else if (dragMode === 'rotate') {
-                // Rotate shape
+                // Rotate shape incrementally relative to drag start
                 const centerX = selectedShape.x + selectedShape.width / 2;
                 const centerY = selectedShape.y + selectedShape.height / 2;
-                const angle = Math.atan2(y - centerY, x - centerX);
-                selectedShape.rotation = angle;
+                const currentAngle = Math.atan2(y - centerY, x - centerX);
+                const deltaAngle = currentAngle - initialAngle;
+                selectedShape.rotation = initialRotation + deltaAngle;
             }
         }
         redraw();
