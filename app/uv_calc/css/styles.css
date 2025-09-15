@@ -1,0 +1,134 @@
+body {
+    font-family: sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.drag-drop-zone {
+    border: 2px dashed #aaa;
+    width: 100%;
+    height: 120px;
+    text-align: center;
+    line-height: 120px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.ctrl0 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+
+.image-info {
+    text-align: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.input-decorated {
+    min-width: auto;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coordinate-group {
+    display: flex;
+    gap: 10px;
+}
+
+.output-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.preview-canvas {
+    display: block;
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+.base64-textarea {
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    resize: vertical;
+    overflow: auto;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.action-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+select.input-decorated {
+    appearance: none;
+    background: url('data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNC41IDMiPjxwYXRoIGZpbGw9IiM1NTUiIGQ9Ik0uMjI1IDBoMy45NUwxLjUgMi4yNS4yMjUgMHoiLz48L3N2Zz4=') no-repeat right 10px center / 8px 10px;
+    padding-right: 30px;
+}

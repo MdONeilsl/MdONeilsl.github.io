@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="UV Calculator for Second Life® users to calculate texture and PBR scale and offset for LSL scripting. Supports creators and general users with drag-and-drop image processing.">
+    <meta name="keywords"
+        content="Second Life UV calculator, virtual world texture tool, LSL scripting tool, Second Life creators, texture scale and offset">
+    <meta name="author" content="UV Calculator Team">
+    <title>UV Calculator</title>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "UV Calculator",
+        "description": "A web-based tool for Second Life users to calculate texture and PBR scale and offset for LSL scripting, designed for creators and general users.",
+        "applicationCategory": "Utility",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <link rel="stylesheet" href="./styles.css">
+    <div class="app-container">
+        <h1>UV Calculator</h1>
+        <div id="drag-drop" class="drag-drop-zone">Drag and drop image here</div>
+        <div id="error" class="error-message"></div>
+        <div class="image-info">Image size: <span id="image-size"></span></div>
+        <label class="checkbox-label" title="Round image dimensions to nearest power of 2 and scale accordingly">
+            <input type="checkbox" id="pot-checkbox"> Round to nearest power of 2 and scale
+        </label>
+        <div class="ctrl0">
+            <select id="render-selector" class="input-decorated" title="Select measurement unit">
+                <option value="opengl">OpenGL</option>
+                <option value="pbr">PBR</option>
+            </select>
+            <select id="unit-selector" class="input-decorated" title="Select measurement unit">
+                <option value="pixels">Pixels</option>
+                <option value="percent">Percent</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>From:</label>
+            <div class="coordinate-group">
+                <input type="number" id="from-x" class="input-decorated" step="1" min="0" value="0"
+                    title="Start coordinate X">
+                <input type="number" id="from-y" class="input-decorated" step="1" min="0" value="0"
+                    title="Start coordinate Y">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label><select id="mode-selector" class="input-decorated"
+                    title="Switch between end-point or size measurement">
+                    <option value="to">To (end point)</option>
+                    <option value="size">Size</option>
+                </select>:</label>
+            <div class="coordinate-group">
+                <input type="number" id="to-x" class="input-decorated" step="1" value="1" title="End X or Width">
+                <input type="number" id="to-y" class="input-decorated" step="1" value="1" title="End Y or Height">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Output:</label>
+            <input type="text" id="output" class="output-field" readonly title="Calculated scale and offset">
+            <input type="text" id="output1" class="output-field" readonly title="Calculated scale and offset">
+        </div>
+        <canvas id="preview" class="preview-canvas"></canvas>
+        <textarea id="base64" class="base64-textarea" readonly title="Base64 encoded PNG of the subsection"></textarea>
+        <select id="save-format" class="input-decorated" title="Select save format">
+            <option value="png">PNG</option>
+            <option value="jpeg">JPG</option>
+        </select>
+        <div class="button-group">
+            <button id="save-btn" class="action-button" disabled>Save subsection</button>
+            <button id="reset-btn" class="action-button">Reset</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>c</p>
+        <p>© 2025 UV Calculator. All rights reserved.</p>
+        <p>Second Life® is a registered trademark of Linden Research, Inc. UV Calculator is not affiliated with or
+            sponsored by Linden Research.</p>
+    </footer>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>

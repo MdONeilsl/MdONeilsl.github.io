@@ -24,7 +24,8 @@ const translations = {
             data_comp: "Data Compacter",
             css_pro:"CSS Processor",
             bad_apple_video: "Bad Apple Video",
-            sorting_sound: "Sorting Sound"
+            sorting_sound: "Sorting Sound",
+            uv_calc: "UV Calculator",
         }
     },
     ja: {
@@ -52,7 +53,8 @@ const translations = {
             data_comp: "データ圧縮機",
             css_pro:"CSSプロセッサー",
             bad_apple_video: "バッドアップルビデオ",
-            sorting_sound: "ソーティングサウンド"
+            sorting_sound: "ソーティングサウンド",
+            uv_calc: "UV計算機",
         }
     },
     de: {
@@ -80,7 +82,8 @@ const translations = {
             data_comp: "Datenkomprimierer",
             css_pro:" CSS-Prozessor",
             bad_apple_video: "Bad Apple Video",
-            sorting_sound: "Sortiergeräusch"
+            sorting_sound: "Sortiergeräusch",
+            uv_calc: "UV-Rechner",
         }
     },
     fr: {
@@ -108,7 +111,8 @@ const translations = {
             data_comp: "Compacteur de données",
             css_pro:"Processeur CSS",
             bad_apple_video: "Vidéo Bad Apple",
-            sorting_sound: "Son de tri"
+            sorting_sound: "Son de tri",
+            uv_calc: "Calculateur UV",
         }
     },
     es: {
@@ -136,7 +140,8 @@ const translations = {
             data_comp: "Compactador de datos",
             css_pro:"Procesador CSS",
             bad_apple_video: "Video Bad Apple",
-            sorting_sound: "Sonido de ordenación"
+            sorting_sound: "Sonido de ordenación",
+            uv_calc: "Calculadora UV",
         }
     },
     pt: {
@@ -164,7 +169,8 @@ const translations = {
             data_comp: "Compactador de dados",
             css_pro:"Processador CSS",
             bad_apple_video: "Vídeo Bad Apple",
-            sorting_sound: "Som de ordenação"
+            sorting_sound: "Som de ordenação",
+            uv_calc: "Calculadora de UV",
         }
     },
     zh: {
@@ -192,7 +198,8 @@ const translations = {
             data_comp: "数据压缩器",
             css_pro:"CSS处理器",
             bad_apple_video: "坏苹果视频",
-            sorting_sound: "排序声音"
+            sorting_sound: "排序声音",
+            uv_calc: "紫外线计算器",
         }
     },
     hi: {
@@ -220,7 +227,8 @@ const translations = {
             data_comp: "डेटा संपीड़क",
             css_pro:"CSS प्रोसेसर",
             bad_apple_video: "बैड एप्पल वीडियो",
-            sorting_sound: "सॉर्टिंग ध्वनि"
+            sorting_sound: "सॉर्टिंग ध्वनि",
+            uv_calc: "UV कैलकुलेटर",
         }
     },
     ar: {
@@ -248,7 +256,8 @@ const translations = {
             data_comp: "مدمج البيانات",
             css_pro:"معالج CSS",
             bad_apple_video: "فيديو Bad Apple",
-            sorting_sound: "صوت الفرز"
+            sorting_sound: "صوت الفرز",
+            uv_calc: "آلة حاسبة للأشعة فوق البنفسجية",
         }
     },
     bn: {
@@ -276,7 +285,8 @@ const translations = {
             data_comp: "ডেটা কম্প্যাক্টর ",
             css_pro:"CSS প্রসেসর",
             bad_apple_video: "ব্যাড অ্যাপল ভিডিও",
-            sorting_sound: "সাজানোর শব্দ"
+            sorting_sound: "সাজানোর শব্দ",
+            uv_calc: "ইউভি ক্যালকুলেটর",
         }
     },
     ru: {
@@ -305,7 +315,8 @@ const translations = {
             css_pro:"CSS-процессор",
 
             bad_apple_video: "Видео Bad Apple",
-            sorting_sound: "Звук сортировки"
+            sorting_sound: "Звук сортировки",
+            uv_calc: "UV калькулятор",
         }
     },
     ur: {
@@ -333,7 +344,8 @@ const translations = {
             data_comp: "ڈیٹا کمپیکٹر",
             css_pro:"CSS پروسیسر",
             bad_apple_video: "بیڈ ایپل ویڈیو",
-            sorting_sound: "ترتیب دینے کی آواز"
+            sorting_sound: "ترتیب دینے کی آواز",
+            uv_calc: "UV کیلکولیٹر",
         }
     }
 };
@@ -356,22 +368,28 @@ function translatePage(lang) {
 
     // Update link buttons
     const linkButtons = document.querySelectorAll('.links a');
-    linkButtons[0].textContent = t.links.marketplace;
-    linkButtons[1].textContent = t.links.donation;
-    linkButtons[2].textContent = t.links.pbr_packer;
-    linkButtons[3].textContent = t.links.pbr_image;
-    linkButtons[4].textContent = t.links.img_pro;
-    linkButtons[5].textContent = t.links.shape_mixer;
-    linkButtons[6].textContent = t.links.media_to_prim;
-    linkButtons[7].textContent = t.links.normal_map_scaler;
-    linkButtons[8].textContent = t.links.normal_map_merger;
-    linkButtons[9].textContent = t.links.two_d_fonts;
-    linkButtons[10].textContent = t.links.fragmented_frame;
-    linkButtons[11].textContent = t.links.audio_segmenter;
-    linkButtons[12].textContent = t.links.data_comp;
-    linkButtons[13].textContent = t.links.css_pro;
-    linkButtons[14].textContent = t.links.bad_apple_video;
-    linkButtons[15].textContent = t.links.sorting_sound;
+
+    const $ = (id) => document.getElementById(id); 
+    $(`links_marketplace`).textContent = t.links.marketplace;
+    $(`link_donation`).textContent = t.links.donation;
+
+    $(`link_pbr_packer`).textContent = t.links.pbr_packer;
+    $(`link_pbr_image`).textContent = t.links.pbr_image;
+    $(`link_img_pro`).textContent = t.links.img_pro;
+    $(`link_media_to_prim`).textContent = t.links.media_to_prim;
+    $(`link_shape_mixer`).textContent = t.links.shape_mixer;
+    $(`link_normal_map_scaler`).textContent = t.links.normal_map_scaler;
+    $(`link_normal_map_merger`).textContent = t.links.normal_map_merger;
+    $(`link_two_d_fonts`).textContent = t.links.two_d_fonts;
+    $(`link_fragmented_frame`).textContent = t.links.fragmented_frame;
+    $(`link_audio_segmenter`).textContent = t.links.audio_segmenter;
+    $(`link_data_comp`).textContent = t.links.data_comp;
+    $(`link_css_pro`).textContent = t.links.css_pro;
+    $(`bad_apple_video`).textContent = t.links.bad_apple_video;
+    $(`link_sorting_sound`).textContent = t.links.sorting_sound;
+    $(`link_uv_calc`).textContent = t.links.uv_calc;
+
+
 }
 
 // Initialize with English
