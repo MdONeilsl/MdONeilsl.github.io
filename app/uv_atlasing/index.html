@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UV Atlasing tool for Second Life creators - optimize texture usage and maximize image placement efficiency for 3D content creation">
+    <meta name="keywords" content="uv atlasing, texture optimization, second life tool, 3d content creation, texture mapping, uv mapping, second life creators">
+    <meta name="author" content="MdONeil">
+    <title>UV Atlasing</title>
+    
+    <!-- Schema.org markup for SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "UV Atlasing",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web Browser",
+      "description": "A web-based tool for optimizing texture placement and UV atlasing for Second Life content creators",
+      "keywords": "uv atlasing, texture optimization, second life, 3d content creation",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+</head>
+<body>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <h1>UV Atlasing</h1>
+    <div class="drop-zone" id="dropZone"></div>
+    <div class="errors" id="errors"></div>
+    <div class="max-size-controls">
+        <label for="maxSize">Max Size:</label>
+        <select id="maxSize">
+            <option value="512">512</option>
+            <option value="1024" selected>1024</option>
+            <option value="2048">2048</option>
+        </select>
+    </div>
+    <canvas class="atlas-canvas" id="atlasCanvas"></canvas>
+    <div class="canvas-size" id="canvasSize"></div>
+    <div class="toolbar">
+        <label for="gap">Gap between sections (px):</label>
+        <input id="gap" type="number" min="1" value="2">
+        <label for="outputType">Output format:</label>
+        <select id="outputType">
+            <option value="array">Array</option>
+            <option value="individual">Individual Variables</option>
+            <option value="define">Define</option>
+        </select>
+        <label for="renderMode">Render Mode:</label>
+        <select id="renderMode">
+            <option value="opengl">OpenGL</option>
+            <option value="pbr">PBR</option>
+        </select>
+        <button id="clearAll" class="clear-btn">Clear All</button>
+    </div>
+    <div class="output-section">
+        <textarea class="output-textarea" id="output" placeholder="Upload images to see output"></textarea>
+    </div>
+    <div class="save-controls">
+        <button id="copyBtn" class="copy-btn">Copy to Clipboard</button>
+        <div class="save-options">
+            <label for="imageType">Image type:</label>
+            <select id="imageType">
+                <option value="png">PNG</option>
+                <option value="jpg">JPG</option>
+            </select>
+            <button id="saveBtn" class="save-btn">Save</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>UV Atlasing Tool for Second Life® MdONeil | © 2025</p>
+        <p>Second Life® is a trademark of Linden Research, Inc. This tool is not affiliated with or sponsored by Linden Research.</p>
+        <p>This tool is designed for Second Life users to optimize their content creation workflow.</p>
+    </footer>
+
+    <script src="./js/scripts.js"></script>
+</body>
+</html>

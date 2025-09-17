@@ -111,7 +111,7 @@ let currentLanguage = 'en';
 const updateText = () => {
     const lang = translations[currentLanguage];
     document.title = lang.title;
-    
+
     const labels = {
         'input': lang.selectFile,
         'maxCanvasSize': lang.maxImageSize,
@@ -119,7 +119,7 @@ const updateText = () => {
         'videoFps': lang.fpsTarget,
         'objectSide': lang.sideTarget
     };
-    
+
     for (const [id, text] of Object.entries(labels)) {
         const label = document.querySelector(`label[for="${id}"]`);
         if (label) label.textContent = text;
@@ -127,16 +127,21 @@ const updateText = () => {
 
     const instructions = document.querySelector('#instructions');
     if (instructions) {
-        instructions.querySelector('h2').textContent = lang.instructionsTitle;
-        const steps = instructions.querySelectorAll('ul li');
-        [lang.step1, lang.step2, lang.step3, lang.step4, lang.step5, lang.step6]
-            .forEach((step, i) => steps[i].textContent = step);
-        instructions.querySelector('p').textContent = lang.scriptLocation;
+        let el = instructions.querySelector('h2');
+        if (el) {
+            el.textContent = lang.instructionsTitle;
+            const steps = instructions.querySelectorAll('ul li');
+            [lang.step1, lang.step2, lang.step3, lang.step4, lang.step5, lang.step6]
+                .forEach((step, i) => steps[i].textContent = step);
+            instructions.querySelector('p').textContent = lang.scriptLocation;
+        }
+
+
     }
 
     const canvasInfo = document.querySelector('#canvasInfo');
     if (canvasInfo) canvasInfo.placeholder = lang.canvasInfoPlaceholder;
-    
+
     const langButton = document.querySelector('#langButton');
     if (langButton) langButton.textContent = currentLanguage.toUpperCase();
 

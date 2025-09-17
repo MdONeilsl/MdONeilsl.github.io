@@ -26,6 +26,7 @@ const translations = {
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sorting Sound",
             uv_calc: "UV Calculator",
+            uv_atlasing: "UV Atlasing",
         }
     },
     ja: {
@@ -55,6 +56,7 @@ const translations = {
             bad_apple_video: "バッドアップルビデオ",
             sorting_sound: "ソーティングサウンド",
             uv_calc: "UV計算機",
+            uv_atlasing: "UVアトラシング",
         }
     },
     de: {
@@ -84,6 +86,7 @@ const translations = {
             bad_apple_video: "Bad Apple Video",
             sorting_sound: "Sortiergeräusch",
             uv_calc: "UV-Rechner",
+            uv_atlasing: "UV-Atlaserstellung",
         }
     },
     fr: {
@@ -113,6 +116,7 @@ const translations = {
             bad_apple_video: "Vidéo Bad Apple",
             sorting_sound: "Son de tri",
             uv_calc: "Calculateur UV",
+            uv_atlasing: "Création d’atlas UV",
         }
     },
     es: {
@@ -142,6 +146,7 @@ const translations = {
             bad_apple_video: "Video Bad Apple",
             sorting_sound: "Sonido de ordenación",
             uv_calc: "Calculadora UV",
+            uv_atlasing: "Atlas de UV",
         }
     },
     pt: {
@@ -171,6 +176,7 @@ const translations = {
             bad_apple_video: "Vídeo Bad Apple",
             sorting_sound: "Som de ordenação",
             uv_calc: "Calculadora de UV",
+            uv_atlasing: "Mapeamento UV",
         }
     },
     zh: {
@@ -200,6 +206,7 @@ const translations = {
             bad_apple_video: "坏苹果视频",
             sorting_sound: "排序声音",
             uv_calc: "紫外线计算器",
+            uv_atlasing: "UV贴图集",
         }
     },
     hi: {
@@ -229,6 +236,7 @@ const translations = {
             bad_apple_video: "बैड एप्पल वीडियो",
             sorting_sound: "सॉर्टिंग ध्वनि",
             uv_calc: "UV कैलकुलेटर",
+            uv_atlasing: "यूवी एटलसिंग",
         }
     },
     ar: {
@@ -258,6 +266,7 @@ const translations = {
             bad_apple_video: "فيديو Bad Apple",
             sorting_sound: "صوت الفرز",
             uv_calc: "آلة حاسبة للأشعة فوق البنفسجية",
+            uv_atlasing: "تجميع خرائط UV",
         }
     },
     bn: {
@@ -287,6 +296,7 @@ const translations = {
             bad_apple_video: "ব্যাড অ্যাপল ভিডিও",
             sorting_sound: "সাজানোর শব্দ",
             uv_calc: "ইউভি ক্যালকুলেটর",
+            uv_atlasing: "ইউভি অ্যাটলাসিং",
         }
     },
     ru: {
@@ -317,6 +327,7 @@ const translations = {
             bad_apple_video: "Видео Bad Apple",
             sorting_sound: "Звук сортировки",
             uv_calc: "UV калькулятор",
+            uv_atlasing: "UV-атласинг",
         }
     },
     ur: {
@@ -346,6 +357,7 @@ const translations = {
             bad_apple_video: "بیڈ ایپل ویڈیو",
             sorting_sound: "ترتیب دینے کی آواز",
             uv_calc: "UV کیلکولیٹر",
+            uv_atlasing: "یو وی ایٹلاسنگ",
         }
     }
 };
@@ -388,6 +400,7 @@ function translatePage(lang) {
     $(`bad_apple_video`).textContent = t.links.bad_apple_video;
     $(`link_sorting_sound`).textContent = t.links.sorting_sound;
     $(`link_uv_calc`).textContent = t.links.uv_calc;
+    $(`link_uv_atlasing`).textContent = t.links.uv_atlasing;
 
 
 }
