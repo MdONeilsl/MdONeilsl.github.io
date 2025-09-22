@@ -27,6 +27,7 @@ const translations = {
             sorting_sound: "Sorting Sound",
             uv_calc: "UV Calculator",
             uv_atlasing: "UV Atlasing",
+            imgs_pro: " Images Processor",
         }
     },
     ja: {
@@ -57,6 +58,7 @@ const translations = {
             sorting_sound: "ソーティングサウンド",
             uv_calc: "UV計算機",
             uv_atlasing: "UVアトラシング",
+            imgs_pro: "画像プロセッサ",
         }
     },
     de: {
@@ -87,6 +89,7 @@ const translations = {
             sorting_sound: "Sortiergeräusch",
             uv_calc: "UV-Rechner",
             uv_atlasing: "UV-Atlaserstellung",
+            imgs_pro: "Bilderprozessor",
         }
     },
     fr: {
@@ -117,6 +120,7 @@ const translations = {
             sorting_sound: "Son de tri",
             uv_calc: "Calculateur UV",
             uv_atlasing: "Création d’atlas UV",
+            imgs_pro: "Processeur d’images",
         }
     },
     es: {
@@ -147,6 +151,7 @@ const translations = {
             sorting_sound: "Sonido de ordenación",
             uv_calc: "Calculadora UV",
             uv_atlasing: "Atlas de UV",
+            imgs_pro: "Procesador de imágenes",
         }
     },
     pt: {
@@ -177,6 +182,7 @@ const translations = {
             sorting_sound: "Som de ordenação",
             uv_calc: "Calculadora de UV",
             uv_atlasing: "Mapeamento UV",
+            imgs_pro: "Processador de imagens",
         }
     },
     zh: {
@@ -207,6 +213,7 @@ const translations = {
             sorting_sound: "排序声音",
             uv_calc: "紫外线计算器",
             uv_atlasing: "UV贴图集",
+            imgs_pro: " 图像处理器",
         }
     },
     hi: {
@@ -237,6 +244,7 @@ const translations = {
             sorting_sound: "सॉर्टिंग ध्वनि",
             uv_calc: "UV कैलकुलेटर",
             uv_atlasing: "यूवी एटलसिंग",
+            imgs_pro: "छवियों का प्रोसेसर",
         }
     },
     ar: {
@@ -267,6 +275,7 @@ const translations = {
             sorting_sound: "صوت الفرز",
             uv_calc: "آلة حاسبة للأشعة فوق البنفسجية",
             uv_atlasing: "تجميع خرائط UV",
+            imgs_pro: "معالج الصور",
         }
     },
     bn: {
@@ -297,6 +306,7 @@ const translations = {
             sorting_sound: "সাজানোর শব্দ",
             uv_calc: "ইউভি ক্যালকুলেটর",
             uv_atlasing: "ইউভি অ্যাটলাসিং",
+            imgs_pro:  "ছবির প্রসেসর",
         }
     },
     ru: {
@@ -328,6 +338,7 @@ const translations = {
             sorting_sound: "Звук сортировки",
             uv_calc: "UV калькулятор",
             uv_atlasing: "UV-атласинг",
+            imgs_pro:  "процессор изображений",
         }
     },
     ur: {
@@ -358,6 +369,7 @@ const translations = {
             sorting_sound: "ترتیب دینے کی آواز",
             uv_calc: "UV کیلکولیٹر",
             uv_atlasing: "یو وی ایٹلاسنگ",
+            imgs_pro:  "تصویری پروسیسر",
         }
     }
 };
@@ -402,6 +414,7 @@ function translatePage(lang) {
     $(`link_uv_calc`).textContent = t.links.uv_calc;
     $(`link_uv_atlasing`).textContent = t.links.uv_atlasing;
 
+    $(`link_imgs_pro`).textContent = t.links.imgs_pro;
 
 }
 
