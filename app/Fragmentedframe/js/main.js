@@ -18,118 +18,206 @@
     secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
 */
 
-
+/**
+ * @type {HTMLCanvasElement}
+ */
 const canvas = document.getElementById('canvas');
+/**
+ * @type {CanvasRenderingContext2D}
+ */
 const ctx = canvas.getContext('2d');
 const toolbar = document.querySelector('.toolbar');
-const uploadImage = document.getElementById('upload-image');
-const exportObj = document.getElementById('export-mesh');
+const upload_image = document.getElementById('upload-image');
+const export_mesh = document.getElementById('export-mesh');
 
-let currentTool = 'circle';
+let current_tool = 'circle';
 let shapes = [];
-let selectedShape = null;
-let textureImage = null;
-let textureFilename = 'texture.png'; // Default filename for texture
-let textureFileData = null; // Store raw file data for ZIP
-let isDragging = false;
-let startX, startY;
-let isScaling = false;
-let isRotating = false;
-let dragMode = 'none'; // 'none', 'draw', 'move', 'scale', 'rotate'
-let copiedShape = null; // Store copied shape properties
+let selected_shape = null;
+let texture_image = null;
+let texture_filename = 'texture.png';
+let texture_file_data = null;
+let is_dragging = false;
+let start_x, start_y;
+let is_scaling = false;
+let is_rotating = false;
+let drag_mode = 'none';
+let copied_shape = null;
 
-let initialScaleDistance;
-let initialWidth;
-let initialHeight;
-let initialCenterX;
-let initialCenterY;
-let initialAngle;
-let initialRotation;
+let initial_scale_distance;
+let initial_width;
+let initial_height;
+let initial_center_x;
+let initial_center_y;
+let initial_angle;
+let initial_rotation;
 
-// Shape class to store properties
+/**
+ * Represents a geometric shape with position, dimensions, and rotation.
+ */
 class Shape {
+    /**
+     * @param {string} type - The type of shape ('circle', 'rectangle', 'triangle', 'pentagon', 'hexagon')
+     * @param {number} x - The x-coordinate of the shape's position
+     * @param {number} y - The y-coordinate of the shape's position
+     * @param {number} width - The width of the shape
+     * @param {number} height - The height of the shape
+     * @param {number} [rotation=0] - The rotation angle in radians
+     */
     constructor(type, x, y, width, height, rotation = 0) {
         this.type = type;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.rotation = rotation; // Rotation in radians
+        this.rotation = rotation;
+        this._cos_r = 0;
+        this._sin_r = 0;
+        this._update_trigonometry();
     }
 
+    /**
+     * Updates cached trigonometric values for rotation.
+     */
+    _update_trigonometry() {
+        this._cos_r = Math.cos(this.rotation);
+        this._sin_r = Math.sin(this.rotation);
+    }
+
+    /**
+     * Draws the shape on the canvas context.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+     */
     draw(ctx) {
         ctx.save();
-        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+        const half_width = this.width * 0.5;
+        const half_height = this.height * 0.5;
+        ctx.translate(this.x + half_width, this.y + half_height);
         ctx.rotate(this.rotation);
         ctx.beginPath();
+        
         if (this.type === 'circle') {
-            ctx.arc(0, 0, Math.abs(this.width / 2), 0, Math.PI * 2);
+            ctx.arc(0, 0, Math.abs(half_width), 0, Math.PI * 2);
         } else if (this.type === 'rectangle') {
-            ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.rect(-half_width, -half_height, this.width, this.height);
         } else {
             const sides = this.type === 'triangle' ? 3 : this.type === 'pentagon' ? 5 : 6;
-            const radius = Math.abs(this.width / 2);
-            ctx.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+            const radius = Math.abs(half_width);
+            let angle = 0;
+            ctx.moveTo(radius * Math.cos(angle), radius * Math.sin(angle));
             for (let i = 1; i <= sides; i++) {
-                const angle = (i * 2 * Math.PI) / sides;
+                angle = (i * 2 * Math.PI) / sides;
                 ctx.lineTo(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             ctx.closePath();
         }
-        ctx.strokeStyle = selectedShape === this ? 'red' : 'black';
+        
+        ctx.strokeStyle = selected_shape === this ? 'red' : 'black';
         ctx.lineWidth = 2;
         ctx.stroke();
         ctx.restore();
     }
 
-    isPointInside(x, y) {
+    /**
+     * Checks if a point is inside the shape.
+     * @param {number} x - The x-coordinate of the point
+     * @param {number} y - The y-coordinate of the point
+     * @returns {boolean} True if the point is inside the shape
+     */
+    is_point_inside(x, y) {
         ctx.save();
-        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+        const half_width = this.width * 0.5;
+        const half_height = this.height * 0.5;
+        ctx.translate(this.x + half_width, this.y + half_height);
         ctx.rotate(this.rotation);
         ctx.beginPath();
+        
         if (this.type === 'circle') {
-            const radius = Math.abs(this.width / 2);
-            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            ctx.arc(0, 0, Math.abs(half_width), 0, Math.PI * 2);
         } else if (this.type === 'rectangle') {
-            ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+            ctx.rect(-half_width, -half_height, this.width, this.height);
         } else {
             const sides = this.type === 'triangle' ? 3 : this.type === 'pentagon' ? 5 : 6;
-            const radius = Math.abs(this.width / 2);
-            ctx.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+            const radius = Math.abs(half_width);
+            let angle = 0;
+            ctx.moveTo(radius * Math.cos(angle), radius * Math.sin(angle));
             for (let i = 1; i <= sides; i++) {
-                const angle = (i * 2 * Math.PI) / sides;
+                angle = (i * 2 * Math.PI) / sides;
                 ctx.lineTo(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             ctx.closePath();
         }
+        
+        const result = ctx.isPointInPath(x, y);
         ctx.restore();
-        return ctx.isPointInPath(x, y);
+        return result;
+    }
+
+    /**
+     * Sets the rotation angle and updates trigonometric cache.
+     * @param {number} rotation - The new rotation angle in radians
+     */
+    set rotation(rotation) {
+        this._rotation = rotation;
+        this._update_trigonometry();
+    }
+
+    /**
+     * Gets the rotation angle.
+     * @returns {number} The rotation angle in radians
+     */
+    get rotation() {
+        return this._rotation;
     }
 }
 
-// Redraw canvas with texture and shapes
+/**
+ * Pre-calculated trigonometric constants for performance.
+ */
+const math_constants = {
+    two_pi: Math.PI * 2,
+    half_pi: Math.PI * 0.5
+};
+
+/**
+ * Cached canvas dimensions to avoid frequent DOM queries.
+ */
+const canvas_dimensions = {
+    width: canvas.width,
+    height: canvas.height,
+    inverse_width: 1 / canvas.width,
+    inverse_height: 1 / canvas.height
+};
+
+/**
+ * Redraws the canvas with texture and shapes.
+ */
 function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (textureImage) {
-        ctx.drawImage(textureImage, 0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas_dimensions.width, canvas_dimensions.height);
+    if (texture_image) {
+        ctx.drawImage(texture_image, 0, 0, canvas_dimensions.width, canvas_dimensions.height);
     }
-    shapes.forEach(shape => shape.draw(ctx));
+    for (let i = 0; i < shapes.length; i++) {
+        shapes[i].draw(ctx);
+    }
 }
 
-// Handle file upload (for both drag-and-drop and click)
-function handleFile(file) {
+/**
+ * Handles file upload and processes the image.
+ * @param {File} file - The image file to process
+ */
+function handle_file(file) {
     if (!file.type.startsWith('image/')) {
         alert('Please upload an image file.');
         return;
     }
 
-    textureFilename = file.name; // Set texture filename for OBJ export
-    textureFileData = file; // Store raw file for ZIP
+    texture_filename = file.name;
+    texture_file_data = file;
     const reader = new FileReader();
     reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-            textureImage = img;
+            texture_image = img;
             redraw();
         };
         img.src = e.target.result;
@@ -137,207 +225,367 @@ function handleFile(file) {
     reader.readAsDataURL(file);
 }
 
-// Toolbar button handling
-toolbar.querySelectorAll('.tool-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+/**
+ * Updates canvas dimensions cache and redraws.
+ */
+function update_canvas_dimensions() {
+    canvas_dimensions.width = canvas.width;
+    canvas_dimensions.height = canvas.height;
+    canvas_dimensions.inverse_width = 1 / canvas.width;
+    canvas_dimensions.inverse_height = 1 / canvas.height;
+    redraw();
+}
+
+// Initialize canvas dimensions
+update_canvas_dimensions();
+
+// Toolbar button handling with event delegation
+toolbar.addEventListener('click', (event) => {
+    const target = event.target.closest('.tool-btn');
+    if (target) {
         toolbar.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentTool = btn.dataset.shape;
-        selectedShape = null;
+        target.classList.add('active');
+        current_tool = target.dataset.shape;
+        selected_shape = null;
         redraw();
-    });
+    }
 });
 
-// Image upload handling (click and drag-and-drop)
-uploadImage.addEventListener('change', (event) => {
+// Image upload handling
+upload_image.addEventListener('change', (event) => {
     const files = event.target.files;
     if (files && files[0]) {
-        handleFile(files[0]);
+        handle_file(files[0]);
     }
 });
 
-uploadImage.addEventListener('dragover', (event) => {
+upload_image.addEventListener('dragover', (event) => {
     event.preventDefault();
-    event.stopPropagation();
-    uploadImage.classList.add('dragover');
+    upload_image.classList.add('dragover');
 });
 
-uploadImage.addEventListener('dragleave', (event) => {
+upload_image.addEventListener('dragleave', (event) => {
     event.preventDefault();
-    event.stopPropagation();
-    uploadImage.classList.remove('dragover');
+    upload_image.classList.remove('dragover');
 });
 
-uploadImage.addEventListener('drop', (event) => {
+upload_image.addEventListener('drop', (event) => {
     event.preventDefault();
-    event.stopPropagation();
-    uploadImage.classList.remove('dragover');
+    upload_image.classList.remove('dragover');
     const files = event.dataTransfer.files;
     if (files && files[0]) {
-        handleFile(files[0]);
+        handle_file(files[0]);
     }
 });
 
-// Key handling for scale, rotate, copy, and paste
-document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 's') {
-        isScaling = true;
-    } else if (e.key.toLowerCase() === 'r') {
-        isRotating = true;
-    } else if (e.ctrlKey && e.key.toLowerCase() === 'c' && selectedShape) {
-        // Copy selected shape
-        copiedShape = {
-            type: selectedShape.type,
-            x: selectedShape.x,
-            y: selectedShape.y,
-            width: selectedShape.width,
-            height: selectedShape.height,
-            rotation: selectedShape.rotation
-        };
-    } else if (e.ctrlKey && e.key.toLowerCase() === 'v' && copiedShape) {
-        // Paste copied shape with offset
-        const newShape = new Shape(
-            copiedShape.type,
-            copiedShape.x + 10, // Offset by 10 pixels
-            copiedShape.y + 10,
-            copiedShape.width,
-            copiedShape.height,
-            copiedShape.rotation
-        );
-        shapes.push(newShape);
-        selectedShape = newShape; // Select the pasted shape
-        redraw();
-    } else if (e.key === 'Delete' && selectedShape) {
-        shapes = shapes.filter(shape => shape !== selectedShape);
-        selectedShape = null;
-        redraw();
+/**
+ * Handles keyboard input for shape manipulation.
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function handle_keydown(e) {
+    const key = e.key.toLowerCase();
+    if (key === 's') {
+        is_scaling = true;
+    } else if (key === 'r') {
+        is_rotating = true;
+    } else if (e.ctrlKey) {
+        if (key === 'c' && selected_shape) {
+            copied_shape = {
+                type: selected_shape.type,
+                x: selected_shape.x,
+                y: selected_shape.y,
+                width: selected_shape.width,
+                height: selected_shape.height,
+                rotation: selected_shape.rotation
+            };
+        } else if (key === 'v' && copied_shape) {
+            const new_shape = new Shape(
+                copied_shape.type,
+                copied_shape.x + 10,
+                copied_shape.y + 10,
+                copied_shape.width,
+                copied_shape.height,
+                copied_shape.rotation
+            );
+            shapes.push(new_shape);
+            selected_shape = new_shape;
+            redraw();
+        }
+    } else if (key === 'delete' && selected_shape) {
+        const index = shapes.indexOf(selected_shape);
+        if (index > -1) {
+            shapes.splice(index, 1);
+            selected_shape = null;
+            redraw();
+        }
     }
-});
+}
 
-document.addEventListener('keyup', (e) => {
-    if (e.key.toLowerCase() === 's') {
-        isScaling = false;
-    } else if (e.key.toLowerCase() === 'r') {
-        isRotating = false;
+/**
+ * Handles keyboard key release events.
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function handle_keyup(e) {
+    const key = e.key.toLowerCase();
+    if (key === 's') {
+        is_scaling = false;
+    } else if (key === 'r') {
+        is_rotating = false;
     }
-});
+}
 
-// Canvas interaction
+document.addEventListener('keydown', handle_keydown);
+document.addEventListener('keyup', handle_keyup);
+
+/**
+ * Gets normalized canvas coordinates from mouse event.
+ * @param {MouseEvent} event - The mouse event
+ * @returns {Object} Normalized x and y coordinates
+ */
+function get_canvas_coordinates(event) {
+    const rect = canvas.getBoundingClientRect();
+    const scale_x = canvas_dimensions.width / rect.width;
+    const scale_y = canvas_dimensions.height / rect.height;
+    return {
+        x: (event.clientX - rect.left) * scale_x,
+        y: (event.clientY - rect.top) * scale_y
+    };
+}
+
 canvas.addEventListener('mousedown', (event) => {
     if (event.button === 0) {
-        const rect = canvas.getBoundingClientRect();
-        startX = (event.clientX - rect.left) * (canvas.width / rect.width);
-        startY = (event.clientY - rect.top) * (canvas.height / rect.height);
+        const coords = get_canvas_coordinates(event);
+        start_x = coords.x;
+        start_y = coords.y;
 
-        // Check if a shape is clicked
-        selectedShape = shapes.find(shape => shape.isPointInside(startX, startY));
+        // Find clicked shape using reverse iteration for better selection of top shapes
+        for (let i = shapes.length - 1; i >= 0; i--) {
+            if (shapes[i].is_point_inside(start_x, start_y)) {
+                selected_shape = shapes[i];
+                break;
+            }
+        }
 
-        if (selectedShape) {
-            dragMode = isScaling ? 'scale' : isRotating ? 'rotate' : 'move';
-            isDragging = true;
+        if (selected_shape) {
+            drag_mode = is_scaling ? 'scale' : is_rotating ? 'rotate' : 'move';
+            is_dragging = true;
 
-            // Initialize values for scale or rotate
-            const centerX = selectedShape.x + selectedShape.width / 2;
-            const centerY = selectedShape.y + selectedShape.height / 2;
+            const center_x = selected_shape.x + selected_shape.width * 0.5;
+            const center_y = selected_shape.y + selected_shape.height * 0.5;
 
-            if (dragMode === 'scale') {
-                initialScaleDistance = Math.sqrt((startX - centerX) ** 2 + (startY - centerY) ** 2);
-                initialWidth = selectedShape.width;
-                initialHeight = selectedShape.height;
-                initialCenterX = centerX;
-                initialCenterY = centerY;
-            } else if (dragMode === 'rotate') {
-                initialAngle = Math.atan2(startY - centerY, startX - centerX);
-                initialRotation = selectedShape.rotation;
+            if (drag_mode === 'scale') {
+                initial_scale_distance = Math.hypot(start_x - center_x, start_y - center_y);
+                initial_width = selected_shape.width;
+                initial_height = selected_shape.height;
+                initial_center_x = center_x;
+                initial_center_y = center_y;
+            } else if (drag_mode === 'rotate') {
+                initial_angle = Math.atan2(start_y - center_y, start_x - center_x);
+                initial_rotation = selected_shape.rotation;
             }
         } else {
-            dragMode = 'draw';
-            isDragging = true;
+            drag_mode = 'draw';
+            is_dragging = true;
         }
         redraw();
     }
 });
 
-canvas.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+canvas.addEventListener('mousemove', (event) => {
+    if (!is_dragging) return;
 
-        if (dragMode === 'draw') {
-            // Drawing a new shape
-            if (shapes.length && shapes[shapes.length - 1].isTemp) {
-                shapes.pop();
-            }
-            const width = x - startX;
-            const height = y - startY;
-            const shape = new Shape(currentTool, startX, startY, width, height);
-            shape.isTemp = true;
-            shapes.push(shape);
-        } else if (selectedShape) {
-            if (dragMode === 'move') {
-                // Move shape
-                const dx = x - startX;
-                const dy = y - startY;
-                selectedShape.x += dx;
-                selectedShape.y += dy;
-                startX = x;
-                startY = y;
-            } else if (dragMode === 'scale') {
-                // Scale shape incrementally relative to drag start, keeping center fixed
-                const newDistance = Math.sqrt((x - initialCenterX) ** 2 + (y - initialCenterY) ** 2);
-                if (initialScaleDistance > 0) {
-                    const scaleFactor = newDistance / initialScaleDistance;
-                    const newWidth = initialWidth * scaleFactor;
-                    const newHeight = initialHeight * scaleFactor;
-                    selectedShape.x = initialCenterX - newWidth / 2;
-                    selectedShape.y = initialCenterY - newHeight / 2;
-                    selectedShape.width = newWidth;
-                    selectedShape.height = newHeight;
-                }
-            } else if (dragMode === 'rotate') {
-                // Rotate shape incrementally relative to drag start
-                const centerX = selectedShape.x + selectedShape.width / 2;
-                const centerY = selectedShape.y + selectedShape.height / 2;
-                const currentAngle = Math.atan2(y - centerY, x - centerX);
-                const deltaAngle = currentAngle - initialAngle;
-                selectedShape.rotation = initialRotation + deltaAngle;
-            }
+    const coords = get_canvas_coordinates(event);
+    const x = coords.x;
+    const y = coords.y;
+
+    if (drag_mode === 'draw') {
+        if (shapes.length && shapes[shapes.length - 1].is_temp) {
+            shapes.pop();
         }
-        redraw();
+        const width = x - start_x;
+        const height = y - start_y;
+        const shape = new Shape(current_tool, start_x, start_y, width, height);
+        shape.is_temp = true;
+        shapes.push(shape);
+    } else if (selected_shape) {
+        if (drag_mode === 'move') {
+            const dx = x - start_x;
+            const dy = y - start_y;
+            selected_shape.x += dx;
+            selected_shape.y += dy;
+            start_x = x;
+            start_y = y;
+        } else if (drag_mode === 'scale') {
+            const new_distance = Math.hypot(x - initial_center_x, y - initial_center_y);
+            if (initial_scale_distance > 0) {
+                const scale_factor = new_distance / initial_scale_distance;
+                const new_width = initial_width * scale_factor;
+                const new_height = initial_height * scale_factor;
+                selected_shape.x = initial_center_x - new_width * 0.5;
+                selected_shape.y = initial_center_y - new_height * 0.5;
+                selected_shape.width = new_width;
+                selected_shape.height = new_height;
+            }
+        } else if (drag_mode === 'rotate') {
+            const center_x = selected_shape.x + selected_shape.width * 0.5;
+            const center_y = selected_shape.y + selected_shape.height * 0.5;
+            const current_angle = Math.atan2(y - center_y, x - center_x);
+            const delta_angle = current_angle - initial_angle;
+            selected_shape.rotation = initial_rotation + delta_angle;
+        }
     }
+    redraw();
 });
 
 canvas.addEventListener('mouseup', () => {
-    if (isDragging) {
-        isDragging = false;
-        if (dragMode === 'draw' && shapes.length && shapes[shapes.length - 1].isTemp) {
-            shapes[shapes.length - 1].isTemp = false;
+    if (is_dragging) {
+        is_dragging = false;
+        if (drag_mode === 'draw' && shapes.length && shapes[shapes.length - 1].is_temp) {
+            shapes[shapes.length - 1].is_temp = false;
         }
-        dragMode = 'none';
+        drag_mode = 'none';
         redraw();
     }
 });
 
-// Export mesh as Collada with texture in a ZIP
-exportObj.addEventListener('click', () => {
+// Optimized export function with pre-allocated arrays
+export_mesh.addEventListener('click', () => {
     if (shapes.length === 0) {
         alert('Please draw at least one shape before exporting.');
         return;
     }
 
-    // Generate Collada file
-    let daeContent = `<?xml version="1.0" encoding="utf-8"?>
+    // Pre-calculate total vertices and sides for array pre-allocation
+    let total_vertices = 0;
+    let total_sides = 0;
+    const shape_data = [];
+
+    for (let i = 0; i < shapes.length; i++) {
+        const shape = shapes[i];
+        const sides = shape.type === 'circle' ? 32 : shape.type === 'rectangle' ? 4 : 
+                     shape.type === 'triangle' ? 3 : shape.type === 'pentagon' ? 5 : 6;
+        
+        shape_data.push({ shape, sides });
+        total_vertices += sides * 2; // Top and bottom vertices
+        total_sides += sides;
+    }
+
+    // Pre-allocate arrays for better performance
+    const positions = new Float32Array(total_vertices * 3);
+    const uvs = new Float32Array(total_sides * 2);
+    let pos_index = 0;
+    let uv_index = 0;
+    let vertex_count = 0;
+
+    // Process shapes and fill arrays
+    for (let i = 0; i < shape_data.length; i++) {
+        const { shape, sides } = shape_data[i];
+        const cx = shape.x + shape.width * 0.5;
+        const cy = shape.y + shape.height * 0.5;
+        const radius = Math.abs(shape.width * 0.5);
+
+        // Generate vertices
+        for (let j = 0; j < sides; j++) {
+            const angle = (j * math_constants.two_pi) / sides;
+            const cos_angle = Math.cos(angle);
+            const sin_angle = Math.sin(angle);
+            
+            // Apply rotation
+            const dx = radius * cos_angle;
+            const dy = radius * sin_angle;
+            const rotated_x = cx + dx * shape._cos_r - dy * shape._sin_r;
+            const rotated_y = cy + dx * shape._sin_r + dy * shape._cos_r;
+
+            // Clamp to canvas bounds
+            const x = Math.max(0, Math.min(800, rotated_x));
+            const y = Math.max(0, Math.min(600, rotated_y));
+
+            // Bottom vertex
+            positions[pos_index++] = x * canvas_dimensions.inverse_width;
+            positions[pos_index++] = 1 - y * canvas_dimensions.inverse_height;
+            positions[pos_index++] = 0;
+
+            // Top vertex
+            positions[pos_index++] = x * canvas_dimensions.inverse_width;
+            positions[pos_index++] = 1 - y * canvas_dimensions.inverse_height;
+            positions[pos_index++] = 1;
+
+            // UV coordinates (unrotated)
+            const uv_x = Math.max(0, Math.min(800, cx + radius * cos_angle));
+            const uv_y = Math.max(0, Math.min(600, cy + radius * sin_angle));
+            uvs[uv_index++] = uv_x * canvas_dimensions.inverse_width;
+            uvs[uv_index++] = 1 - uv_y * canvas_dimensions.inverse_height;
+        }
+        vertex_count += sides * 2;
+    }
+
+    // Generate optimized Collada content
+    const dae_content = generate_collada_content(positions, uvs, vertex_count, total_sides, shape_data);
+    
+    // Create and download ZIP
+    create_zip_file(dae_content);
+});
+
+/**
+ * Generates Collada XML content for the mesh.
+ * @param {Float32Array} positions - Vertex position data
+ * @param {Float32Array} uvs - UV coordinate data
+ * @param {number} vertex_count - Total number of vertices
+ * @param {number} total_sides - Total number of sides across all shapes
+ * @param {Array} shape_data - Array containing shape information
+ * @returns {string} The Collada XML content
+ */
+function generate_collada_content(positions, uvs, vertex_count, total_sides, shape_data) {
+    const timestamp = new Date().toISOString();
+    
+    // Build polylist data efficiently
+    let textured_vcount = '';
+    let blank_vcount = '';
+    let textured_polylist = '';
+    let blank_polylist = '';
+    let vertex_offset = 0;
+    let uv_offset = 0;
+
+    for (let i = 0; i < shape_data.length; i++) {
+        const { sides } = shape_data[i];
+        
+        textured_vcount += sides + ' ' + sides + ' ';
+        
+        // Top face (counter-clockwise)
+        for (let j = sides - 1; j >= 0; j--) {
+            textured_polylist += (vertex_offset + sides + j) + ' ' + (uv_offset + j) + ' ';
+        }
+        // Bottom face (clockwise)
+        for (let j = sides - 1; j >= 0; j--) {
+            textured_polylist += (vertex_offset + j) + ' ' + (uv_offset + j) + ' ';
+        }
+
+        // Side faces
+        blank_vcount += Array(sides).fill(4).join(' ') + ' ';
+        for (let j = 0; j < sides; j++) {
+            const j_next = (j + 1) % sides;
+            blank_polylist += 
+                (vertex_offset + sides + j) + ' ' + (uv_offset + j) + ' ' +
+                (vertex_offset + sides + j_next) + ' ' + (uv_offset + j_next) + ' ' +
+                (vertex_offset + j_next) + ' ' + (uv_offset + j_next) + ' ' +
+                (vertex_offset + j) + ' ' + (uv_offset + j) + ' ';
+        }
+
+        vertex_offset += sides * 2;
+        uv_offset += sides;
+    }
+
+    return `<?xml version="1.0" encoding="utf-8"?>
 <COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
     <asset>
-        <created>${new Date().toISOString()}</created>
-        <modified>${new Date().toISOString()}</modified>
+        <created>${timestamp}</created>
+        <modified>${timestamp}</modified>
         <unit name="meter" meter="1"/>
         <up_axis>Z_UP</up_axis>
     </asset>
     <library_images>
         <image id="texture_image" name="texture_image">
-            <init_from>${textureFilename}</init_from>
+            <init_from>${texture_filename}</init_from>
         </image>
     </library_images>
     <library_materials>
@@ -386,172 +634,9 @@ exportObj.addEventListener('click', () => {
         <geometry id="mesh_geom" name="mesh">
             <mesh>
                 <source id="mesh_positions">
-                    <float_array id="mesh_positions_array" count="${shapes.reduce((sum, s) => sum + 2 * (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6) * 3, 0)}">`;
-
-    let positions = '';
-    let uvs = '';
-    let normals = '';
-    let texturedPolylist = '';
-    let blankPolylist = '';
-    let vertexCount = 0;
-    let uvCount = 0;
-    let texturedVcount = '';
-    let blankVcount = '';
-    let totalSides = 0;
-
-    shapes.forEach(shape => {
-        const cx = shape.x + shape.width / 2;
-        const cy = shape.y + shape.height / 2;
-        const cosR = Math.cos(shape.rotation);
-        const sinR = Math.sin(shape.rotation);
-
-        // Determine vertices based on shape type
-        let vertices = [];
-        let sides = 4; // Default for rectangle
-        if (shape.type === 'circle') {
-            sides = 32; // Approximate circle with 32 segments
-            const radius = Math.abs(shape.width / 2);
-            for (let j = 0; j < sides; j++) {
-                const angle = (j * 2 * Math.PI) / sides;
-                vertices.push({
-                    x: cx + radius * Math.cos(angle),
-                    y: cy + radius * Math.sin(angle)
-                });
-            }
-        } else if (shape.type === 'rectangle') {
-            vertices = [
-                { x: shape.x, y: shape.y },
-                { x: shape.x + shape.width, y: shape.y },
-                { x: shape.x + shape.width, y: shape.y + shape.height },
-                { x: shape.x, y: shape.y + shape.height }
-            ];
-        } else {
-            sides = shape.type === 'triangle' ? 3 : shape.type === 'pentagon' ? 5 : 6;
-            const radius = Math.abs(shape.width / 2);
-            for (let j = 0; j < sides; j++) {
-                const angle = (j * 2 * Math.PI) / sides;
-                vertices.push({
-                    x: cx + radius * Math.cos(angle),
-                    y: cy + radius * Math.sin(angle)
-                });
-            }
-        }
-
-        // Apply rotation and clamp to canvas bounds (0,0 to 800,600)
-        const rotated = vertices.map(v => {
-            const dx = v.x - cx;
-            const dy = v.y - cy;
-            const x = cx + dx * cosR - dy * sinR;
-            const y = cy + dx * sinR + dy * cosR;
-            return {
-                x: Math.max(0, Math.min(800, x)),
-                y: Math.max(0, Math.min(600, y))
-            };
-        });
-
-        // UVs: use unrotated vertices to keep texture upright
-        let uvVertices = [];
-        if (shape.type === 'circle') {
-            const radius = Math.abs(shape.width / 2);
-            for (let j = 0; j < sides; j++) {
-                const angle = (j * 2 * Math.PI) / sides;
-                uvVertices.push({
-                    x: cx + radius * Math.cos(angle),
-                    y: cy + radius * Math.sin(angle)
-                });
-            }
-        } else if (shape.type === 'rectangle') {
-            uvVertices = [
-                { x: shape.x, y: shape.y },
-                { x: shape.x + shape.width, y: shape.y },
-                { x: shape.x + shape.width, y: shape.y + shape.height },
-                { x: shape.x, y: shape.y + shape.height }
-            ];
-        } else {
-            const radius = Math.abs(shape.width / 2);
-            for (let j = 0; j < sides; j++) {
-                const angle = (j * 2 * Math.PI) / sides;
-                uvVertices.push({
-                    x: cx + radius * Math.cos(angle),
-                    y: cy + radius * Math.sin(angle)
-                });
-            }
-        }
-
-        // Vertex positions (bottom and top)
-        rotated.forEach(v => {
-            positions += `${v.x / 800} ${1 - v.y / 600} 0 `;
-        });
-        rotated.forEach(v => {
-            positions += `${v.x / 800} ${1 - v.y / 600} 1 `;
-        });
-
-        // UVs (clamped and normalized)
-        uvVertices.forEach(v => {
-            const x = Math.max(0, Math.min(800, v.x));
-            const y = Math.max(0, Math.min(600, v.y));
-            uvs += `${x / 800} ${1 - y / 600} `;
-        });
-
-        // Normals: top, bottom, and sides
-        let shapeNormals = [];
-        // Top face normals (point up, outward)
-        for (let j = 0; j < sides; j++) {
-            shapeNormals.push(`0 0 1`);
-        }
-        // Bottom face normals (point up, inward)
-        for (let j = 0; j < sides; j++) {
-            shapeNormals.push(`0 0 1`);
-        }
-        // Side face normals (point outward)
-        for (let j = 0; j < sides; j++) {
-            const jNext = (j + 1) % sides;
-            const v0 = rotated[j];
-            const v1 = rotated[jNext];
-            // Compute normal using cross product
-            const dx = v1.x - v0.x;
-            const dy = v1.y - v0.y;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) {
-                const nx = dy / len; // Outward direction
-                const ny = -dx / len;
-                shapeNormals.push(`${nx} ${ny} 0`);
-                shapeNormals.push(`${nx} ${ny} 0`); // Two vertices per side
-            } else {
-                shapeNormals.push(`0 0 0`);
-                shapeNormals.push(`0 0 0`);
-            }
-        }
-        normals += shapeNormals.join(' ') + ' ';
-
-        // Polylist entries
-        texturedVcount += `${sides} ${sides} `;
-        blankVcount += `${Array(sides).fill(4).join(' ')} `;
-
-        // Textured polylist: top and bottom faces
-        // Top face (counter-clockwise, outward)
-        for (let j = sides - 1; j >= 0; j--) {
-            texturedPolylist += `${vertexCount + sides + j} ${uvCount + j} `;
-        }
-        // Bottom face (clockwise, inward)
-        for (let j = sides - 1; j >= 0; j--) {
-            texturedPolylist += `${vertexCount + j} ${uvCount + j} `;
-        }
-
-        // Blank polylist: side faces (counter-clockwise, outward)
-        for (let j = 0; j < sides; j++) {
-            const jNext = (j + 1) % sides;
-            blankPolylist += `${vertexCount + sides + j} ${uvCount + j} ${vertexCount + sides + jNext} ${uvCount + jNext} ${vertexCount + jNext} ${uvCount + jNext} ${vertexCount + j} ${uvCount + j} `;
-        }
-
-        vertexCount += 2 * sides;
-        uvCount += sides;
-        totalSides += sides;
-    });
-
-    daeContent += `${positions.trim()}</float_array>
+                    <float_array id="mesh_positions_array" count="${positions.length}">${positions.join(' ')}</float_array>
                     <technique_common>
-                        <accessor source="#mesh_positions_array" count="${vertexCount}" stride="3">
+                        <accessor source="#mesh_positions_array" count="${vertex_count}" stride="3">
                             <param name="X" type="float"/>
                             <param name="Y" type="float"/>
                             <param name="Z" type="float"/>
@@ -559,38 +644,28 @@ exportObj.addEventListener('click', () => {
                     </technique_common>
                 </source>
                 <source id="mesh_uvs">
-                    <float_array id="mesh_uvs_array" count="${2 * totalSides}">${uvs.trim()}</float_array>
+                    <float_array id="mesh_uvs_array" count="${uvs.length}">${uvs.join(' ')}</float_array>
                     <technique_common>
-                        <accessor source="#mesh_uvs_array" count="${totalSides}" stride="2">
+                        <accessor source="#mesh_uvs_array" count="${total_sides}" stride="2">
                             <param name="S" type="float"/>
                             <param name="T" type="float"/>
-                        </accessor>
-                    </technique_common>
-                </source>
-                <source id="mesh_normals">
-                    <float_array id="mesh_normals_array" count="${shapes.reduce((sum, s) => sum + (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6) * (2 + 2 * (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6)) * 3, 0)}">${normals.trim()}</float_array>
-                    <technique_common>
-                        <accessor source="#mesh_normals_array" count="${shapes.reduce((sum, s) => sum + (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6) * (2 + 2 * (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6)), 0)}" stride="3">
-                            <param name="X" type="float"/>
-                            <param name="Y" type="float"/>
-                            <param name="Z" type="float"/>
                         </accessor>
                     </technique_common>
                 </source>
                 <vertices id="mesh_vertices">
                     <input semantic="POSITION" source="#mesh_positions"/>
                 </vertices>
-                <polylist material="texture_material" count="${shapes.reduce((sum, s) => sum + 2, 0)}">
+                <polylist material="texture_material" count="${shape_data.length * 2}">
                     <input semantic="VERTEX" source="#mesh_vertices" offset="0"/>
                     <input semantic="TEXCOORD" source="#mesh_uvs" offset="1" set="0"/>
-                    <vcount>${texturedVcount.trim()}</vcount>
-                    <p>${texturedPolylist}</p>
+                    <vcount>${textured_vcount.trim()}</vcount>
+                    <p>${textured_polylist.trim()}</p>
                 </polylist>
-                <polylist material="blank_material" count="${shapes.reduce((sum, s) => sum + (s.type === 'circle' ? 32 : s.type === 'rectangle' ? 4 : s.type === 'triangle' ? 3 : s.type === 'pentagon' ? 5 : 6), 0)}">
+                <polylist material="blank_material" count="${total_sides}">
                     <input semantic="VERTEX" source="#mesh_vertices" offset="0"/>
                     <input semantic="TEXCOORD" source="#mesh_uvs" offset="1" set="0"/>
-                    <vcount>${blankVcount.trim()}</vcount>
-                    <p>${blankPolylist}</p>
+                    <vcount>${blank_vcount.trim()}</vcount>
+                    <p>${blank_polylist.trim()}</p>
                 </polylist>
             </mesh>
         </geometry>
@@ -617,24 +692,30 @@ exportObj.addEventListener('click', () => {
         <instance_visual_scene url="#Scene"/>
     </scene>
 </COLLADA>`;
+}
 
-    // Create ZIP file
+/**
+ * Creates and downloads a ZIP file containing the mesh and texture.
+ * @param {string} dae_content - The Collada XML content
+ */
+function create_zip_file(dae_content) {
     const zip = new JSZip();
-    zip.file('mesh.dae', daeContent);
-    if (textureFileData) {
-        zip.file(textureFilename, textureFileData);
+    zip.file('mesh.dae', dae_content);
+    if (texture_file_data) {
+        zip.file(texture_filename, texture_file_data);
     }
 
-    // Download ZIP
     zip.generateAsync({ type: 'blob' }).then(blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'mesh.zip';
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
-});
+}
 
 // Initial draw
 redraw();
