@@ -10,4 +10,5 @@ app/NormalMapScaler/tmp_idx.html
 app/NormalMapMerger/tmp_idx.html
 app/Fragmentedframe/tmp_idx.html
 app/2DFonts/index_style.html
-app/landing/js/translate.js
+app/CSSProcessor/index_style.html
+app/CSSProcessor/js/main.ref.js
