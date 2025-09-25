@@ -16,120 +16,149 @@
     <meta property="og:url" content="https://mdoneilsl.github.io">
     <meta property="og:type" content="website">
     <link rel="canonical" href="https://mdoneilsl.github.io">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        
+    </style>
 </head>
 
 <body>
+    <link rel="stylesheet" href="./app/landing/css/style.css">
     <canvas id="canvas"></canvas>
-    <div class="language-selector">
-        <select id="language-select" aria-label="Select language for the webpage">
-            <option value="en">en</option>
-            <option value="zh">zh</option>
-            <option value="hi">hi</option>
-            <option value="es">es</option>
-            <option value="fr">fr</option>
-            <option value="ar">ar</option>
-            <option value="bn">bn</option>
-            <option value="pt">pt</option>
-            <option value="ru">ru</option>
-            <option value="ur">ur</option>
-            <option value="ja">ja</option>
-            <option value="de">de</option>
+    <!--
+    <div class="language_selector">
+        <select id="language-select" class="language_select" aria-label="Select language for the webpage">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="hi">हिन्दी</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="ar">العربية</option>
+            <option value="bn">বাংলা</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
+            <option value="ur">اردو</option>
+            <option value="ja">日本語</option>
+            <option value="de">Deutsch</option>
         </select>
     </div>
-    <a href="https://github.com/MdONeilsl/mdONeilsl.github.io" class="github-corner" aria-label="View source on GitHub">
+    -->
+    <a href="https://github.com/MdONeilsl/mdONeilsl.github.io" class="github_corner" aria-label="View source on GitHub">
         <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
             <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" />
-            <path
-                d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+            <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
                 fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm" />
-            <path
-                d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+            <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
                 fill="currentColor" class="octo-body" />
         </svg>
     </a>
+
     <div class="container">
-        <header>
-            <img src="./assets/img/260.jpg" alt="MdONeil's Profile Picture" class="profile-picture"
-                aria-label="MdONeil's profile image">
-            <div class="name">MdONeil</div>
-        </header>
-        <main>
-            <div class="social-icons">
-                <a href="https://x.com/MdONeilsl" target="_blank" rel="noopener noreferrer"
-                    aria-label="Visit MdONeil's X.com profile">
-                    <img src="https://x.com/favicon.ico" alt="X.com Profile" class="social-icon">
+        <header class="header fade_in">
+            <img src="./app/landing/assets/img/260.jpg" alt="MdONeil's Profile Picture" class="profile_picture">
+            <h1 class="name">MdONeil</h1>
+            <p class="tagline">Creative Developer & Second Life Tool Creator</p>
+            
+            <div class="social_icons">
+                <a href="https://x.com/MdONeilsl" target="_blank" rel="noopener noreferrer" class="social_link" aria-label="X.com Profile">
+                    <img src="https://x.com/favicon.ico" alt="X.com" class="social_icon">
                 </a>
-                <a href="https://www.primfeed.com/mdoneil.resident" target="_blank" rel="noopener noreferrer"
-                    aria-label="Visit MdONeil's Primfeed profile">
-                    <img src="https://www.primfeed.com/assets/pf_maskable_x512.png" alt="Primfeed Profile"
-                        class="social-icon">
+                <a href="https://www.primfeed.com/mdoneil.resident" target="_blank" rel="noopener noreferrer" class="social_link" aria-label="Primfeed Profile">
+                    <img src="https://www.primfeed.com/assets/pf_maskable_x512.png" alt="Primfeed" class="social_icon">
                 </a>
-                <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" target="_blank"
-                    rel="noopener noreferrer" aria-label="Visit MdONeil's Second Life profile">
-                    <img src="https://secondlife.com/favicon.ico" alt="Second Life Profile" class="social-icon">
+                <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" target="_blank" rel="noopener noreferrer" class="social_link" aria-label="Second Life Profile">
+                    <img src="https://secondlife.com/favicon.ico" alt="Second Life" class="social_icon">
                 </a>
-                <a href="https://github.com/MdONeilsl" target="_blank" rel="noopener noreferrer"
-                    aria-label="Visit MdONeil's GitHub profile">
-                    <img src="https://github.githubassets.com/assets/apple-touch-icon-114x114-09ce42d3ca4b.png"
-                        alt="GitHub Profile" class="social-icon">
+                <a href="https://github.com/MdONeilsl" target="_blank" rel="noopener noreferrer" class="social_link" aria-label="GitHub Profile">
+                    <img src="https://github.githubassets.com/assets/apple-touch-icon-114x114-09ce42d3ca4b.png" alt="GitHub" class="social_icon">
                 </a>
             </div>
-            <div class="links">
-                <a href="https://marketplace.secondlife.com/stores/263354" id="links_marketplace" target="_blank"
-                    rel="noopener noreferrer" class="link-button full-width"
-                    aria-label="Visit MdONeil's Second Life Marketplace store">Marketplace</a>
-                <a href="https://marketplace.secondlife.com/wishlists/MdONeil" id="link_donation" target="_blank"
-                    rel="noopener noreferrer" class="link-button full-width"
-                    aria-label="Support MdONeil via Second Life wishlist donation">Donation</a>
+        </header>
 
-                <a href="./app/ShapeMixer/" id="link_shape_mixer" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Shape Mixer tool">Shape Mixer</a>
+        <main>
+            <div class="special_links fade_in">
+                <a href="https://marketplace.secondlife.com/stores/263354" target="_blank" rel="noopener noreferrer" class="special_link">
+                    <span>Second Life Marketplace</span>
+                </a>
+                <a href="https://marketplace.secondlife.com/wishlists/MdONeil" target="_blank" rel="noopener noreferrer" class="special_link">
+                    <span>Support via Wishlist</span>
+                </a>
+            </div>
 
-                <a href="./app/Segmenter/" id="link_audio_segmenter" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Audio Segmenter tool">Audio Segmenter</a>
-                
-                <a href="./app/PBRPacker/" id="link_pbr_packer" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's PBR Packer tool">PBR Packer</a>
-                <a href="./app/PBR_img/" id="link_pbr_image" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's PBR Image tool">PBR Image</a>
-                <a href="./app/ImageProcessor/" id="link_img_pro" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Image Processor tool">Image Processor</a>
-
-                <a href="./app/ImagesProcessor/" id="link_imgs_pro" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Images Processor tool">Images Processor</a>
-
-                <a href="./app/prim_gif/" id="link_media_to_prim" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Media to Prim tool">Media to Prim</a>
-                <a href="./app/NormalMapScaler/" id="link_normal_map_scaler" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Normal Map Scaler tool">Normal Map Scaler</a>
-                <a href="./app/NormalMapMerger/" id="link_normal_map_merger" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Normal Map Merger tool">Normal Map Merger</a>
-                <a href="./app/uv_calc/" id="link_uv_calc" target="_blank" rel="noopener noreferrer" class="link-button"
-                    aria-label="Access MdONeil's UV Calculator tool">UV Calculator</a>
-                <a href="./app/uv_atlasing/" id="link_uv_atlasing" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's UV Atlasing tool">UV Atlasing</a>
-                <a href="./app/2DFonts/" id="link_two_d_fonts" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's 2D Fonts tool">2D Fonts</a>
-
-                <a href="./app/Fragmentedframe/" id="link_fragmented_frame" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Fragmented Frame tool">Fragmented Frame</a>
-                    
-                <a href="./app/DataCompacter/" id="link_data_comp" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Data Compacter tool">Data Compacter</a>
-                <a href="./app/CSSProcessor/" id="link_css_pro" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's CSS Processor tool">CSS Processor</a>
-                
-                <a href="./app/touhou/" id="bad_apple_video" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Bad Apple Video tool">Bad Apple Video</a>
-                <a href="./app/SortingSound/" id="link_sorting_sound" target="_blank" rel="noopener noreferrer"
-                    class="link-button" aria-label="Access MdONeil's Sorting Sound tool">Sorting Sound</a>
+            <div class="tools_grid">
+                <a href="./app/ShapeMixer/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Shape Mixer</h3>
+                    <p class="tool_description">Blend and mix character shapes with advanced customization tools</p>
+                </a>
+                <a href="./app/Segmenter/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Audio Segmenter</h3>
+                    <p class="tool_description">Precise audio splitting and editing for perfect sound clips</p>
+                </a>
+                <a href="./app/PBRPacker/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">PBR Packer</h3>
+                    <p class="tool_description">Combine PBR textures into optimized material maps</p>
+                </a>
+                <a href="./app/PBR_img/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">PBR Image</h3>
+                    <p class="tool_description">Generate and process PBR texture maps from images</p>
+                </a>
+                <a href="./app/ImageProcessor/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Image Processor</h3>
+                    <p class="tool_description">Advanced image manipulation and optimization tools</p>
+                </a>
+                <a href="./app/ImagesProcessor/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Images Processor</h3>
+                    <p class="tool_description">Batch process multiple images with consistent settings</p>
+                </a>
+                <a href="./app/prim_gif/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Media to Prim</h3>
+                    <p class="tool_description">Convert media files to prim-friendly formats</p>
+                </a>
+                <a href="./app/NormalMapScaler/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Normal Map Scaler</h3>
+                    <p class="tool_description">Scale normal maps while preserving surface details</p>
+                </a>
+                <a href="./app/NormalMapMerger/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Normal Map Merger</h3>
+                    <p class="tool_description">Combine multiple normal maps into unified textures</p>
+                </a>
+                <a href="./app/uv_calc/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">UV Calculator</h3>
+                    <p class="tool_description">Calculate and optimize UV mapping coordinates</p>
+                </a>
+                <a href="./app/uv_atlasing/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">UV Atlasing</h3>
+                    <p class="tool_description">Create efficient texture atlases from UV layouts</p>
+                </a>
+                <a href="./app/2DFonts/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">2D Fonts</h3>
+                    <p class="tool_description">Generate custom font textures and atlases</p>
+                </a>
+                <a href="./app/Fragmentedframe/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Fragmented Frame</h3>
+                    <p class="tool_description">Create artistic fragmented image effects</p>
+                </a>
+                <a href="./app/DataCompacter/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Data Compacter</h3>
+                    <p class="tool_description">Compress and optimize data for efficient storage</p>
+                </a>
+                <a href="./app/CSSProcessor/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">CSS Processor</h3>
+                    <p class="tool_description">Optimize and process CSS for better performance</p>
+                </a>
+                <a href="./app/touhou/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Bad Apple Video</h3>
+                    <p class="tool_description">Convert videos to ASCII art and special effects</p>
+                </a>
+                <a href="./app/SortingSound/" target="_blank" rel="noopener noreferrer" class="tool_card fade_in">
+                    <h3 class="tool_title">Sorting Sound</h3>
+                    <p class="tool_description">Visualize sorting algorithms with synchronized audio</p>
+                </a>
             </div>
         </main>
     </div>
-    <script src="./js/main.js"></script>
-    <script src="./js/translate.js"></script>
+
+    <script src="./app/landing/js/main.js"></script>
     <script type="application/ld+json">
     {
         "@context": "http://schema.org",
