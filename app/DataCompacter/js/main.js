@@ -17,274 +17,313 @@
 
     secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
 */
-const styleSelect = document.getElementById('select-style');
-const delimiterInput = document.getElementById('input-delimiter');
-const separatorInput = document.getElementById('input-keyval');
-const maxBytesInput = document.getElementById('input-maxbytes');
-const maxLinesInput = document.getElementById('input-maxlines');
-const inputTextarea = document.getElementById('textarea-input');
-const outputTextarea = document.getElementById('textarea-output');
-const processBtn = document.getElementById('button-process');
-const copyBtn = document.getElementById('button-copy');
-const errorDiv = document.getElementById('error-message');
 
-const validateInputs = () => {
-    const style = styleSelect.value;
-    const delimiter = delimiterInput.value;
-    const separator = separatorInput.value;
-    const maxBytes = parseInt(maxBytesInput.value);
-    const maxLines = parseInt(maxLinesInput.value);
-    const input = inputTextarea.value;
+/** @type {HTMLSelectElement} */
+const style_select = document.getElementById('select-style');
+/** @type {HTMLInputElement} */
+const delimiter_input = document.getElementById('input-delimiter');
+/** @type {HTMLInputElement} */
+const separator_input = document.getElementById('input-keyval');
+/** @type {HTMLInputElement} */
+const max_bytes_input = document.getElementById('input-maxbytes');
+/** @type {HTMLInputElement} */
+const max_lines_input = document.getElementById('input-maxlines');
+/** @type {HTMLTextAreaElement} */
+const input_textarea = document.getElementById('textarea-input');
+/** @type {HTMLTextAreaElement} */
+const output_textarea = document.getElementById('textarea-output');
+/** @type {HTMLButtonElement} */
+const process_btn = document.getElementById('button-process');
+/** @type {HTMLButtonElement} */
+const copy_btn = document.getElementById('button-copy');
+/** @type {HTMLDivElement} */
+const error_div = document.getElementById('error-message');
+
+/** @type {TextEncoder} */
+const text_encoder = new TextEncoder();
+
+/**
+ * Validates all input fields and returns validation status
+ * @returns {boolean} True if all inputs are valid, false otherwise
+ */
+const validate_inputs = () => {
+    const style = style_select.value;
+    const delimiter = delimiter_input.value;
+    const separator = separator_input.value;
+    const max_bytes = parseInt(max_bytes_input.value, 10);
+    const max_lines = parseInt(max_lines_input.value, 10);
+    const input = input_textarea.value;
 
     if (!input.trim()) {
-        showError('Input data is empty.');
+        show_error('Input data is empty.');
         return false;
     }
+    
     if (style === 'kvp' && !separator) {
-        showError('Key-value separator is empty.');
+        show_error('Key-value separator is empty.');
         return false;
     }
-    if (isNaN(maxBytes) || maxBytes < 1) {
-        showError('Max bytes per line must be a positive integer.');
+    
+    if (isNaN(max_bytes) || max_bytes < 1) {
+        show_error('Max bytes per line must be a positive integer.');
         return false;
     }
-    if (isNaN(maxLines) || maxLines < 1) {
-        showError('Max number of lines must be a positive integer.');
+    
+    if (isNaN(max_lines) || max_lines < 1) {
+        show_error('Max number of lines must be a positive integer.');
         return false;
     }
-    if (style === 'json') {
-        try {
-            JSON.parse(input);
-        } catch {
-            showError('Invalid JSON input.');
-            return false;
-        }
-    } else if (style === 'kvp') {
-        const lines = input.split(delimiter);
-        for (let line of lines) {
-            if (line.trim() && !line.includes(separator)) {
-                showError('Invalid KVP format: missing separator.');
+
+    if (style === 'kvp') {
+        const lines = input.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line && !line.includes(separator)) {
+                show_error('Invalid KVP format: missing separator.');
                 return false;
             }
         }
     }
+    
     return true;
-}
+};
 
-const showError = (message) => {
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    processBtn.disabled = true;
-}
+/**
+ * Displays an error message to the user
+ * @param {string} message - The error message to display
+ */
+const show_error = (message) => {
+    error_div.textContent = message;
+    error_div.style.display = 'block';
+    process_btn.disabled = true;
+};
 
-const clearError = () => {
-    errorDiv.textContent = '';
-    errorDiv.style.display = 'none';
-}
+/**
+ * Clears any displayed error messages
+ */
+const clear_error = () => {
+    error_div.textContent = '';
+    error_div.style.display = 'none';
+};
 
-const updateButtonState = () => {
-    const inputStates = {
+/**
+ * Updates the button state based on current input values
+ */
+const update_button_state = () => {
+    const input_states = {
         list: { separator: true, delimiter: false },
         raw: { separator: true, delimiter: true },
-        json: { separator: true, delimiter: true },
+        uuidlist: { separator: true, delimiter: false },
         kvp: { separator: false, delimiter: false }
     };
 
-    const state = inputStates[styleSelect.value] || inputStates.kvp;
-    separatorInput.disabled = state.separator;
-    delimiterInput.disabled = state.delimiter;
-    processBtn.disabled = !validateInputs();
+    const state = input_states[style_select.value] || input_states.kvp;
+    separator_input.disabled = state.separator;
+    delimiter_input.disabled = state.delimiter;
+    process_btn.disabled = !validate_inputs();
 };
 
-const getByteLength = (str) => {
-    return new TextEncoder().encode(str).length;
-}
+/**
+ * Calculates the byte length of a string using cached TextEncoder
+ * @param {string} str - The string to measure
+ * @returns {number} The byte length of the string
+ */
+const get_byte_length = (str) => {
+    return text_encoder.encode(str).length;
+};
 
-const processData = () => {
-    clearError();
-    if (!validateInputs()) return;
+/**
+ * Processes input data based on selected style and constraints
+ */
+const process_data = () => {
+    clear_error();
+    if (!validate_inputs()) return;
 
-    const style = styleSelect.value;
-    const delimiter = style === 'json' ? '' : delimiterInput.value;
-    const separator = separatorInput.value;
-    const maxBytes = parseInt(maxBytesInput.value);
-    const maxLines = parseInt(maxLinesInput.value);
-    const input = inputTextarea.value;
+    const style = style_select.value;
+    const delimiter = style === 'raw' ? '' : delimiter_input.value;
+    const separator = separator_input.value;
+    const max_bytes = parseInt(max_bytes_input.value, 10);
+    const max_lines = parseInt(max_lines_input.value, 10);
+    const input = input_textarea.value;
 
-    let outputLines = [];
-    let currentLine = '';
-    let currentByteCount = 0;
+    const output_lines = [];
+    let current_line = '';
+    let current_byte_count = 0;
 
-    if (style === 'raw') {
-        const strInput = input.split(/\r?\n/).map(item => item.trim()).filter(Boolean).join('');
+    /**
+     * Adds current line to output and resets line state
+     * @returns {boolean} True if max lines not exceeded, false otherwise
+     */
+    const flush_line = () => {
+        if (current_line) {
+            if (output_lines.length >= max_lines) {
+                show_error('Maximum number of lines exceeded.');
+                output_textarea.value = '';
+                return false;
+            }
+            output_lines.push(current_line);
+            current_line = '';
+            current_byte_count = 0;
+        }
+        return true;
+    };
 
-        let strWork = '';
-        let currentByteLength = 0;
+    /**
+     * Processes an item and adds it to the current line
+     * @param {string} item_str - The item string to process
+     * @param {boolean} [force_flush=false] - Whether to force flush before adding
+     * @returns {boolean} True if successful, false if max lines exceeded
+     */
+    const process_item = (item_str, force_flush = false) => {
+        const item_bytes = get_byte_length(item_str);
+        const delimiter_bytes = current_line && delimiter ? get_byte_length(delimiter) : 0;
+        const total_bytes = item_bytes + delimiter_bytes;
 
-        const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
-        const graphemes = [...segmenter.segment(strInput)].map(seg => seg.segment);
+        if (force_flush || current_byte_count + total_bytes > max_bytes) {
+            if (!flush_line()) return false;
+        }
 
-        for (const grapheme of graphemes) {
-            const charByteLength = getByteLength(grapheme);
+        if (current_line && delimiter) {
+            current_line += delimiter + item_str;
+            current_byte_count += delimiter_bytes + item_bytes;
+        } else {
+            current_line = item_str;
+            current_byte_count = item_bytes;
+        }
+        
+        return true;
+    };
 
-            if (currentByteLength + charByteLength > maxBytes) {
-                outputLines.push(strWork);
+    try {
+        if (style === 'raw') {
+            const cleaned_input = input.replace(/\r?\n/g, '').trim();
+            if (!cleaned_input) return;
+            
+            let str_work = '';
+            let current_byte_length = 0;
 
-                if (outputLines.length >= maxLines) {
-                    showError('Maximum number of lines exceeded.');
-                    outputTextarea.value = '';
-                    return;
+            for (let i = 0; i < cleaned_input.length; i++) {
+                const char = cleaned_input[i];
+                const char_byte_length = get_byte_length(char);
+
+                if (current_byte_length + char_byte_length > max_bytes) {
+                    if (output_lines.length >= max_lines) {
+                        show_error('Maximum number of lines exceeded.');
+                        output_textarea.value = '';
+                        return;
+                    }
+                    output_lines.push(str_work);
+                    str_work = char;
+                    current_byte_length = char_byte_length;
+                } else {
+                    str_work += char;
+                    current_byte_length += char_byte_length;
                 }
-
-                strWork = '';
-                currentByteLength = 0;
             }
 
-            strWork += grapheme;
-            currentByteLength += charByteLength;
-        }
-
-        if (strWork) {
-            outputLines.push(strWork);
-        }
-
-    }
-    else if (style === 'list') {
-        const items = input.split(/\r?\n/).filter(item => item.trim());
-
-        for (let item of items) {
-            const itemStr = item.trim();
-            const itemBytes = getByteLength(itemStr);
-            const delimiterBytes = currentLine && delimiter ? getByteLength(delimiter) : 0;
-
-            if (currentByteCount + itemBytes + delimiterBytes <= maxBytes) {
-                currentLine += currentLine && delimiter ? delimiter + itemStr : itemStr;
-                currentByteCount += itemBytes + delimiterBytes;
+            if (str_work && output_lines.length < max_lines) {
+                output_lines.push(str_work);
             }
-            else {
-                if (currentLine) outputLines.push(currentLine);
-                if (outputLines.length >= maxLines) {
-                    showError('Maximum number of lines exceeded.');
-                    outputTextarea.value = '';
-                    return;
+        } 
+        else if (style === 'list' || style === 'uuidlist') {
+            const lines = input.split('\n');
+            const items = [];
+            
+            if (style === 'uuidlist') {
+                const uuid_regex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+                const seen = new Set();
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    let match;
+                    while ((match = uuid_regex.exec(line)) !== null) {
+                        const uuid = match[0].toLowerCase();
+                        if (!seen.has(uuid)) {
+                            seen.add(uuid);
+                            items.push(match[0]);
+                        }
+                    }
                 }
-                currentLine = itemStr;
-                currentByteCount = itemBytes;
-            }
-        }
-        if (currentLine) outputLines.push(currentLine);
-
-    }
-    else if (style === 'uuidlist') {
-
-        const uuidRegex = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
-
-        // Extract all UUIDs from input, preserve first occurrence’s case, ensure uniqueness (case-insensitive)
-        const seen = new Set();
-        const matches = [];
-
-        (input.match(uuidRegex) || []).forEach(u => {
-            const lower = u.toLowerCase();
-            if (!seen.has(lower)) {
-                seen.add(lower);
-                matches.push(u); // keep case as in text
-            }
-        });
-
-        for (let item of matches) {
-            const itemStr = item.trim();
-            const itemBytes = getByteLength(itemStr);
-            const delimiterBytes = currentLine && delimiter ? getByteLength(delimiter) : 0;
-
-            if (currentByteCount + itemBytes + delimiterBytes <= maxBytes) {
-                currentLine += currentLine && delimiter ? delimiter + itemStr : itemStr;
-                currentByteCount += itemBytes + delimiterBytes;
             } else {
-                if (currentLine) outputLines.push(currentLine);
-                if (outputLines.length >= maxLines) {
-                    showError('Maximum number of lines exceeded.');
-                    outputTextarea.value = '';
+                for (let i = 0; i < lines.length; i++) {
+                    const item = lines[i].trim();
+                    if (item) items.push(item);
+                }
+            }
+
+            for (let i = 0; i < items.length; i++) {
+                if (!process_item(items[i])) return;
+            }
+        } 
+        else if (style === 'kvp') {
+            const lines = input.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                if (!line.includes(separator)) {
+                    show_error('Invalid KVP format: missing separator.');
+                    output_textarea.value = '';
                     return;
                 }
-                currentLine = itemStr;
-                currentByteCount = itemBytes;
+                
+                const separator_index = line.indexOf(separator);
+                const key = line.substring(0, separator_index).trim();
+                const value = line.substring(separator_index + separator.length).trim();
+                const kv_str = key + separator + value;
+                
+                if (!process_item(kv_str)) return;
             }
         }
 
-        if (currentLine) outputLines.push(currentLine);
-    }
-    else if (style === 'kvp') {
-        const pairs = input.split(/\r?\n/).filter(pair => pair.trim());
-        for (let pair of pairs) {
-            const pairStr = pair.trim();
-            if (!pairStr.includes(separator)) {
-                showError('Invalid KVP format: missing separator.');
-                outputTextarea.value = '';
-                return;
-            }
-            // Split into key and value using the first occurrence of the separator
-            const [key, ...rest] = pairStr.split(separator);
-            const value = rest.join(separator); // In case value contains the separator
-            const kvStr = `${key.trim()}${separator}${value.trim()}`;
-
-            const kvBytes = getByteLength(kvStr);
-            const delimiterBytes = currentLine && delimiter ? getByteLength(delimiter) : 0;
-
-            if (currentByteCount + kvBytes + delimiterBytes <= maxBytes) {
-                currentLine += currentLine && delimiter ? delimiter + kvStr : kvStr;
-                currentByteCount += kvBytes + delimiterBytes;
-            }
-            else {
-                if (currentLine) outputLines.push(currentLine);
-                if (outputLines.length >= maxLines) {
-                    showError('Maximum number of lines exceeded.');
-                    outputTextarea.value = '';
-                    return;
-                }
-                currentLine = kvStr;
-                currentByteCount = kvBytes;
-            }
+        if (current_line && output_lines.length < max_lines) {
+            output_lines.push(current_line);
         }
-        if (currentLine) outputLines.push(currentLine);
+
+        if (output_lines.length > max_lines) {
+            show_error('Maximum number of lines exceeded.');
+            output_textarea.value = '';
+            return;
+        }
+
+        output_textarea.value = output_lines.join('\n');
+    } catch (error) {
+        show_error('An unexpected error occurred during processing.');
+        console.error('Processing error:', error);
     }
+};
 
-    if (outputLines.length > maxLines) {
-        showError('Maximum number of lines exceeded.');
-        outputTextarea.value = '';
-        return;
+// Event listeners with optimized event handling
+style_select.addEventListener('change', update_button_state);
+input_textarea.addEventListener('input', update_button_state);
+delimiter_input.addEventListener('input', update_button_state);
+separator_input.addEventListener('input', update_button_state);
+max_bytes_input.addEventListener('input', update_button_state);
+max_lines_input.addEventListener('input', update_button_state);
+
+process_btn.addEventListener('click', process_data);
+
+copy_btn.addEventListener('click', () => {
+    if (output_textarea.value) {
+        navigator.clipboard.writeText(output_textarea.value).catch(err => {
+            console.error('Failed to copy text:', err);
+        });
     }
-
-    outputTextarea.value = outputLines.join('\n');
-    //maxLinesInput.value = outputLines.length;
-}
-
-styleSelect.addEventListener('change', () => {
-    updateButtonState();
 });
 
-inputTextarea.addEventListener('input', updateButtonState);
-delimiterInput.addEventListener('input', updateButtonState);
-separatorInput.addEventListener('input', updateButtonState);
-maxBytesInput.addEventListener('input', updateButtonState);
-maxLinesInput.addEventListener('input', updateButtonState);
-
-processBtn.addEventListener('click', processData);
-
-copyBtn.addEventListener('click', () => {
-    if (outputTextarea.value) {
-        navigator.clipboard.writeText(outputTextarea.value);
-        //alert('Output copied to clipboard!');
-    }
-});
-
-inputTextarea.addEventListener('keydown', (e) => {
+input_textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
         e.preventDefault();
-        const start = inputTextarea.selectionStart;
-        const end = inputTextarea.selectionEnd;
-        inputTextarea.value = inputTextarea.value.substring(0, start) + '\t' + inputTextarea.value.substring(end);
-        inputTextarea.selectionStart = inputTextarea.selectionEnd = start + 1;
+        const start = input_textarea.selectionStart;
+        const end = input_textarea.selectionEnd;
+        input_textarea.value = input_textarea.value.substring(0, start) + '\t' + input_textarea.value.substring(end);
+        input_textarea.selectionStart = input_textarea.selectionEnd = start + 1;
+        update_button_state();
     }
 });
 
-updateButtonState();
+// Initialize button state
+update_button_state();

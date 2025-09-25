@@ -29,10 +29,18 @@
 <body class="app-body">
     <link rel="stylesheet" href="./css/style.css">
     <div class="app-container">
-        <h1 class="app-title">Data Compacter</h1>
-        <div class="form-group">
-            <label class="form-label" for="input-style">Input Style</label>
-            <div class="tooltip-container">
+        <header class="app-header">
+            <h1 class="app-title">Data Compacter</h1>
+        </header>
+        
+        <div class="app-content">
+            <div class="form-group">
+                <label class="form-label" for="select-style">
+                    Input Style <span class="tooltip-container">
+                        <span class="tooltip-icon">?</span>
+                        <span class="tooltip-text">Select the format of your input data</span>
+                    </span>
+                </label>
                 <select class="form-select" id="select-style">
                     <option value="raw" selected>Raw</option>
                     <option value="list">List</option>
@@ -40,54 +48,64 @@
                     <option value="kvp">KVP</option>
                 </select>
             </div>
-        </div>
-        <div class="form-group-inline form-group">
-            <div>
-                <label class="form-label" for="input-delimiter">Entry Delimiter</label>
-                <input class="form-text-input" id="input-delimiter" value="\n">
+            
+            <div class="form-group-inline form-group">
+                <div>
+                    <label class="form-label" for="input-delimiter">Entry Delimiter</label>
+                    <input class="form-input-text" id="input-delimiter" value="\n">
+                </div>
+                <div>
+                    <label class="form-label" for="input-keyval">Separator</label>
+                    <input class="form-input-text" id="input-keyval" value="=" disabled>
+                </div>
             </div>
-            <div>
-                <label class="form-label" for="input-keyval">Separator</label>
-                <input class="form-text-input" id="input-keyval" value="=" disabled>
+            
+            <div class="form-group-inline">
+                <div>
+                    <label class="form-label" for="input-maxbytes">Max Bytes per Line</label>
+                    <input class="form-input-number" id="input-maxbytes" value="1024" type="number" min="1">
+                </div>
+                <div>
+                    <label class="form-label" for="input-maxlines">Max Number of Lines</label>
+                    <input class="form-input-number" id="input-maxlines" value="256" type="number" min="1">
+                </div>
             </div>
-        </div>
-        <div class="form-group-inline">
-            <div>
-                <label class="form-label" for="input-maxbytes">Max Bytes per Line</label>
-                <input class="form-number-input" id="input-maxbytes" value="1024" type="number" min="1">
+            
+            <div class="form-group">
+                <label class="form-label" for="textarea-input">Input Data</label>
+                <textarea class="form-textarea" id="textarea-input" placeholder="Enter your data here"></textarea>
             </div>
-            <div>
-                <label class="form-label" for="input-maxlines">Max Number of Lines</label>
-                <input class="form-number-input" id="input-maxlines" value="256" type="number" min="1">
+            
+            <div class="error-message" id="error-message"></div>
+            
+            <div class="form-group">
+                <label class="form-label" for="textarea-output">Output Result</label>
+                <textarea class="form-textarea" id="textarea-output" readonly placeholder="Output will appear here"></textarea>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="form-label" for="textarea-input">Input Data</label>
-            <textarea class="form-textarea" id="textarea-input" placeholder="Enter your data here"></textarea>
-        </div>
-        <div class="error-message" id="error-message"></div>
-        <div class="form-group">
-            <label class="form-label" for="textarea-output">Output Result</label>
-            <textarea class="form-textarea" id="textarea-output" readonly
-                placeholder="Output will appear here"></textarea>
-        </div>
-        <div class="button-group">
-            <button class="form-button button-primary" id="button-process" disabled>Process</button>
-            <button class="form-button button-secondary" id="button-copy">Copy</button>
+            
+            <div class="button-group">
+                <button class="form-button button-primary" id="button-process" disabled>
+                    <span class="status-indicator status-ready"></span>
+                    Process Data
+                </button>
+                <button class="form-button button-secondary" id="button-copy">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+                    </svg>
+                    Copy Result
+                </button>
+            </div>
         </div>
 
         <footer>
             <p>Data Compacter is not affiliated with or sponsored by Linden Research, Inc.</p>
-            <p>Built with <a href="https://github.com/orling/grapheme-splitter" target="_blank" rel="noopener">grapheme-splitter</a> 
-                (MIT License) by Orlin Georgiev</p>
-            <p>Developed by <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a> 
-                under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>.</p>
+            <p>Built with <a href="https://github.com/orling/grapheme-splitter" target="_blank" rel="noopener">grapheme-splitter</a> (MIT License) by Orlin Georgiev</p>
+            <p>Developed by <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a> under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>.</p>
         </footer>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/grapheme-splitter@1.0.4/index.min.js"></script>
     <script src="./js/main.js"></script>
-    <!-- <script src="./js/test.js"></script> -->
-
 </body>
 
 </html>
