@@ -30,135 +30,172 @@
         },
         "softwareVersion": "1.0.0",
         "url": "https://mdoneilsl.github.io/app/2DFonts/",
-        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
     }
     </script>
+
 </head>
 
 <body>
-    <link rel="stylesheet" href="css/style.css">
-    <div class="container">
-        <div class="nav_pan">
-            <div style="display:flex">
-                <div id="tool_btn" class="tool_btn" role="button" aria-label="Toggle settings panel">🔧 🡐 🡐 🡐</div>
-            </div>
-            <div class="nav_tool">
-                <div>
-                    <label for="width_sel">Width:</label>
-                    <select id="width_sel" aria-label="Canvas width">
-                        <option value="16">16</option>
-                        <option value="32">32</option>
-                        <option value="64">64</option>
-                        <option value="128">128</option>
-                        <option value="256" selected>256</option>
-                        <option value="512">512</option>
-                        <option value="1024">1024</option>
-                        <option value="2048">2048</option>
-                    </select>
-                      
-                    <label for="height_sel">Height:</label>
-                    <select id="height_sel" aria-label="Canvas height">
-                        <option value="16">16</option>
-                        <option value="32">32</option>
-                        <option value="64">64</option>
-                        <option value="128">128</option>
-                        <option value="256" selected>256</option>
-                        <option value="512">512</option>
-                        <option value="1024">1024</option>
-                        <option value="2048">2048</option>
-                    </select>
+    <link rel="stylesheet" href="./css/style.css">
+    <div class="app_container">
+        <header class="header">
+            <div class="header_content">
+                <button id="tool_btn" class="button_icon" aria-label="Toggle settings panel">
+                    ⚙️ Settings
+                </button>
+
+                <div class="header_group">
+                    <div class="control_group">
+                        <span class="control_label">Width:</span>
+                        <select id="width_sel" class="select" aria-label="Canvas width">
+                            <option value="16">16</option>
+                            <option value="32">32</option>
+                            <option value="64">64</option>
+                            <option value="128">128</option>
+                            <option value="256" selected>256</option>
+                            <option value="512">512</option>
+                            <option value="1024">1024</option>
+                            <option value="2048">2048</option>
+                        </select>
+
+                        <span class="control_label">Height:</span>
+                        <select id="height_sel" class="select" aria-label="Canvas height">
+                            <option value="16">16</option>
+                            <option value="32">32</option>
+                            <option value="64">64</option>
+                            <option value="128">128</option>
+                            <option value="256" selected>256</option>
+                            <option value="512">512</option>
+                            <option value="1024">1024</option>
+                            <option value="2048">2048</option>
+                        </select>
+                    </div>
+
+                    <div class="control_group">
+                        <span class="control_label">Zoom:</span>
+                        <span id="ft_zoom_btn" class="control_label" aria-live="polite">100%</span>
+
+                        <div class="checkbox_group">
+                            <input type="checkbox" id="ft_grid_btn" class="checkbox" aria-label="Toggle grid">
+                            <label for="ft_grid_btn" class="control_label">Grid</label>
+                        </div>
+
+                        <button id="export_act" class="button" aria-label="Export canvas as PNG">
+                            📥 Export
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="nav_tool" style="padding-left:5px">
-                <div>
-                    <span>🔎 Zoom: </span>
-                    <span id="ft_zoom_btn" aria-live="polite">100%</span>
-                </div>
-                  
-                <div>
-                    <input id="ft_grid_btn" type="checkbox" aria-label="Toggle grid">
-                    <label for="ft_grid_btn">Show Grid</label>
-                </div>
-                  
-                <button id="export_act" aria-label="Export canvas as PNG">Export Font</button>
+        </header>
+
+        <main class="preview_area">
+            <canvas id="graph" class="preview_canvas" role="img" aria-label="Font texture preview"></canvas>
+        </main>
+
+        <footer class="footer">
+            <div class="footer_content">
+                <p class="footer_text">2D Font Texture Generator is not affiliated with or sponsored by Linden Research,
+                    Inc.</p>
+                <p class="footer_text">Developed by MdONeil under the GNU v3 License. Contact:
+                    <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                        class="footer_link">MdONeil</a>
+                </p>
+                <p class="footer_text">
+                    <a href="https://www.gnu.org/licenses/gpl-3.0.html" class="footer_link">GNU v3 License</a>
+                </p>
             </div>
-        </div>
-        <div class="view_canv">
-            <canvas id="graph" role="img" aria-label="Font texture preview"></canvas>
-        </div>
-        <div class="status_bar"></div>
+        </footer>
     </div>
 
-    <fieldset id="tool_fld" class="tool_pan hidden">
-        <input type="text" id="font_family" placeholder="font family" class="tool_item" aria-label="Font family">
-        <input type="text" id="char_list" placeholder="characters" class="tool_item" aria-label="Characters to render">
-        <div class="tool_row">
-            <select id="font_weight" class="item_grow tool_item" aria-label="Font weight">
-                <option value="normal">font weight</option>
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-            </select>
-            <select id="font_style" class="item_grow tool_item" aria-label="Font style">
-                <option value="normal">font style</option>
-                <option value="normal">Normal</option>
-                <option value="italic">Italic</option>
-            </select>
-            <select id="fill_style" class="item_grow tool_item" aria-label="Fill style">
-                <option value="fill">fill style</option>
-                <option value="fill">Fill</option>
-                <option value="stroke">Stroke</option>
-            </select>
+    <div id="overlay" class="overlay hidden"></div>
+
+    <div id="tool_fld" class="settings_panel hidden">
+        <div class="settings_header">
+            <h2 class="settings_title">Font Settings</h2>
+            <button id="tool_close_btn" class="button_icon" aria-label="Close settings panel">✕</button>
         </div>
-        <div class="tool_row">
-            <input type="checkbox" style="visibility: hidden;">
-            <label class="tool_item">Color: </label>
-            <input type="color" id="font_color" value="#000000" aria-label="Font color">
-            <input type="range" id="font_alpha" class="item_grow tool_item" step="0.01" min="0" max="1" value="1"
-                aria-label="Font opacity">
+
+        <div class="settings_grid">
+            <input type="text" id="font_family" placeholder="Font family" class="text_input" aria-label="Font family">
+            <input type="text" id="char_list" placeholder="Characters to render" class="text_input"
+                aria-label="Characters to render">
+
+            <div class="settings_row">
+                <select id="font_weight" class="select" aria-label="Font weight">
+                    <option value="normal">Normal</option>
+                    <option value="bold">Bold</option>
+                </select>
+                <select id="font_style" class="select" aria-label="Font style">
+                    <option value="normal">Normal</option>
+                    <option value="italic">Italic</option>
+                </select>
+                <select id="fill_style" class="select" aria-label="Fill style">
+                    <option value="fill">Fill</option>
+                    <option value="stroke">Stroke</option>
+                </select>
+            </div>
+
+            <div class="settings_row">
+                <label class="settings_label">Text Color:</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="font_color" value="#000000" class="color_input" aria-label="Font color">
+                    <input type="range" id="font_alpha" class="range_input" step="0.01" min="0" max="1" value="1"
+                        aria-label="Font opacity">
+                </div>
+            </div>
+
+            <div class="settings_row">
+                <label class="settings_label">Background:</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="back_color" value="#FFFFFF" class="color_input"
+                        aria-label="Background color">
+                    <input type="range" id="back_alpha" class="range_input" step="0.01" min="0" max="1" value="0"
+                        aria-label="Background opacity">
+                </div>
+            </div>
+
+            <div class="settings_row">
+                <div class="checkbox_group">
+                    <input type="checkbox" id="shadow_chb" class="checkbox" aria-label="Enable shadow">
+                    <label for="shadow_chb" class="settings_label">Shadow</label>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="shadow_color" value="#000000" class="color_input" aria-label="Shadow color">
+                    <input type="range" id="shadow_x" class="range_input" value="0" max="10" min="-10" step="1"
+                        aria-label="Shadow X offset">
+                    <input type="range" id="shadow_y" class="range_input" value="0" max="10" min="-10" step="1"
+                        aria-label="Shadow Y offset">
+                </div>
+            </div>
+
+            <div class="settings_row">
+                <div class="checkbox_group">
+                    <input type="checkbox" id="glowing_chb" class="checkbox" aria-label="Enable glow">
+                    <label for="glowing_chb" class="settings_label">Glow</label>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="glowing_color" value="#FFFFFF" class="color_input" aria-label="Glow color">
+                    <input type="range" id="glowing_dist" class="range_input" max="20" min="0" step="1" value="1"
+                        aria-label="Glow distance">
+                </div>
+            </div>
+
+            <div class="settings_row">
+                <div class="checkbox_group">
+                    <input type="checkbox" id="blurred_chb" class="checkbox" aria-label="Enable blur">
+                    <label for="blurred_chb" class="settings_label">Blur</label>
+                </div>
+                <input type="range" id="blurred_dist" class="range_input" max="10" min="0" step="0.1" value="1"
+                    aria-label="Blur distance">
+            </div>
         </div>
-        <div class="tool_row">
-            <input type="checkbox" style="visibility: hidden;">
-            <label class="tool_item">Back: </label>
-            <input type="color" id="back_color" value="#FFFFFF" aria-label="Background color">
-            <input type="range" id="back_alpha" class="item_grow tool_item" step="0.01" min="0" max="1" value="0"
-                aria-label="Background opacity">
-        </div>
-        <div class="tool_row">
-            <input type="checkbox" id="shadow_chb" aria-label="Enable shadow">
-            <label for="shadow_chb" class="tool_item">Shadowed: </label>
-            <input type="color" id="shadow_color" value="#000000" aria-label="Shadow color">
-            <input type="range" id="shadow_x" class="item_grow tool_item" value="0" max="10" min="-10" step="1"
-                aria-label="Shadow X offset">
-            <input type="range" id="shadow_y" class="item_grow tool_item" value="0" max="10" min="-10" step="1"
-                aria-label="Shadow Y offset">
-        </div>
-        <div class="tool_row">
-            <input type="checkbox" id="glowing_chb" aria-label="Enable glow">
-            <label for="glowing_chb" class="tool_item">Glowing: </label>
-            <input type="color" id="glowing_color" value="#FFFFFF" aria-label="Glow color">
-            <input type="range" id="glowing_dist" class="item_grow tool_item" max="20" min="0" step="1" value="1"
-                aria-label="Glow distance">
-        </div>
-        <div class="tool_row">
-            <input type="checkbox" id="blurred_chb" aria-label="Enable blur">
-            <label for="blurred_chb" class="tool_item">Blurred: </label>
-            <input type="range" id="blurred_dist" class="item_grow tool_item" max="10" min="0" step="0.1" value="1"
-                aria-label="Blur distance">
-        </div>
-        <button id="tool_close_btn" aria-label="Close settings panel">OK</button>
-    </fieldset>
+    </div>
 
     <div id="worker" style="display:none">
         <canvas id="canv_char"></canvas>
         <canvas id="canv_tex"></canvas>
     </div>
-
-    <footer>
-        <p>2D Font Texture Generator is not affiliated with or sponsored by Linden Research, Inc.</p>
-        <p>Developed by MdONeil under the GNU v3 License. Contact: <a
-                href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
-        <p><a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a></p>
-    </footer>
 
     <script src="js/main.js"></script>
 </body>
