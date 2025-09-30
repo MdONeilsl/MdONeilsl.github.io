@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Font Generator</title>
+    <meta name="description" content="Free online 3D font generator tool for Second Life® creators. Transform text into 3D models for virtual world content creation using custom TTF, OTF, and WOFF fonts.">
+    <meta name="keywords" content="3D font generator, Second Life content creation, 3D text creator, virtual world tools, TTF to 3D, font modeling">
+    <meta name="author" content="3D Font Generator">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Schema.org markup for SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "3D Font Generator",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web Browser",
+      "description": "Web-based tool for creating 3D text models from custom fonts, designed for virtual world content creation",
+      "featureList": "Font upload, 3D modeling, bevel controls, glTF export",
+      "softwareVersion": "1.0",
+      "copyrightYear": "2023",
+      "creator": {
+        "@type": "Organization",
+        "name": "3D Font Generator"
+      }
+    }
+    </script>
+    
+    <style>
+       
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@latest/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@latest/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <link rel="stylesheet" href="./css/styles.css">
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cube logo-icon"></i>
+                    <div>
+                        <h1>3D Font</h1>
+                        <div class="tagline">Transform your text into 3D models</div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="reset-btn" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-font"></i>
+                <h2 class="card-title">Font & Text</h2>
+            </div>
+            <div class="form-group">
+                <label for="font-upload">
+                    <i class="fas fa-upload"></i> Upload Custom Font (TTF, OTF, WOFF)
+                </label>
+                <input type="file" id="font-upload" accept=".ttf,.otf,.woff">
+            </div>
+            <div class="form-group">
+                <label for="text-input">
+                    <i class="fas fa-text-height"></i> Enter Text
+                </label>
+                <input type="text" id="text-input" placeholder="Type your text here...">
+            </div>
+            <div id="error"></div>
+            <progress id="progress" max="100" value="0"></progress>
+        </div>
+
+        <div class="settings-grid">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2 class="card-title">3D Settings</h2>
+                </div>
+                <div class="form-group">
+                    <label for="depth">Depth</label>
+                    <div class="range-container">
+                        <input type="range" id="depth" min="0.01" max="10" step="0.01" value="1">
+                        <span class="range-value" id="depth-value">1.00</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="curveSegments">Curve Segments</label>
+                    <div class="range-container">
+                        <input type="range" id="curveSegments" min="1" max="50" step="1" value="12">
+                        <span class="range-value" id="curveSegments-value">12</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="steps">Steps</label>
+                    <div class="range-container">
+                        <input type="range" id="steps" min="1" max="50" step="1" value="1">
+                        <span class="range-value" id="steps-value">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-cube"></i>
+                    <h2 class="card-title">Bevel Settings</h2>
+                </div>
+                <div class="toggle-label">
+                    <span>Enable Bevel</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="bevelEnabled">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="bevelThickness">Thickness</label>
+                    <div class="range-container">
+                        <input type="range" id="bevelThickness" min="0" max="2" step="0.01" value="0.2">
+                        <span class="range-value" id="bevelThickness-value">0.20</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bevelSize">Size</label>
+                    <div class="range-container">
+                        <input type="range" id="bevelSize" min="0" max="2" step="0.01" value="0.1">
+                        <span class="range-value" id="bevelSize-value">0.10</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bevelOffset">Offset</label>
+                    <div class="range-container">
+                        <input type="range" id="bevelOffset" min="-2" max="2" step="0.01" value="0">
+                        <span class="range-value" id="bevelOffset-value">0.00</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bevelSegments">Segments</label>
+                    <div class="range-container">
+                        <input type="range" id="bevelSegments" min="0" max="5" step="1" value="3">
+                        <span class="range-value" id="bevelSegments-value">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="button-group">
+                <button id="generate-btn" class="btn btn-primary">
+                    <i class="fas fa-cube"></i> Generate 3D Fonts
+                </button>
+                <button id="save-btn" class="btn btn-secondary" disabled>
+                    <i class="fas fa-download"></i> Download ZIP
+                </button>
+            </div>
+        </div>
+
+        <div class="char-selector">
+            <label for="char_sel">Character Preview</label>
+            <input type="range" id="char_sel" min="0" max="0" value="0">
+        </div>
+
+        <div id="preview"></div>
+
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <ol>
+                <li>Upload a TTF, OTF, or WOFF font file containing all desired characters. You can find fonts at:
+                    <ul>
+                        <li>Online: Google Fonts, FontSquirrel, or DaFont.</li>
+                        <li>On Your Computer: Check C:\Windows\Fonts (Windows) or /Library/Fonts (macOS).</li>
+                    </ul>
+                </li>
+                <li>Verify font licensing for your use case.</li>
+                <li>Enter text. Only characters in the font will be processed; others will be skipped and shown below.
+                </li>
+                <li>Click "Generate 3D Fonts" to process the text.</li>
+                <li>Click "Download ZIP" to save the generated glTF (.gltf) files.</li>
+            </ol>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 3D Font Generator. All rights reserved.</p>
+            <p>Second Life® is a registered trademark of Linden Research, Inc. This tool is not affiliated with or sponsored by Linden Research.</p>
+            <div class="footer-links">
+                <span>Powered by:</span>
+                <a href="https://threejs.org/" target="_blank">Three.js (MIT)</a> |
+                <a href="https://opentype.js.org/" target="_blank">opentype.js (MIT)</a> |
+                <a href="https://stuk.github.io/jszip/" target="_blank">JSZip (MIT)</a> |
+                <a href="/licenses">View License Details</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
+
+</body>
+
+</html>
