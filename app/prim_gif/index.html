@@ -14,15 +14,22 @@
         "author": { "@type": "Person", "name": "MdONeil", "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" }, "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } "url": "https://mdoneilsl.github.io/app/prim_gif/",
         "license": "https://www.gnu.org/licenses/gpl-3.0.html", }
     </script>
-    <link rel=stylesheet href=./css/style.css>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <link rel="stylesheet" href="./css/style.css">
     <div id="container">
-        <div id="controls">
+        <header>
+            <h1>Media to Prim</h1>
+            <p class="subtitle">Extract frames from video and GIF images to create Second Life ready assets.</p>
+        </header>
 
-            <div>
-                <label for="maxCanvasSize">Max Image Size:</label>
+        <div id="controls">
+            <div class="control-group">
+                <label for="maxCanvasSize">Max Image Size</label>
                 <select id="maxCanvasSize">
                     <option value="64">64</option>
                     <option value="128">128</option>
@@ -32,8 +39,8 @@
                     <option value="2048" selected>2048</option>
                 </select>
             </div>
-            <div>
-                <label for="maxFrameSize">Max Frame Size:</label>
+            <div class="control-group">
+                <label for="maxFrameSize">Max Frame Size</label>
                 <select id="maxFrameSize">
                     <option value="64">64</option>
                     <option value="128">128</option>
@@ -43,8 +50,8 @@
                     <option value="2048">2048</option>
                 </select>
             </div>
-            <div>
-                <label for="videoFps">FPS Target:</label>
+            <div class="control-group">
+                <label for="videoFps">FPS Target</label>
                 <select id="videoFps">
                     <option value="15" selected>15 FPS</option>
                     <option value="24">24 FPS</option>
@@ -54,8 +61,8 @@
                     <option value="60">60 FPS</option>
                 </select>
             </div>
-            <div>
-                <label for="objectSide">Side Target:</label>
+            <div class="control-group">
+                <label for="objectSide">Side Target</label>
                 <select id="objectSide">
                     <option value="0" selected>Side 0</option>
                     <option value="1">Side: 1</option>
@@ -68,23 +75,41 @@
                     <option value="8">Side: 8</option>
                 </select>
             </div>
-            <div>
-                <label for="input">Select GIF or Video:</label>
-                <input type="file" id="input" accept="image/gif,video/mp4,video/webm">
+            <div class="control-group">
+                <label for="input">Select GIF or Video</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="input" accept="image/gif,video/mp4,video/webm">
+                    <div class="file-input-button">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Choose File
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <label for="button-save">Save to disk:</label>
-                <button class="form-button button-primary" id="button-save" disabled>Save</button>
+            <div class="control-group">
+                <label for="button-save">Save to disk</label>
+                <button class="form-button button-primary" id="button-save" disabled>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                    </svg>
+                    Save
+                </button>
             </div>
         </div>
+
         <div id="progressContainer">
             <progress id="progressBar" value="0" max="100"></progress>
         </div>
+
         <div id="messageContainer"></div>
+
         <div id="canvasContainer"></div>
+
         <textarea id="canvasInfo" readonly placeholder="Canvas Information will appear here."></textarea>
-        <div id="mediaContainer"><img id="hiddenImage">
+
+        <div id="mediaContainer">
+            <img id="hiddenImage">
             <video id="hiddenVideo" muted></video>
         </div>
         
@@ -103,12 +128,10 @@
                 href="https://marketplace.secondlife.com/p/Media-to-Prim-v10/27079803">Media to Prim v1.0</a>
                 -->
         </div>
-        
     </div>
-    <footer
-        style="margin-top: 20px; font-size: 0.9em; color: #555; text-align: center; background-color: #f0f0f0; border-top: 1px solid #ddd; border-radius: 8px; padding: 15px;">
-        <p>Second Life and SL are trademarks of Linden Research, Inc. Media to Prim is not affiliated with or sponsored
-            by Linden Research.</p>
+
+    <footer>
+        <p>Second Life and SL are trademarks of Linden Research, Inc. Media to Prim is not affiliated with or sponsored by Linden Research.</p>
         <p>libgif-js (MIT License) by Johan Nordberg.</p>
         <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>. 
             Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
@@ -117,7 +140,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/libgif@0.0.3/libgif.min.js"></script>
     <script src="./js/script.js"></script>
-    <script src="./js/lang.js"></script>
+    <!-- <script src="./js/lang.js"></script> -->
 </body>
 
 </html>
