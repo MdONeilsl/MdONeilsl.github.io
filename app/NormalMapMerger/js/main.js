@@ -1,3 +1,4 @@
+
 /*
     Normal Map Merger: A tool for merging two normal maps.
     Copyright (C) 2025  MdONeil 
@@ -18,39 +19,56 @@
     secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
 */
 
-const baseInput = document.getElementById('baseInput');
-const addInput = document.getElementById('addInput');
-const conventionSelect = document.getElementById('convention');
-const intensityInput = document.getElementById('intensity');
-const fallbackAlphaInput = document.getElementById('fallbackAlpha');
-const mergeButton = document.querySelector('button');
-const previewCanvas = document.getElementById('preview');
-const progressContainer = document.getElementById('progress-container');
-const progressBar = document.getElementById('progress-bar');
-const errorMessage = document.getElementById('error-message');
-const downloadButton = document.getElementById('download');
-let resultImageData;
-let isProcessing = false; // Track processing state
+const base_input = document.getElementById('baseInput');
+const add_input = document.getElementById('addInput');
+const convention_select = document.getElementById('convention');
+const intensity_input = document.getElementById('intensity');
+const fallback_alpha_input = document.getElementById('fallbackAlpha');
+const merge_button = document.querySelector('button');
+const preview_canvas = document.getElementById('preview');
+const progress_container = document.getElementById('progress-container');
+const progress_bar = document.getElementById('progress-bar');
+const error_message = document.getElementById('error-message');
+const download_button = document.getElementById('download');
+let result_image_data;
+let is_processing = false;
 
-function showError(msg) {
-    errorMessage.textContent = msg;
-    errorMessage.style.display = 'block';
-    progressContainer.style.display = 'none';
-    previewCanvas.style.display = 'none';
-    downloadButton.style.display = 'none';
-    isProcessing = false;
-    if (mergeButton) {
-        mergeButton.classList.remove('loading');
-        mergeButton.textContent = 'Merge Normal Maps'; // Restore button text
+/**
+ * Displays an error message and updates UI accordingly
+ * @param {string} msg - The error message to display
+ */
+const show_error = (msg) => {
+    error_message.textContent = msg;
+    error_message.style.display = 'block';
+    progress_container.style.display = 'none';
+    preview_canvas.style.display = 'none';
+    download_button.style.display = 'none';
+    is_processing = false;
+    if (merge_button) {
+        merge_button.classList.remove('loading');
+        merge_button.textContent = 'Merge Normal Maps';
     }
 }
 
-function clearError() {
-    errorMessage.style.display = 'none';
+/**
+ * Clears any displayed error messages
+ */
+const clear_error = () => {
+    error_message.style.display = 'none';
 }
 
-function loadImage(file) {
+/**
+ * Loads an image from a file with validation
+ * @param {File} file - The image file to load
+ * @returns {Promise<HTMLImageElement>} Promise resolving to loaded image
+ */
+const load_image = (file) => {
     return new Promise((resolve, reject) => {
+        if (!file.type.startsWith('image/')) {
+            reject('Invalid file type. Please upload an image.');
+            return;
+        }
+
         const img = new Image();
         img.onload = () => {
             if (img.width > 2048 || img.height > 2048) {
@@ -59,36 +77,49 @@ function loadImage(file) {
                 resolve(img);
             }
         };
-        img.onerror = () => {
-            let errorMsg = 'Failed to load image.';
-            if (file.type && !file.type.startsWith('image/')) {
-                errorMsg = 'Invalid file type. Please upload an image.';
-            }
-            reject(errorMsg);
-        };
+        img.onerror = () => reject('Failed to load image. The image may be corrupted.');
         img.src = URL.createObjectURL(file);
     });
 }
 
-function getImageData(img, canvas) {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
+/**
+ * Extracts ImageData from an image using a canvas
+ * @param {HTMLImageElement} img - The source image
+ * @param {HTMLCanvasElement} canvas - The canvas to use for rendering
+ * @returns {ImageData} The image data extracted from the canvas
+ */
+const get_image_data = (img, canvas) => {
+    const width = canvas.width = img.width;
+    const height = canvas.height = img.height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     ctx.drawImage(img, 0, 0);
     try {
-        return ctx.getImageData(0, 0, img.width, img.height);
+        return ctx.getImageData(0, 0, width, height);
     } catch (error) {
         throw new Error('Error reading image data. The image may be corrupted.');
     }
-
 }
 
-function normalize(v) {
-    const len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    return len > 0 ? [v[0] / len, v[1] / len, v[2] / len] : v;
+/**
+ * Normalizes a 3D vector
+ * @param {number[]} v - The vector to normalize [x, y, z]
+ * @returns {number[]} Normalized vector
+ */
+const normalize = (v) => {
+    const x = v[0], y = v[1], z = v[2];
+    const len_sq = x * x + y * y + z * z;
+    if (len_sq === 0) return v;
+    const len_inv = 1 / Math.sqrt(len_sq);
+    return [x * len_inv, y * len_inv, z * len_inv];
 }
 
-function cross(a, b) {
+/**
+ * Calculates cross product of two vectors
+ * @param {number[]} a - First vector
+ * @param {number[]} b - Second vector
+ * @returns {number[]} Cross product vector
+ */
+const cross = (a, b) => {
     return [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
@@ -96,130 +127,182 @@ function cross(a, b) {
     ];
 }
 
-function dot(a, b) {
+/**
+ * Calculates dot product of two vectors
+ * @param {number[]} a - First vector
+ * @param {number[]} b - Second vector
+ * @returns {number} Dot product
+ */
+const dot = (a, b) => {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-function rotateVector(vec, axis, angle) {
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
-    const k = 1 - cosA;
+/**
+ * Rotates a vector around an axis by specified angle
+ * @param {number[]} vec - Vector to rotate
+ * @param {number[]} axis - Axis of rotation
+ * @param {number} angle - Angle in radians
+ * @returns {number[]} Rotated vector
+ */
+const rotate_vector = (vec, axis, angle) => {
+    const cos_a = Math.cos(angle);
+    const sin_a = Math.sin(angle);
+    const k = 1 - cos_a;
     const [x, y, z] = vec;
     const [ux, uy, uz] = axis;
 
     const rotated = [
-        x * (cosA + ux * ux * k) + y * (ux * uy * k - uz * sinA) + z * (ux * uz * k + uy * sinA),
-        x * (uy * ux * k + uz * sinA) + y * (cosA + uy * uy * k) + z * (uy * uz * k - ux * sinA),
-        x * (uz * ux * k - uy * sinA) + y * (uz * uy * k + ux * sinA) + z * (cosA + uz * uz * k)
+        x * (cos_a + ux * ux * k) + y * (ux * uy * k - uz * sin_a) + z * (ux * uz * k + uy * sin_a),
+        x * (uy * ux * k + uz * sin_a) + y * (cos_a + uy * uy * k) + z * (uy * uz * k - ux * sin_a),
+        x * (uz * ux * k - uy * sin_a) + y * (uz * uy * k + ux * sin_a) + z * (cos_a + uz * uz * k)
     ];
     return normalize(rotated);
 }
 
-async function mergeNormalMaps() {
-    if (isProcessing) return; // Prevent multiple merges
-    isProcessing = true;
-    clearError();
-    progressContainer.style.display = 'block';
-    progressBar.style.width = '0%';
-    previewCanvas.style.display = 'none';
-    downloadButton.style.display = 'none';
-    mergeButton.classList.add('loading'); // Add loading class
-    mergeButton.textContent = 'Processing...'; // Change button text
+/**
+ * Merges two normal maps with specified intensity and convention
+ * @returns {Promise<void>}
+ */
+const merge_normal_maps = async () => {
+    if (is_processing) return;
+    is_processing = true;
+    clear_error();
+    progress_container.style.display = 'block';
+    progress_bar.style.width = '0%';
+    preview_canvas.style.display = 'none';
+    download_button.style.display = 'none';
+    merge_button.classList.add('loading');
+    merge_button.textContent = 'Processing...';
 
     try {
-        if (!baseInput.files[0] || !addInput.files[0]) {
+        if (!base_input.files[0] || !add_input.files[0]) {
             throw new Error('Please upload both normal maps.');
         }
 
-        const baseImg = await loadImage(baseInput.files[0]);
-        const addImg = await loadImage(addInput.files[0]);
+        const [base_img, add_img] = await Promise.all([
+            load_image(base_input.files[0]),
+            load_image(add_input.files[0])
+        ]);
 
-        // Check image dimensions
-        if (baseImg.width !== addImg.width || baseImg.height !== addImg.height) {
+        if (base_img.width !== add_img.width || base_img.height !== add_img.height) {
             throw new Error('Images must have the same dimensions.');
         }
 
-        const tempCanvas = document.createElement('canvas');
-        const baseData = getImageData(baseImg, tempCanvas);
-        const addData = getImageData(addImg, tempCanvas);
+        const temp_canvas = document.createElement('canvas');
+        const [base_data, add_data] = [
+            get_image_data(base_img, temp_canvas),
+            get_image_data(add_img, temp_canvas)
+        ];
 
-        const width = Math.min(baseData.width, addData.width);
-        const height = Math.min(baseData.height, addData.height);
-        previewCanvas.width = width;
-        previewCanvas.height = height;
-        const ctx = previewCanvas.getContext('2d');
-        const resultData = ctx.createImageData(width, height);
+        const width = Math.min(base_data.width, add_data.width);
+        const height = Math.min(base_data.height, add_data.height);
+        preview_canvas.width = width;
+        preview_canvas.height = height;
+        const ctx = preview_canvas.getContext('2d');
+        const result_data = ctx.createImageData(width, height);
 
-        const intensity = parseFloat(intensityInput.value);
-        const isDirectX = conventionSelect.value === 'directx';
-        const fallbackAlpha = parseInt(fallbackAlphaInput.value);
+        const intensity = parseFloat(intensity_input.value);
+        const is_directx = convention_select.value === 'directx';
+        const fallback_alpha = parseInt(fallback_alpha_input.value);
+        const y_sign = is_directx ? -1 : 1;
+        const base_data_arr = base_data.data;
+        const add_data_arr = add_data.data;
+        const result_data_arr = result_data.data;
+        const base_width = base_data.width;
+        const add_width = add_data.width;
+        const base_height = base_data.height;
+        const add_height = add_data.height;
+
+        let progress_update_count = 0;
+        const progress_interval = Math.max(1, Math.floor(height / 100));
 
         for (let y = 0; y < height; y++) {
+            const y_base = y % base_height;
+            const y_add = y % add_height;
+            const base_row_offset = y_base * base_width;
+            const add_row_offset = y_add * add_width;
+            const result_row_offset = y * width;
+
             for (let x = 0; x < width; x++) {
-                const idx = (y * width + x) * 4;
-                const baseIdx = (y % baseData.height * baseData.width + x % baseData.width) * 4;
-                const addIdx = (y % addData.height * addData.width + x % addData.width) * 4;
+                const x_base = x % base_width;
+                const x_add = x % add_width;
+                const base_idx = (base_row_offset + x_base) << 2;
+                const add_idx = (add_row_offset + x_add) << 2;
+                const result_idx = (result_row_offset + x) << 2;
 
-                const baseNormal = [
-                    baseData.data[baseIdx] / 255 * 2 - 1,
-                    (isDirectX ? -1 : 1) * (baseData.data[baseIdx + 1] / 255 * 2 - 1),
-                    baseData.data[baseIdx + 2] / 255 * 2 - 1
+                const base_normal = [
+                    base_data_arr[base_idx] * 0.00784313725 - 1,
+                    y_sign * (base_data_arr[base_idx + 1] * 0.00784313725 - 1),
+                    base_data_arr[base_idx + 2] * 0.00784313725 - 1
                 ];
-                const addNormal = [
-                    addData.data[addIdx] / 255 * 2 - 1,
-                    (isDirectX ? -1 : 1) * (addData.data[addIdx + 1] / 255 * 2 - 1),
-                    addData.data[addIdx + 2] / 255 * 2 - 1
+                const add_normal = [
+                    add_data_arr[add_idx] * 0.00784313725 - 1,
+                    y_sign * (add_data_arr[add_idx + 1] * 0.00784313725 - 1),
+                    add_data_arr[add_idx + 2] * 0.00784313725 - 1
                 ];
 
-                const zAxis = [0, 0, 1];
-                const axis = normalize(cross(zAxis, addNormal));
-                const angle = Math.acos(Math.min(Math.max(dot(zAxis, addNormal), -1), 1));
+                const z_axis = [0, 0, 1];
+                const axis = normalize(cross(z_axis, add_normal));
+                const dot_product = Math.min(Math.max(dot(z_axis, add_normal), -1), 1);
+                const angle = Math.acos(dot_product);
 
-                let resultNormal = baseNormal;
-                if (!isNaN(axis[0]) && angle > 0.0001) {
-                    resultNormal = rotateVector(baseNormal, axis, angle * intensity);
+                let result_normal = base_normal;
+                if (!isNaN(axis[0]) && angle > 1e-4) {
+                    result_normal = rotate_vector(base_normal, axis, angle * intensity);
                 }
 
-                // Blend alpha channels for per-pixel specular exponent
-                const baseAlpha = baseData.data[baseIdx + 3] !== undefined ? baseData.data[baseIdx + 3] : fallbackAlpha;
-                const addAlpha = addData.data[addIdx + 3] !== undefined ? addData.data[addIdx + 3] : fallbackAlpha;
-                const blendedAlpha = Math.round((1 - intensity) * baseAlpha + intensity * addAlpha);
+                const base_alpha = base_data_arr[base_idx + 3] ?? fallback_alpha;
+                const add_alpha = add_data_arr[add_idx + 3] ?? fallback_alpha;
+                const blended_alpha = Math.round((1 - intensity) * base_alpha + intensity * add_alpha);
 
-                resultData.data[idx] = ((resultNormal[0] + 1) / 2) * 255;
-                resultData.data[idx + 1] = ((resultNormal[1] * (isDirectX ? -1 : 1) + 1) / 2) * 255;
-                resultData.data[idx + 2] = ((resultNormal[2] + 1) / 2) * 255;
-                resultData.data[idx + 3] = blendedAlpha; // Per-pixel specular exponent
+                result_data_arr[result_idx] = (result_normal[0] + 1) * 127.5;
+                result_data_arr[result_idx + 1] = (result_normal[1] * y_sign + 1) * 127.5;
+                result_data_arr[result_idx + 2] = (result_normal[2] + 1) * 127.5;
+                result_data_arr[result_idx + 3] = blended_alpha;
             }
-            progressBar.style.width = `${(y / (height - 1)) * 100}%`;
+
+            if (++progress_update_count >= progress_interval || y === height - 1) {
+                progress_update_count = 0;
+                progress_bar.style.width = `${(y / (height - 1)) * 100}%`;
+            }
         }
 
-        ctx.putImageData(resultData, 0, 0);
-        previewCanvas.style.display = 'block';
-        progressContainer.style.display = 'none';
-        downloadButton.style.display = 'block';
-        resultImageData = resultData;
+        ctx.putImageData(result_data, 0, 0);
+        preview_canvas.style.display = 'block';
+        progress_container.style.display = 'none';
+        download_button.style.display = 'block';
+        result_image_data = result_data;
 
-        const baseName = baseInput.files[0].name.split('.')[0];
-        const addName = addInput.files[0].name.split('.')[0];
-        downloadButton.dataset.filename = `${baseName}_${addName}.png`;
+        const base_name = base_input.files[0].name.split('.')[0];
+        const add_name = add_input.files[0].name.split('.')[0];
+        download_button.dataset.filename = `${base_name}_${add_name}.png`;
     } catch (err) {
-        showError(err.message);
+        show_error(err.message);
     } finally {
-        isProcessing = false; // Reset processing flag
-        if (mergeButton) {
-            mergeButton.classList.remove('loading'); // Remove loading class
-            mergeButton.textContent = 'Merge Normal Maps'; // Restore button text
+        is_processing = false;
+        if (merge_button) {
+            merge_button.classList.remove('loading');
+            merge_button.textContent = 'Merge Normal Maps';
         }
     }
 }
 
-function downloadResult() {
-    if (!resultImageData) {
-        showError('No result to download. Please merge normal maps first.');
+/**
+ * Downloads the merged normal map result
+ */
+const download_result = () => {
+    if (!result_image_data) {
+        show_error('No result to download. Please merge normal maps first.');
         return;
     }
     const link = document.createElement('a');
-    link.download = downloadButton.dataset.filename;
-    link.href = previewCanvas.toDataURL('image/png');
+    link.download = download_button.dataset.filename;
+    link.href = preview_canvas.toDataURL('image/png');
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 }
+
+// Event listeners
+merge_button.addEventListener('click', merge_normal_maps);
+download_button.addEventListener('click', download_result);

@@ -33,43 +33,72 @@
         "license": "https://www.gnu.org/licenses/gpl-3.0.html",
       }
     </script>
+
 </head>
 
 <body>
-    <link rel=stylesheet href=./css/style.css>
-    <div class=container>
+    <link rel="stylesheet" href="./css/style.css">
+    <div class="container">
         <h1>Normal Map Scaler</h1>
-        <div class=drop-zone id=dropZone> Drag and drop normal maps here or click to select </div><input type=file
-            id=fileInput multiple accept=image/png,image/jpeg style=display:none>
-        <div class=size-select-group><label for=widthSelect>Width:</label><select id=widthSelect>
-                <option value=0>Original</option>
-                <option value=128>128</option>
-                <option value=256>256</option>
-                <option value=512 selected>512</option>
-                <option value=1024>1024</option>
-                <option value=2048>2048</option>
-            </select><label for=heightSelect>Height:</label><select id=heightSelect>
-                <option value=0>Original</option>
-                <option value=128>128</option>
-                <option value=256>256</option>
-                <option value=512 selected>512</option>
-                <option value=1024>1024</option>
-                <option value=2048>2048</option>
-            </select></div><button id=processButton disabled>Process Normal Maps</button><progress class=progress
-            id=progressBar value=0 max=100></progress>
-        <div class=error id=errorMessage></div>
-        <div class=preview-container id=previewContainer></div><button id=downloadButton></button><button
-            id=resetButton>Reset</button>
+        <div class="drop-zone" id="dropZone">
+            <div class="icon">📁</div>
+            <p>Drag and drop normal maps here or click to select</p>
+        </div>
+        <input type="file" id="fileInput" multiple accept="image/png,image/jpeg" style="display:none">
+
+        <div class="size-select-group">
+            <label for="widthSelect">Width:</label>
+            <select id="widthSelect">
+                <option value="0">Original</option>
+                <option value="128">128</option>
+                <option value="256">256</option>
+                <option value="512" selected>512</option>
+                <option value="1024">1024</option>
+                <option value="2048">2048</option>
+            </select>
+            <label for="heightSelect">Height:</label>
+            <select id="heightSelect">
+                <option value="0">Original</option>
+                <option value="128">128</option>
+                <option value="256">256</option>
+                <option value="512" selected>512</option>
+                <option value="1024">1024</option>
+                <option value="2048">2048</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button id="processButton" disabled>
+                <span class="button-icon">⚙️</span>
+                Process Normal Maps
+            </button>
+            <button id="resetButton">
+                <span class="button-icon">🔄</span>
+                Reset
+            </button>
+        </div>
+
+        <progress class="progress" id="progressBar" value="0" max="100"></progress>
+        <div class="error" id="errorMessage"></div>
+
+        <div class="preview-container" id="previewContainer"></div>
+
+        <button id="downloadButton">
+            <span class="button-icon">📥</span>
+            Download All
+        </button>
     </div>
-    <footer style="margin-top: 20px; font-size: 0.9em; color: #555; text-align: center;">
+
+    <footer>
         <p>Second Life and SL are trademarks of Linden Research, Inc. Normal Map Scaler is not affiliated with or
             sponsored by Linden Research.</p>
         <p>Uses: JSZip (MIT) by Stuart K. Bradshaw.</p>
-        <p>Developed by MdONeil under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>. Contact: <a
-                href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <p>Developed by MdONeil under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>.
+            Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
     </footer>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js></script>
-    <script src=./js/main.js></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="./js/main.js"></script>
 </body>
 
 </html>

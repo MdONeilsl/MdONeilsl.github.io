@@ -14,3 +14,5 @@ app/CSSProcessor/index_style.html
 app/CSSProcessor/js/main.ref.js
 app/DataCompacter/index_style.html
 app/Fragmentedframe/js/main.ref.js
+app/ImageProcessor/index_style.html
+app/ImageProcessor/js/main.ref.js
