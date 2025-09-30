@@ -16,3 +16,5 @@ app/DataCompacter/index_style.html
 app/Fragmentedframe/js/main.ref.js
 app/ImageProcessor/index_style.html
 app/ImageProcessor/js/main.ref.js
+app/PBRPacker/index_style.html
+app/PBRPacker/js/main.js

@@ -10,72 +10,80 @@
     <meta name="author" content="MdONeil">
     <meta name="robots" content="index, follow">
     <title>PBR Web Packer</title>
+   
 </head>
 
 <body>
     <link rel="stylesheet" href="./css/style.css">
-    <div class="container">
-        <div class="sidebar" id="sidebar">
-            <h2>Neutral</h2>
-            <div class="neutral-image-container">
-                <span class="neutral-label">Placeholder</span>
-                <img id="def_tex_placeholder_img" data-origine="placeholder" draggable="true" width="512" height="512"
-                    src="./assets/placeholder.png" alt="Placeholder texture"
-                    ondragstart="event.dataTransfer.setData('text', 'placeholder')">
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">PBR Web Packer</h1>
+            <p class="app-subtitle">A web-based tool for Second Life content creators to pack PBR map textures into glTF files</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar" id="sidebar">
+                <h2 class="sidebar-title">Neutral Textures</h2>
+                <div class="neutral-image-container">
+                    <span class="neutral-label">Placeholder</span>
+                    <img id="def_tex_placeholder_img" data-origine="placeholder" draggable="true" width="512" height="512"
+                        src="./assets/placeholder.png" alt="Placeholder texture"
+                        ondragstart="event.dataTransfer.setData('text', 'placeholder')">
+                </div>
+                <div class="neutral-image-container">
+                    <span class="neutral-label">White</span>
+                    <img id="def_tex_white_img" data-origine="white" draggable="true" width="8" height="8"
+                        src="./assets/white.png" alt="White texture"
+                        ondragstart="event.dataTransfer.setData('text', 'white')">
+                </div>
+                <div class="neutral-image-container">
+                    <span class="neutral-label">Black</span>
+                    <img id="def_tex_black_img" data-origine="black" draggable="true" width="8" height="8"
+                        src="./assets/black.png" alt="Black texture"
+                        ondragstart="event.dataTransfer.setData('text', 'black')">
+                </div>
+                <div class="neutral-image-container">
+                    <span class="neutral-label">Normal</span>
+                    <img id="def_tex_normal_img" data-origine="normal" draggable="true" width="8" height="8"
+                        src="./assets/normal.png" alt="Normal texture"
+                        ondragstart="event.dataTransfer.setData('text', 'normal')">
+                </div>
+                <div class="neutral-image-container">
+                    <span class="neutral-label">Transparent</span>
+                    <img id="def_tex_transparent_img" data-origine="transparent" class="transparent" draggable="true"
+                        width="8" height="8" src="./assets/transparent.png" alt="Transparent texture"
+                        ondragstart="event.dataTransfer.setData('text', 'transparent')">
+                </div>
             </div>
-            <div class="neutral-image-container">
-                <span class="neutral-label">White</span>
-                <img id="def_tex_white_img" data-origine="white" draggable="true" width="8" height="8"
-                    src="./assets/white.png" alt="White texture"
-                    ondragstart="event.dataTransfer.setData('text', 'white')">
-            </div>
-            <div class="neutral-image-container">
-                <span class="neutral-label">Black</span>
-                <img id="def_tex_black_img" data-origine="black" draggable="true" width="8" height="8"
-                    src="./assets/black.png" alt="Black texture"
-                    ondragstart="event.dataTransfer.setData('text', 'black')">
-            </div>
-            <div class="neutral-image-container">
-                <span class="neutral-label">Normal</span>
-                <img id="def_tex_normal_img" data-origine="normal" draggable="true" width="8" height="8"
-                    src="./assets/normal.png" alt="Normal texture"
-                    ondragstart="event.dataTransfer.setData('text', 'normal')">
-            </div>
-            <div class="neutral-image-container">
-                <span class="neutral-label">Transparent</span>
-                <img id="def_tex_transparent_img" data-origine="transparent" class="transparent" draggable="true"
-                    width="8" height="8" src="./assets/transparent.png" alt="Transparent texture"
-                    ondragstart="event.dataTransfer.setData('text', 'transparent')">
-            </div>
-        </div>
-        <div class="main">
-            <div class="toolbar">
-                <label for="maxSize">Max Size:
-                    <select id="maxSize" title="Set maximum texture size">
-                        <option value="8">8</option>
-                        <option value="16">16</option>
-                        <option value="32">32</option>
-                        <option value="64">64</option>
-                        <option value="128">128</option>
-                        <option value="256">256</option>
-                        <option value="512" selected>512</option>
-                        <option value="1024">1024</option>
-                        <option value="2048">2048</option>
-                    </select>
-                </label>
-                <label for="format">Format:
-                    <select id="format" title="Select export format">
-                        <option value="png">PNG</option>
-                        <option value="jpeg">JPEG</option>
-                    </select>
-                </label>
-                <label for="lossless">
-                    <input type="checkbox" id="lossless" checked title="Enable lossless export"> Lossless
-                </label>
-            </div>
-            <div class="sections">
+            
+            <div class="main">
+                <div class="toolbar">
+                    <label for="maxSize">Max Size:
+                        <select id="maxSize" title="Set maximum texture size">
+                            <option value="8">8</option>
+                            <option value="16">16</option>
+                            <option value="32">32</option>
+                            <option value="64">64</option>
+                            <option value="128">128</option>
+                            <option value="256">256</option>
+                            <option value="512" selected>512</option>
+                            <option value="1024">1024</option>
+                            <option value="2048">2048</option>
+                        </select>
+                    </label>
+                    <label for="format">Format:
+                        <select id="format" title="Select export format">
+                            <option value="png">PNG</option>
+                            <option value="jpeg">JPEG</option>
+                        </select>
+                    </label>
+                    <label for="lossless">
+                        <input type="checkbox" id="lossless" checked title="Enable lossless export"> Lossless
+                    </label>
+                </div>
+                
                 <div class="section">
-                    <h2>Components Section</h2>
+                    <h2 class="section-title">Components Section</h2>
                     <div class="canvas-row" id="components">
                         <div class="canvas-container">
                             <span>Albedo</span>
@@ -114,11 +122,13 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="progress-bar" id="progressBar">
                     <div></div>
                 </div>
+                
                 <div class="section">
-                    <h2>PBR Material Maps Section</h2>
+                    <h2 class="section-title">PBR Material Maps Section</h2>
                     <div class="canvas-row" id="pbr">
                         <div class="canvas-container">
                             <span>Color</span>
@@ -142,12 +152,14 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="button-container">
                     <button class="save-btn" onclick="saveGltf()" aria-label="Save glTF file">Save glTF</button>
                     <button class="clear-btn" onclick="clearApp()" aria-label="Clear all canvases">Clear</button>
                 </div>
+                
                 <div class="section instructions">
-                    <h2>Usage Instructions</h2>
+                    <h2 class="section-title">Usage Instructions</h2>
                     <ul>
                         <li>Drag neutral images (white, black, normal, transparent, placeholder) from the sidebar to
                             Component canvases (Albedo, Transparency, etc.) to set default textures.</li>
@@ -164,9 +176,11 @@
                 </div>
             </div>
         </div>
+        
         <div id="debugLog"></div>
+        
         <dialog id="assignDialog" role="dialog" aria-labelledby="assignDialogTitle">
-            <h3 id="assignDialogTitle" style="display: none;">Assign Textures</h3>
+            <h3 id="assignDialogTitle">Assign Textures</h3>
             <form>
                 <p>Assign textures to canvases:</p>
                 <div id="fileAssignments"></div>
@@ -176,29 +190,7 @@
             </form>
         </dialog>
     </div>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "PBR Web Packer",
-        "description": "A web-based tool for Second Life content creators and 3D artists to pack PBR map textures into glTF files for virtual world applications.",
-        "applicationCategory": "Multimedia",
-        "operatingSystem": "Web",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "keywords": "Second Life tool, PBR, gltf, texture packer, 3D artist, virtual world",
-         "author": {
-        "@type": "Person",
-        "name": "MdONeil",
-        "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
-      }
-      "url": "https://mdoneilsl.github.io/app/PBRPacker/",
-      "license": "https://www.gnu.org/licenses/gpl-3.0.html",
-    }
-    </script>
+    
     <footer>
         <p>PBR Web Packer is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden Research, Inc.</p>
         <p>© 2025 <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a>. All rights
@@ -207,6 +199,7 @@
             Stuart Knightley and <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a> (MIT
             License) by Three.js Authors. See <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a> for details.</p>
     </footer>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
