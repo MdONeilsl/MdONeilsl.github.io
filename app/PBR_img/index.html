@@ -10,17 +10,19 @@
     <meta name="keywords" content="PBR, color enhancement, reflection enhancement, Second Life tool, virtual world app">
     <meta name="author" content="MdONeil">
     <meta property=og:title content="PBR Image">
-    <meta property=og:description content="Enhance image color and reflection for PBR materials in virtual worlds like Second Life.">
+    <meta property=og:description
+        content="Enhance image color and reflection for PBR materials in virtual worlds like Second Life.">
     <meta property=og:image content=https://mdoneilsl.github.io/assets/img/thumbnail.jpg>
     <meta property=og:url content=https://mdoneilsl.github.io/PBR_img />
     <meta property=og:type content=website>
     <meta name=twitter:card content=summary_large_image>
     <meta name=twitter:title content="PBR Image">
-    <meta name=twitter:description content="Enhance image color and reflection for PBR materials in virtual worlds like Second Life.">
+    <meta name=twitter:description
+        content="Enhance image color and reflection for PBR materials in virtual worlds like Second Life.">
     <meta name=twitter:image content=./assets/img/thumbnail.jpg>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel=stylesheet>
-    <link href=./css/style.css rel=stylesheet>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -38,106 +40,143 @@
       "license": "https://www.gnu.org/licenses/gpl-3.0.html"
     }
     </script>
+
+
 </head>
 
-<body class="bg-gray-100 p-6">
-    <div class="container mx-auto space-y-8">
+<body>
+    <link rel="stylesheet" href="./css/style.css">
+    <div class="container">
+        <header class="card">
+            <h1>PBR Image Processor</h1>
+            <p style="color: var(--text-secondary);">Enhance image color and reflection for PBR materials in virtual
+                worlds like Second Life.</p>
+        </header>
+
         <div class="card">
-            <h2 class="text-xl font-semibold text-gray-800">Image Input</h2>
-            <div id=canvas-input
-                class="border-2 border-dashed border-gray-300 rounded-md p-12 text-center cursor-pointer drag-over:border-green-500 drag-over:bg-yellow-100">
-                <p class=text-gray-600>Drag and drop an image here, or click to select a file.</p><input type=file
-                    id=image-file class=hidden accept=image/*>
+            <h2><span class="material-icons-round">image</span> Image Input</h2>
+            <div id="canvas-input" class="drop-zone">
+                <span class="material-icons-round upload-icon">cloud_upload</span>
+                <p>Drag and drop an image here, or click to select a file.</p>
+                <p style="font-size: 0.9rem; color: var(--text-light);">Supports JPG, PNG, and WebP formats</p>
+                <input type="file" id="image-file" class="hidden" accept="image/*">
             </div>
-            <div class="image-canvas-container"><canvas id=input-image-canvas
-                    class="border border-gray-300 rounded-md shadow-sm"></canvas>
+            <div class="image-canvas-container">
+                <canvas id="input-image-canvas"></canvas>
                 <p class="image-label">Input Image</p>
             </div>
             <div class="controls-container">
                 <label class="control-label">
-                    <input type=checkbox id=fix-size class="checkbox" checked>
-                    <span class=text-gray-700>Fix Size to Power of 2</span>
+                    <input type="checkbox" id="fix-size" class="checkbox" checked>
+                    <span>Fix Size to Power of 2</span>
                 </label>
                 <label class="control-label">
-                    <span class=text-gray-700>Max Texture Size:</span>
-                    <select id=max-size class="select">
-                        <option value=256>256px</option>
-                        <option value=512>512px</option>
-                        <option value=1024>1024px</option>
-                        <option value=2048 selected>2048px</option>
+                    <span>Max Texture Size:</span>
+                    <select id="max-size" class="select">
+                        <option value="256">256px</option>
+                        <option value="512">512px</option>
+                        <option value="1024">1024px</option>
+                        <option value="2048" selected>2048px</option>
                     </select>
                 </label>
             </div>
         </div>
+
         <div class="card">
-            <h2 class="text-xl font-semibold text-gray-800">Output Maps</h2>
+            <h2><span class="material-icons-round">palette</span> Output Maps</h2>
             <div class="output-maps-row">
                 <div class="output-map-container">
-                    <p class="image-label">Albedo</p><canvas id=srgb-output
-                        class="border border-gray-300 rounded-md shadow-sm"></canvas><label
-                        class="mt-2 text-sm text-gray-700">Color Space:</label><select id=srgb-color-space
-                        class="select text-sm">
-                        <option value=none>None</option>
-                        <option value=srgb>sRGB</option>
-                        <option value=linear>Linear</option>
-                    </select><label class="mt-2 text-sm text-gray-700">Max Texture Size:</label><select id=srgb-max-size
-                        class="select text-sm">
-                        <option value=256>256px</option>
-                        <option value=512>512px</option>
-                        <option value=1024>1024px</option>
-                        <option value=2048 selected>2048px</option>
-                    </select>
-                </div>
-                <div class="output-map-container">
-                    <p class="image-label">Metallic</p><canvas id=metal-roughness-output
-                        class="border border-gray-300 rounded-md shadow-sm"></canvas>
-                    <div class="flex flex-col items-start mt-2 space-y-2">
-                        <label class="control-label">
-                            <input type=checkbox id=occlusion-checkbox class="checkbox" checked>
-                            <span class="text-sm">Occlusion</span>
-                        </label>
-                        <label class="control-label">
-                            <input type=checkbox id=roughness-checkbox class="checkbox">
-                            <span class="text-sm">Roughness</span>
-                        </label>
-                        <label class="control-label">
-                            <input type=checkbox id=metalness-checkbox class="checkbox">
-                            <span class="text-sm">Metalness</span>
-                        </label>
+                    <p class="image-label">Albedo</p>
+                    <canvas id="srgb-output"></canvas>
+                    <div class="control-group">
+                        <div class="input-group">
+                            <label>Color Space:</label>
+                            <select id="srgb-color-space" class="select">
+                                <option value="none">None</option>
+                                <option value="srgb">sRGB</option>
+                                <option value="linear">Linear</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Max Texture Size:</label>
+                            <select id="srgb-max-size" class="select">
+                                <option value="256">256px</option>
+                                <option value="512">512px</option>
+                                <option value="1024">1024px</option>
+                                <option value="2048" selected>2048px</option>
+                            </select>
+                        </div>
                     </div>
-                    <label class="mt-2 text-sm text-gray-700">Max Texture Size:</label>
-                    <select id=metal-roughness-max-size class="select text-sm">
-                        <option value=256>256px</option>
-                        <option value=512 selected>512px</option>
-                        <option value=1024>1024px</option>
-                        <option value=2048>2048px</option>
-                    </select>
                 </div>
+
                 <div class="output-map-container">
-                    <p class="image-label">Emissive</p><canvas id=emissive-output
-                        class="border border-gray-300 rounded-md shadow-sm"></canvas><label for=emissive-threshold
-                        class="mt-2 text-sm text-gray-700">Emissive Threshold:</label><input type=number
-                        id=emissive-threshold class="select text-sm max-w-[100px]" value=28 min=0 max=255><label
-                        class="mt-2 text-sm text-gray-700">Max Texture
-                        Size:</label><select id=emissive-max-size class="select text-sm">
-                        <option value=256>256px</option>
-                        <option value=512 selected>512px</option>
-                        <option value=1024>1024px</option>
-                        <option value=2048>2048px</option>
-                    </select>
+                    <p class="image-label">Metallic</p>
+                    <canvas id="metal-roughness-output"></canvas>
+                    <div class="control-group">
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="occlusion-checkbox" class="checkbox" checked>
+                                <label for="occlusion-checkbox">Occlusion</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="roughness-checkbox" class="checkbox">
+                                <label for="roughness-checkbox">Roughness</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="metalness-checkbox" class="checkbox">
+                                <label for="metalness-checkbox">Metalness</label>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Max Texture Size:</label>
+                            <select id="metal-roughness-max-size" class="select">
+                                <option value="256">256px</option>
+                                <option value="512" selected>512px</option>
+                                <option value="1024">1024px</option>
+                                <option value="2048">2048px</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="output-map-container">
+                    <p class="image-label">Emissive</p>
+                    <canvas id="emissive-output"></canvas>
+                    <div class="control-group">
+                        <div class="input-group">
+                            <label for="emissive-threshold">Emissive Threshold:</label>
+                            <input type="number" id="emissive-threshold" class="select" value="28" min="0" max="255">
+                        </div>
+                        <div class="input-group">
+                            <label>Max Texture Size:</label>
+                            <select id="emissive-max-size" class="select">
+                                <option value="256">256px</option>
+                                <option value="512" selected>512px</option>
+                                <option value="1024">1024px</option>
+                                <option value="2048">2048px</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card"><button id=save-gltf class="button">
-                <i class="material-icons mr-2">save</i> Save as glTF</button>
+
+        <div class="card" style="text-align: center;">
+            <button id="save-gltf" class="button">
+                <span class="material-icons-round">save</span> Save as glTF
+            </button>
         </div>
     </div>
+
     <footer>
-        <p>PBR Image is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden Research, Inc.</p>
-        <p>&copy; 2025 MdONeil. Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>. Contact: <a
+        <p>PBR Image is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden
+            Research, Inc.</p>
+        <p>&copy; 2025 MdONeil. Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3
+                License</a>. Contact: <a
                 href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil in Second Life</a></p>
     </footer>
-    <script src=./js/ImageProcessor.js type=module></script>
+
+    <script src="./js/main.js" type="module"></script>
 </body>
 
 </html>
