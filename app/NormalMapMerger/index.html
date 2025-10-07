@@ -10,7 +10,7 @@
     <meta name="keywords"
         content="normal map, Second Life tool, 3D texture, texture merging, virtual world, content creation, ALM, Advanced Light Model">
     <meta name="author" content="MdONeil">
-    <link rel=stylesheet href=./css/style.css>
+
     <script type="application/ld+json">
     {
         "@context": "http://schema.org",
@@ -37,44 +37,47 @@
 </head>
 
 <body>
+    <link rel=stylesheet href=./css/style.css>
     <div class="container">
         <h2>Normal Map Merger</h2>
         <div class="input-row">
-            <input type="file" id="baseInput" accept="image/*" title="Base Normal Map (e.g., fabric)"
-                aria-label="Base Normal Map">
-            <input type="file" id="addInput" accept="image/*" title="Add Normal Map (e.g., wrinkles)"
-                aria-label="Additional Normal Map">
-        </div>
-        <div class="input-row">
-            <label for="convention">Convention:</label>
-            <select id="convention" aria-label="Normal Map Convention">
-                <option value="opengl" selected>OpenGL (Y+, default)</option>
-                <option value="directx">DirectX (Y-)</option>
-            </select>
+            <div class="dropzone" id="baseDropzone" title="Base Normal Map (e.g., fabric)">
+                <input type="file" id="baseInput" accept="image/*" hidden>
+            </div>
+            <div class="dropzone" id="addDropzone" title="Add Normal Map (e.g., wrinkles)">
+                <input type="file" id="addInput" accept="image/*" hidden>
+            </div>
+            <div class="dropzone" id="maskDropzone"
+                title="Control the add input intensity by pixel with a rgb grayscale mask">
+                <input type="file" id="maskInput" accept="image/*" hidden>
+            </div>
         </div>
         <div class="input-row">
             <label for="intensity">Intensity:</label>
-            <input type="range" id="intensity" min="0" max="1" step="0.01" value="1" aria-label="Intensity">
+            <input type="range" id="intensity" min="0" max="1" step="0.01" value="1">
         </div>
         <div class="input-row">
             <label for="fallbackAlpha">Fallback Alpha (if inputs lack alpha):</label>
-            <input type="range" id="fallbackAlpha" min="0" max="255" step="1" value="255" aria-label="Fallback Alpha">
+            <input type="range" id="fallbackAlpha" min="0" max="255" step="1" value="255">
         </div>
-        <button onclick="mergeNormalMaps()">Merge Normal Maps</button>
-        <div id="progress-container">
-            <div id="progress-bar"></div>
-        </div>
-        <canvas id="preview"></canvas>
-        <div id="error-message"></div>
-        <button id="download" onclick="downloadResult()">Download Result</button>
+        <button id="process-btn">Merge Normal Maps</button>
+        <div id="error-message" class="error-message"></div>
+        <canvas id="preview" class="preview"></canvas>
+        <button id="download">Download Result</button>
         <div id="info">
-            <p>This tool merges two normal maps, blending their alpha channels for per-pixel specular exponent values
-                (brighter = shinier). Ensure the Advanced Lighting Model is enabled to see effects. Use OpenGL (Y+) for
-                compatibility.</p>
-            <p>Examples: Combine "brick details" with "wall texture" for buildings, or "wrinkles" with "fabric".
-                Intensity controls the blend of both normals and alpha channels.</p>
-            <p>Note: Per-pixel specular exponent is experimental and may not work as expected in some systems. Consider
-                PBR Materials for modern projects.</p>
+            <p>This tool merges two normal maps using 3D vector rotation mathematics to properly combine surface
+                details.
+                The base normal map defines the primary surface orientation, while the add normal map overlays secondary
+                details like wrinkles, scratches, or patterns.</p>
+            <p>The mask image controls the intensity per-pixel: black (0) removes the effect, white (255) applies full
+                effect.
+                If no mask is uploaded, the Intensity slider uniformly controls the blend strength across the entire
+                image.</p>
+            <p>Examples: Combine "brick details" with "wall texture" for buildings, or "wrinkles" with "fabric".</p>
+            <p>The alpha channel is blended for per-pixel specular exponent values (brighter = shinier).
+                Ensure the Advanced Lighting Model is enabled to see effects. Use OpenGL (Y+) for compatibility.</p>
+            <p>Note: Per-pixel specular exponent is experimental and may not work as expected in some systems.
+                Consider PBR Materials for modern projects.</p>
         </div>
     </div>
     <footer>
@@ -83,7 +86,8 @@
         <p>Second Life and SL are trademarks of Linden Research, Inc. This tool is not affiliated with or sponsored by
             Linden Research.</p>
     </footer>
-    <script src="./js/main.js"></script>
+
+    <script type="module" src="./js/main.js"></script>
 </body>
 
 </html>

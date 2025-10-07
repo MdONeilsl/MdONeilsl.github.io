@@ -1,4 +1,34 @@
-/* CSS Variables for consistent theming */
+body,
+h1 {
+    color: var(--dark)
+}
+
+.drop-zone,
+button,
+select {
+    cursor: pointer;
+    transition: var(--transition)
+}
+
+.drop-zone,
+footer,
+h1 {
+    text-align: center
+}
+
+.container,
+footer {
+    max-width: 900px;
+    width: 100%
+}
+
+.drop-zone,
+button,
+footer a,
+select {
+    transition: var(--transition)
+}
+
 :root {
     --primary: #6366f1;
     --primary-dark: #4f46e5;
@@ -12,64 +42,61 @@
     --gray-light: #e2e8f0;
     --border-radius: 12px;
     --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --transition: all 0.2s ease-in-out;
+    --transition: all 0.2s ease-in-out
 }
 
-/* Base styles */
 * {
     box-sizing: border-box;
     margin: 0;
-    padding: 0;
+    padding: 0
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: var(--dark);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0, #c3cfe2 100%);
     line-height: 1.6;
     min-height: 100vh;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center
 }
 
-/* Container */
+.drop-zone::before,
+h1 {
+    background: linear-gradient(90deg, var(--primary), var(--secondary))
+}
+
 .container {
-    background: white;
+    background: #fff;
     padding: 2.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    max-width: 900px;
-    width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 2rem
 }
 
-/* Typography */
 h1 {
-    color: var(--dark);
-    text-align: center;
     margin-bottom: 1.5rem;
     font-weight: 700;
     font-size: 2.25rem;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
+    color: transparent
 }
 
-/* Drop Zone */
 .drop-zone {
     border: 2px dashed var(--gray-light);
     border-radius: var(--border-radius);
     padding: 3rem 2rem;
     margin: 1.5rem 0;
-    cursor: pointer;
-    transition: var(--transition);
-    text-align: center;
     background-color: #f8fafc;
     position: relative;
-    overflow: hidden;
+    overflow: hidden
+}
+
+.error,
+select {
+    padding: .75rem 1rem
 }
 
 .drop-zone::before {
@@ -79,127 +106,126 @@ h1 {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
     transform: scaleX(0);
-    transition: transform 0.3s ease;
+    transition: transform .3s
 }
 
-.drop-zone:hover::before,
-.drop-zone.dragover::before {
-    transform: scaleX(1);
+.drop-zone.dragover::before,
+.drop-zone:hover::before {
+    transform: scaleX(1)
 }
 
-.drop-zone:hover,
-.drop-zone.dragover {
+.drop-zone.dragover,
+.drop-zone:hover {
     border-color: var(--primary);
-    background-color: rgba(99, 102, 241, 0.05);
-    transform: translateY(-2px);
+    background-color: rgba(99, 102, 241, .05);
+    transform: translateY(-2px)
 }
 
 .drop-zone p {
     color: var(--gray);
     font-size: 1.125rem;
-    margin: 0;
+    margin: 0
+}
+
+button,
+select {
+    font-size: 1rem
+}
+
+.preview-item h3,
+footer p {
+    margin-bottom: .75rem
 }
 
 .drop-zone .icon {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: var(--primary);
+    color: var(--primary)
 }
 
-/* Form elements */
 .size-select-group {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin: 1.5rem 0;
+    margin: 1.5rem 0
 }
 
 .size-select-group label {
     font-weight: 600;
-    color: var(--dark);
+    color: var(--dark)
 }
 
 select {
-    padding: 0.75rem 1rem;
     border: 1px solid var(--gray-light);
     border-radius: var(--border-radius);
-    font-size: 1rem;
-    background-color: white;
-    transition: var(--transition);
-    cursor: pointer;
-    min-width: 120px;
+    background-color: #fff;
+    min-width: 120px
 }
 
 select:focus {
-    outline: none;
+    outline: 0;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, .1)
 }
 
-/* Buttons */
 .button-group {
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 1.5rem
 }
 
 button {
-    padding: 0.875rem 1.75rem;
+    padding: .875rem 1.75rem;
     border: none;
     border-radius: var(--border-radius);
-    font-size: 1rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: .5rem
 }
 
 button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    opacity: .6;
+    cursor: not-allowed
 }
 
 button:not(:disabled):hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px)
 }
 
 #processButton {
     background-color: var(--primary);
-    color: white;
+    color: #fff
 }
 
 #processButton:hover:not(:disabled) {
-    background-color: var(--primary-dark);
+    background-color: var(--primary-dark)
 }
 
 #downloadButton {
     background-color: var(--secondary);
-    color: white;
-    display: none;
+    color: #fff;
+    display: none
 }
 
 #downloadButton:hover {
-    background-color: var(--secondary-dark);
+    background-color: var(--secondary-dark)
 }
 
 #resetButton {
     background-color: var(--danger);
-    color: white;
+    color: #fff
 }
 
 #resetButton:hover {
-    background-color: var(--danger-dark);
+    background-color: var(--danger-dark)
 }
 
-/* Progress bar */
 .progress {
     width: 100%;
     height: 8px;
@@ -207,54 +233,55 @@ button:not(:disabled):hover {
     display: none;
     border-radius: 4px;
     overflow: hidden;
-    background-color: var(--gray-light);
+    background-color: var(--gray-light)
+}
+
+.preview,
+.scaled {
+    overflow: visible
 }
 
 .progress::-webkit-progress-bar {
     background-color: var(--gray-light);
-    border-radius: 4px;
+    border-radius: 4px
 }
 
 .progress::-webkit-progress-value {
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     border-radius: 4px;
-    transition: width 0.3s ease;
+    transition: width .3s
 }
 
 .progress::-moz-progress-bar {
     background: linear-gradient(90deg, var(--primary), var(--secondary));
-    border-radius: 4px;
+    border-radius: 4px
 }
 
-/* Error message */
 .error {
     color: var(--danger);
     margin: 1rem 0;
-    padding: 0.75rem 1rem;
-    background-color: rgba(239, 68, 68, 0.1);
+    background-color: rgba(239, 68, 68, .1);
     border-radius: var(--border-radius);
     border-left: 4px solid var(--danger);
-    display: none;
+    display: none
 }
 
-/* Preview */
 .preview-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 2rem
 }
 
 .preview-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center
 }
 
 .preview-item h3 {
-    margin-bottom: 0.75rem;
     font-size: 1rem;
-    color: var(--dark);
+    color: var(--dark)
 }
 
 canvas {
@@ -262,54 +289,55 @@ canvas {
     border-radius: var(--border-radius);
     image-rendering: pixelated;
     max-width: 100%;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1)
 }
 
-/* Footer */
 footer {
-    text-align: center;
     margin-top: 2rem;
-    font-size: 0.875rem;
-    color: var(--gray);
-    max-width: 900px;
-    width: 100%;
-}
-
-footer p {
-    margin-bottom: 0.75rem;
+    font-size: .875rem;
+    color: var(--gray)
 }
 
 footer a {
     color: var(--primary);
-    text-decoration: none;
-    transition: var(--transition);
+    text-decoration: none
 }
 
 footer a:hover {
     color: var(--primary-dark);
-    text-decoration: underline;
+    text-decoration: underline
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width:768px) {
     .container {
-        padding: 1.5rem;
+        padding: 1.5rem
     }
 
     h1 {
-        font-size: 1.75rem;
+        font-size: 1.75rem
     }
 
     .size-select-group {
         flex-direction: column;
-        align-items: stretch;
+        align-items: stretch
     }
 
     .button-group {
-        flex-direction: column;
+        flex-direction: column
     }
 
     .preview-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.scaled {
+    max-width: none;
+    max-height: none
 }
