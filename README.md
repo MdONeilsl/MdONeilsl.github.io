@@ -1,19 +1,41 @@
-# MdONeil's Portfolio
 
-Welcome to my portfolio, showcasing creative tools and projects primarily for Second Life content creation. Visit the live webpage at [https://mdoneilsl.github.io/](https://mdoneilsl.github.io/).
+# MdONeil's Tool Kit Collection
+
+Welcome to my tool kit collection, featuring creative tools and projects primarily for Second Life content creation. Visit the live webpage at [https://mdoneilsl.github.io/](https://mdoneilsl.github.io/).
 
 ## Tools
 
-Below is a list of tools available on the webpage:
+Below is a comprehensive list of tools available on the webpage:
 
-- [PBR Packer](./app/PBRPacker/): Packs Physically Based Rendering (PBR) textures for Second Life material creation, streamlining texture preparation.
-- [PBR Image](./app/PBR_img/): Generates and edits PBR texture images for Second Life, supporting material customization.
-- [Shape Mixer](./app/ShapeMixer/): Blends and modifies avatar shapes for Second Life, enabling custom character designs.
-- [Media to Prim](./app/prim_gif/): Converts media (e.g., GIFs) into prim-based animations for Second Life objects.
-- [Normal Map Scaler](./app/NormalMapScaler/): Scales normal maps for Second Life textures, ensuring proper lighting and detail.
-- [Normal Map Merger](./app/NormalMapMerger/): Combines multiple normal maps into a single texture for Second Life materials.
-- [2D Fonts](./app/2DFonts/): Creates 2D font textures for use in Second Life, supporting custom text displays.
-- [Fragmented Frame](./app/Fragmentedframe/): Generates fragmented frame effects for Second Life animations or textures.
-- [Audio Segmenter](./app/Segmenter/): Splits audio files into segments for Second Life sound effects or sequences.
-- [Image Processor](./app/ImageProcessor/): Optimize and convert images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.
-- [Data Compacter](./app/DataCompacter/): Optimize your data management with ease.
+- [Shape Mixer](./app/ShapeMixer/): Blend and mix character shapes with advanced customization tools
+- [Audio Segmenter](./app/Segmenter/): Precise audio splitting and editing for perfect sound clips
+- [PBR Packer](./app/PBRPacker/): Combine PBR textures into optimized material maps
+- [PBR Image](./app/PBR_img/): Generate and process PBR texture maps from images
+- [Image Processor](./app/ImageProcessor/): Advanced image manipulation and optimization tools
+- [Images Processor](./app/ImagesProcessor/): Batch process multiple images with consistent settings
+- [Media to Prim](./app/prim_gif/): Convert media files to prim-friendly formats
+- [Normal Map Scaler](./app/NormalMapScaler/): Scale normal maps while preserving surface details
+- [Normal Map Merger](./app/NormalMapMerger/): Combine multiple normal maps into unified textures
+- [UV Calculator](./app/uv_calc/): Calculate and optimize UV mapping coordinates
+- [UV Atlasing](./app/uv_atlasing/): Create efficient texture atlases from UV layouts
+- [2D Fonts](./app/2DFonts/): Generate custom font textures and atlases
+- [3D Fonts](./app/3DFonts/): Create 3D text models from custom fonts
+- [Fragmented Frame](./app/Fragmentedframe/): Create artistic fragmented image effects
+- [Data Compacter](./app/DataCompacter/): Compress and optimize data for efficient storage
+- [CSS Processor](./app/CSSProcessor/): Optimize and process CSS for better performance
+
+## Contact
+
+- **X.com**: [@MdONeilsl](https://x.com/MdONeilsl)
+- **Primfeed**: [mdoneil.resident](https://www.primfeed.com/mdoneil.resident)
+- **Second Life**: [Profile](secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about)
+- **GitHub**: [MdONeilsl](https://github.com/MdONeilsl)
+
+## Support
+
+- [Second Life Marketplace](https://marketplace.secondlife.com/stores/263354)
+- [Support via Wishlist](https://marketplace.secondlife.com/wishlists/MdONeil)
+
+ **Disclaimer**
+
+ This tool kit collection is not affiliated with or endorsed by Linden Lab®, the creator of the Second Life® virtual world. "Second Life" and "SL" are registered trademarks of Linden Research, Inc.
