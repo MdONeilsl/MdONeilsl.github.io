@@ -37,9 +37,37 @@ let drop_zone,
 let files = [];
 let zip_file_name;
 
+let uid = 0;
 
 //worker.onmessage = e=> console.log(e.data);
 //worker.postMessage(`test`);
+
+/**
+ * Generates output file name
+ * @param {File} file - Original file
+ * @param {number} target_width - Target width
+ * @param {number} target_height - Target height
+ * @param {boolean} should_scale - Whether scaling was performed
+ * @returns {string} Output file name
+ */
+const generate_output_name = (file, target_width, target_height, should_scale) => {
+    const base_name = file.name.replace(/\.[^/.]+$/, "");
+    let result = should_scale
+        ? `${base_name}_scaled_${target_width || 'orig'}x${target_height || 'orig'}.png`
+        : file.name;
+    if (result.length > 20) {
+        // Ensure we don't cut off the file extension
+        const ext = '.png';
+        const allowedBaseLen = 20 - ext.length;
+        if (should_scale) {
+            result = result.substring(0, allowedBaseLen) + ext;
+        } else {
+            // For non-scaled, just truncate to 20 chars
+            result = result.substring(0, 20);
+        }
+    }
+    return `${++uid}${result}`;
+};
 
 /**
  * Displays preview of original and scaled images
@@ -85,7 +113,7 @@ const display_preview = (file_name, original_img, scaled_canvas) => {
     }
 
     preview.innerHTML = `
-        <h3 style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">${file_name}</h3>
+        <h3 class="truncated-text" title="${file_name}">${file_name}</h3>
         <p>Original (${original_width}x${original_height})</p>
         <canvas width="${original_display_width}" height="${original_display_height}"></canvas>
         <p>Scaled (${scaled_width}x${scaled_height})</p>
@@ -179,77 +207,59 @@ const canvas_to_blob = async (canvas) => {
     });
 };
 
-/**
- * Generates output file name
- * @param {File} file - Original file
- * @param {number} target_width - Target width
- * @param {number} target_height - Target height
- * @param {boolean} should_scale - Whether scaling was performed
- * @returns {string} Output file name
- */
-const generate_output_name = (file, target_width, target_height, should_scale) => {
-    const base_name = file.name.replace(/\.[^/.]+$/, "");
-    let result = should_scale
-        ? `${base_name}_scaled_${target_width || 'orig'}x${target_height || 'orig'}.png`
-        : file.name;
-    if (result.length > 20) {
-        // Ensure we don't cut off the file extension
-        const ext = '.png';
-        const allowedBaseLen = 20 - ext.length;
-        if (should_scale) {
-            result = result.substring(0, allowedBaseLen) + ext;
-        } else {
-            // For non-scaled, just truncate to 20 chars
-            result = result.substring(0, 20);
-        }
-    }
-    return result;
-};
+
 
 /**
- * Processes a single file
- * @param {File} file - File to process
- * @param {number} target_width - Target width
- * @param {number} target_height - Target height
- * @param {JSZip} zip - ZIP archive instance
- * @returns {Promise<boolean>} Success status
+ * Processes an image file asynchronously without waiting, adding it to a zip.
+ * @param {File} file - The input image file.
+ * @param {number} target_width - Desired width for scaling.
+ * @param {number} target_height - Desired height for scaling.
+ * @param {JSZip} zip - The JSZip instance to store the processed file.
+ * @returns {Promise<boolean>} Resolves to true on success, false on failure.
  */
-const process_file = async (file, target_width, target_height, zip) => {
-    try {
-        const img = await load_image(file);
-        const natural_width = img.naturalWidth || img.width;
-        const natural_height = img.naturalHeight || img.height;
+const process_file = (file, target_width, target_height, zip) => {
+    return new Promise((resolve) => {
+        load_image(file)
+            .then(img => {
+                const natural_width = img.naturalWidth || img.width;
+                const natural_height = img.naturalHeight || img.height;
+                const should_scale = should_scale_image(img, target_width, target_height);
 
-        let scaled_canvas;
-        const should_scale = should_scale_image(img, target_width, target_height);
+                let scaled_canvas;
+                if (should_scale) {
+                    const scale_width = target_width > 0 ? target_width : natural_width;
+                    const scale_height = target_height > 0 ? target_height : natural_height;
+                    const src_data = get_image_data(img, 0, 0, natural_width, natural_height);
 
-        if (should_scale) {
-            const scale_width = target_width > 0 ? target_width : natural_width;
-            const scale_height = target_height > 0 ? target_height : natural_height;
-            const src_data = get_image_data(img, 0, 0, natural_width, natural_height);
-
-            const scaled_data = await scale_normal_map_worker(src_data, natural_width, natural_height, scale_width, scale_height);
-
-            scaled_canvas = create_scaled_canvas(scaled_data, scale_width, scale_height);
-        } else {
-            scaled_canvas = document.createElement('canvas');
-            scaled_canvas.width = natural_width;
-            scaled_canvas.height = natural_height;
-            const ctx = scaled_canvas.getContext('2d', { willReadFrequently: false });
-            ctx.drawImage(img, 0, 0);
-        }
-
-        const blob = await canvas_to_blob(scaled_canvas);
-        const output_name = generate_output_name(file, target_width, target_height, should_scale);
-        zip.file(output_name, blob);
-        display_preview(file.name, img, scaled_canvas);
-
-        return true;
-    } catch (err) {
-        console.error(`Error processing ${file.name}:`, err);
-        error_message.textContent = `Error processing ${file.name}: ${err.message}. Continuing with other files.`;
-        return false;
-    }
+                    return scale_normal_map_worker(src_data, natural_width, natural_height, scale_width, scale_height)
+                        .then(scaled_data => {
+                            scaled_canvas = create_scaled_canvas(scaled_data, scale_width, scale_height);
+                            return { scaled_canvas, blob: canvas_to_blob(scaled_canvas), should_scale, img };
+                        });
+                } else {
+                    scaled_canvas = document.createElement('canvas');
+                    scaled_canvas.width = natural_width;
+                    scaled_canvas.height = natural_height;
+                    const ctx = scaled_canvas.getContext('2d', { willReadFrequently: false });
+                    ctx.drawImage(img, 0, 0);
+                    return { scaled_canvas, blob: canvas_to_blob(scaled_canvas), should_scale, img };
+                }
+            })
+            .then(({ scaled_canvas, blob, should_scale, img }) => {
+                return Promise.resolve(blob).then(blob => {
+                    console.log(scaled_canvas, blob, should_scale, img);
+                    const output_name = generate_output_name(file, target_width, target_height, should_scale);
+                    zip.file(output_name, blob);
+                    display_preview(file.name, img, scaled_canvas);
+                    resolve(true);
+                });
+            })
+            .catch(err => {
+                console.error(`Error processing ${file.name}:`, err);
+                error_message.textContent = `Error processing ${file.name}: ${err.message}. Continuing with other files.`;
+                resolve(false);
+            });
+    });
 };
 
 /**
@@ -328,7 +338,7 @@ window.addEventListener('DOMContentLoaded', () => {
         update_file_status();
     });
 
-    process_button.addEventListener('click', async () => {
+    process_button.addEventListener('click', () => {
         if (files.length === 0) return;
 
         initialize_ui();
@@ -338,26 +348,22 @@ window.addEventListener('DOMContentLoaded', () => {
         const zip = new JSZip();
         let has_valid_normal_map = false;
 
-        try {
-            let processed = 0;
-            const total_files = files.length;
+        const total_files = files.length;
+        let processed = 0;
 
-            for (const file of files) {
-                const success = await process_file(file, target_width, target_height, zip);
-                if (success) has_valid_normal_map = true;
-
-                processed++;
-                progress_bar.value = (processed / total_files) * 100;
-
-                if (processed < total_files) {
-                    await new Promise(resolve => requestAnimationFrame(resolve));
-                }
-            }
-
-            await finalize_processing(zip, files, target_width, target_height, has_valid_normal_map);
-        } finally {
-            progress_bar.style.display = 'none';
-        }
+        Promise.all(files.map(file =>
+            process_file(file, target_width, target_height, zip)
+                .then(success => {
+                    if (success) has_valid_normal_map = true;
+                    processed++;
+                    progress_bar.value = (processed / total_files) * 100;
+                    return success;
+                })
+        ))
+            .then(() => finalize_processing(zip, files, target_width, target_height, has_valid_normal_map))
+            .finally(() => {
+                progress_bar.style.display = 'none';
+            });
     });
 
     reset_button.addEventListener('click', reset_app);

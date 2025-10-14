@@ -18,16 +18,22 @@ app/ImageProcessor/index_style.html
 app/ImageProcessor/js/main.ref.js
 app/PBRPacker/index_style.html
 app/PBRPacker/js/main.js
+app/PBRPacker/js/main.test.js
 app/3DFonts/index_style.html
 app/NormalMapScaler/js/main.work.js
 app/NormalMapScaler/assets
 app/NormalMapMerger/js/main.module.js
 app/NormalMapMerger/js/test.js
 app/NormalMapMerger/index.test.html
+app/ImagesProcessor/index.test.html
+app/ImagesProcessor/js/script .test.js
+app/ImagesProcessor/css/styles.test.css
+app/ImagesProcessor/js/main.test.js
 
 lib/test
-
 lib/module/html.js
 lib/module/gl.js
-
 lib/worker/test.js
+lib/class/UltimateImageProcessor.js
+lib/class/gpgpu copy.js
+

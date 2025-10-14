@@ -18,10 +18,24 @@
     secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
 */
 
-attribute vec2 a_position;
-varying vec2 v_uv;
+precision highp float;
+
+// Attributes
+attribute vec2 position;
+
+// Uniforms
+uniform vec2 source_size;
+uniform vec2 target_size;
+
+// Varyings
+varying vec2 v_src_pixel;
+varying vec2 v_source_clamp;
+varying vec2 v_uv_step;
 
 void main() {
-    v_uv = a_position;
-    gl_Position = vec4(a_position * 2.0 - 1.0, 0.0, 1.0);
+    vec2 tex_coord = (position * 0.5) + 0.5;
+    v_src_pixel = tex_coord * source_size;
+    v_source_clamp = source_size - 1.0;
+    v_uv_step = 1.0 / source_size;
+    gl_Position = vec4(position, 0.0, 1.0);
 }

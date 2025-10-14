@@ -1,9 +1,28 @@
+/*
+    Copyright (C) 2025  MdONeil 
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	
+	https://github.com/MdONeilsl
+    secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
+*/
+
 precision mediump float;
 
 uniform sampler2D base_tex;
 uniform sampler2D add_tex;
 uniform sampler2D mask_tex;
-
 uniform float y_sign;
 
 varying vec2 v_uv;
@@ -14,7 +33,9 @@ vec3 norm(vec3 v) {
 }
 
 vec3 cros(vec3 a, vec3 b) {
-    return vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+    return vec3(a.y * b.z - a.z * b.y, 
+                a.z * b.x - a.x * b.z, 
+                a.x * b.y - a.y * b.x);
 }
 
 float dt(vec3 a, vec3 b) {

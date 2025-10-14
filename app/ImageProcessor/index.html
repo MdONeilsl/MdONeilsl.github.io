@@ -1,3 +1,25 @@
+
+<!--
+/*
+    Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
+    Copyright (C) 2025  MdONeil 
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
+*/
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,80 +47,280 @@
         "license": "https://www.gnu.org/licenses/gpl-3.0.html"
     }
     </script>
+
 </head>
 
 <body>
     <link rel="stylesheet" href="./css/styles.css">
     <div class="container">
+        <div class="header">
+            <h1>Image Processor</h1>
+            <p>Optimize and convert images for Assets and web applications</p>
+        </div>
+
         <div class="upload-area" id="uploadArea">
-            Drag and drop an image here or click to select
+            <div class="upload-area-content">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your image here or click to browse</div>
+                <div class="upload-subtext"></div>
+            </div>
             <input type="file" id="fileInput" accept="image/*" style="display: none;">
         </div>
+
         <div class="controls">
-            <div class="slider-container">
-                <label>Quality (JPEG/WebP): <span id="qualityValue">80.00%</span></label>
-                <input type="range" id="qualitySlider" min="1" max="100" step="0.01" value="80">
-            </div>
-            <div class="slider-container">
-                <label>Scale: <span id="scaleValue">100.00%</span></label>
-                <input type="range" id="scaleSlider" min="1" max="100" step="0.01" value="100">
-            </div>
-            <div class="dimension-controls">
-                <div>
-                    <label>Max Width:</label>
-                    <input type="number" id="maxWidth" min="1" value="1920">
-                </div>
-                <div>
-                    <label>Max Height:</label>
-                    <input type="number" id="maxHeight" min="1" value="1080">
-                </div>
-            </div>
-            <div class="dimension-controls">
-                <div>
-                    <label>Format Compatibility:</label>
-                    <select id="formatCompatibility">
-                        <option value="modern">Modern Browsers</option>
-                        <option value="gltf">GLTF</option>
-                        <option value="slupload">SL Upload</option>
+            <div class="control-group">
+                <h3>Scaling Settings</h3>
+
+                <div class="control-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="maxSize">
+                        <label for="maxSize" class="control-label">Max size:</label>
+                    </div>
+                    <select id="maxPower2">
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="8">8</option>
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                        <option value="128">128</option>
+                        <option value="256">256</option>
+                        <option value="512">512</option>
+                        <option value="1024" selected>1024</option>
+                        <option value="2048">2048</option>
+                        <option value="4096">4096</option>
+                        <option value="8192">8192</option>
                     </select>
                 </div>
-                <div>
-                    <label>File Type:</label>
-                    <select id="fileType"></select>
+
+                <div class="control-row size-container">
+                    <div class="input-group">
+                        <label for="sclAlgo">Scaling Method</label>
+                        <select id="sclAlgo">
+                            <option value="0">Fix</option>
+                            <option value="1">Near Pow 2</option>
+                        </select>
+                    </div>
+                    <div class="size-sel-div">
+                        <div id="fix_sel_sec" class="dimension-controls">
+                            <div class="input-group">
+                                <label for="widthNumIn">Width</label>
+                                <input type="number" id="widthNumIn" min="1" max="1024" value="512">
+                            </div>
+                            <div class="input-group">
+                                <label for="heightNumIn">Height</label>
+                                <input type="number" id="heightNumIn" min="1" max="1024" value="512">
+                            </div>
+                        </div>
+
+                        <div id="pow2_sel_sec" class="dimension-controls" style="display:none">
+                            <div class="input-group">
+                                <label class="control-label">Width (Power of 2):</label>
+                                <select id="widthPower2">
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                    <option value="32">32</option>
+                                    <option value="64">64</option>
+                                    <option value="128">128</option>
+                                    <option value="256">256</option>
+                                    <option value="512"selected>512</option>
+                                    <option value="1024" >1024</option>
+                                    <option value="2048">2048</option>
+                                    <option value="4096">4096</option>
+                                    <option value="8192">8192</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="control-label">Height (Power of 2):</label>
+                                <select id="heightPower2">
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                    <option value="32">32</option>
+                                    <option value="64">64</option>
+                                    <option value="128">128</option>
+                                    <option value="256">256</option>
+                                    <option value="512"selected>512</option>
+                                    <option value="1024" >1024</option>
+                                    <option value="2048">2048</option>
+                                    <option value="4096">4096</option>
+                                    <option value="8192">8192</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <label>Image Scale (keep aspect-ratio when possible)</label>
+                        <span class="value-display" id="scaleValue">100%</span>
+                    </div>
+                    <input type="range" id="scaleSlider" min="0.01" max="500" step="0.01" value="100">
+                </div>
+
+                <div class="control-row space">
+                    <label class="control-label">Filter:</label>
+                    <select id="sclFilter">
+                        <option value="-1">None</option>
+                        <option value="0">Box</option>
+                        <option value="1">Hamming</option>
+                        <option value="2">Lanczos2</option>
+                        <option value="3">Lanczos3</option>
+                        <option value="4" selected>MKS2013</option>
+                        <option value="5">Bicubic</option>
+                    </select>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sclGamma">
+                        <label for="sclGamma" class="control-label">Gamma Correction</label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sclUnsharp">
+                        <label for="sclUnsharp" class="control-label">Unsharp Mask</label>
+                    </div>
+                </div>
+
+                <div class="ushr-sec">
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label>Unsharp Amount</label>
+                            <span class="value-display" id="unsharpAmountValue">0</span>
+                        </div>
+                        <input type="range" id="unsharpAmount" min="0" max="400" value="0">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label>Unsharp Radius</label>
+                            <span class="value-display" id="unsharpRadiusValue">1.0</span>
+                        </div>
+                        <input type="range" id="unsharpRadius" min="0.1" max="4" step="0.1" value="1.0">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label>Unsharp Threshold</label>
+                            <span class="value-display" id="unsharpThresholdValue">0</span>
+                        </div>
+                        <input type="range" id="unsharpThreshold" min="0" max="255" value="0">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="control-group">
+                <h3>Compression Settings</h3>
+                <div class="type-controls">
+                    <div class="input-group">
+                        <label class="control-label">Template:</label>
+                        <select id="template">
+                            <option value="web">Web</option>
+                            <option value="gltf">GLTF</option>
+                            <option value="slupload">SL Upload</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="control-label">Alpha Channel:</label>
+                        <select id="alphaChannel">
+                            <option value="unchange">Unchanged</option>
+                            <option value="add">Force Add</option>
+                            <option value="remove">Force Remove</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="control-label">Format:</label>
+                        <select id="format">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                            <option value="avif">AVIF</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <label>Quality</label>
+                        <span class="value-display" id="qualityValue">100%</span>
+                    </div>
+                    <input type="range" id="qualityRange" min="0.001" max="1" step="0.001" value="1">
                 </div>
             </div>
         </div>
+
         <div class="preview-container" id="previewContainer">
             <div class="original-image" id="originalPreview"></div>
             <div class="optimized-image" id="optimizedPreview"></div>
             <div class="preview-divider" id="previewDivider"></div>
         </div>
-        <div class="info">
-            Original Size: <span id="originalSize">0</span> bytes<br>
-            Optimized Size: <span id="optimizedSize">0</span> bytes<br>
-            Space Saved: <span id="spaceSaved">0</span>%<br>
-            Size: <span id="prowidth">0</span> X <span id="proheight">0</span> px
+
+        <div class="info-panel">
+            <div class="info-grid">
+                <div class="dimension-section">
+                    <h4>Original Image</h4>
+                    <div class="info-item">
+                        <span class="info-label">Size</span>
+                        <span class="info-value" id="originalSize">0 bytes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dimensions</span>
+                        <span class="info-value" id="originalDimensions">0 × 0 px</span>
+                    </div>
+                </div>
+                <div class="dimension-section">
+                    <h4>Modified Image</h4>
+                    <div class="info-item">
+                        <span class="info-label">Size</span>
+                        <span class="info-value" id="optimizedSize">0 bytes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dimensions</span>
+                        <span class="info-value" id="optimizedDimensions">0 × 0 px</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Space Saved</span>
+                        <span class="info-value positive" id="spaceSaved">0%</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <textarea id="base64Uri" readonly placeholder="Base64 URI will appear here after processing"></textarea>
-        <button id="saveButton">Save Optimized Image</button>
+
+        <div class="base64-container">
+            <label>Base64 Data URI</label>
+            <div class="base64-header">
+
+                <button class="copy-button" id="copyButton">
+                    <span>📋</span> Copy
+                </button>
+            </div>
+            <textarea id="base64Uri" readonly placeholder="Base64 URI will appear here after processing"></textarea>
+        </div>
+
+        <div class="action-buttons">
+            <button id="saveButton">
+                <span>💾</span> Save Optimized Image
+            </button>
+        </div>
 
         <footer>
-            <p>Second Life and SL are trademarks of Linden Research, Inc. Image Processor is not affiliated with or
-                sponsored by Linden Research.</p>
-            <p>Powered by <a href="https://www.npmjs.com/package/browser-image-compression"
-                    target="_blank">browser-image-compression</a> (MIT License) by Donald <span
-                    style="font-family: monospace;">C</span>.</p>
+            <p>©2025 Image Processor. All rights reserved.</p>
+            <p>Image Processor is not affiliated with Linden
+                Research. Second Life and SL are trademarks of Linden Research, Inc.</p>
             <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL-3.0
-                    License</a>. Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
-                    target="_blank">Second Life Profile</a>. See full license texts at <a href="https://www.gnu.org/licenses/gpl-3.0.html">Licenses</a>.
-            </p>
+                    License</a></p>
+            <p>Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                    target="_blank">Second Life Profile</a></p>
         </footer>
     </div>
-
-
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.js"></script>
-    <script src="./js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
 </body>
 
 </html>

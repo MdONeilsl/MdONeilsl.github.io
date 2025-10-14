@@ -1,213 +1,270 @@
-<!doctype html>
-<html lang=en>
+<!--
+/*
+    Batch Image Processor: Optimize and convert multiple images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
+    Copyright (C) 2025  MdONeil 
 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
+*/
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Images Processor is a web-based tool for Second Life® creators to resize and compress images for virtual world content creation.">
-    <meta name="keywords"
-        content="image processing tool, virtual world content creation, image resizing for Second Life, Second Life texture tool, content creation app">
-    <title>Images Processor</title>
+    <meta name="description" content="Batch Image Processor: Optimize and convert multiple images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.">
+    <meta name="keywords" content="image converter, PNG, JPEG, WebP, GLTF, Second Life tool, image optimization, web">
+    <meta name="author" content="MdONeil">
+    <title>Batch Image Processor</title>
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "Images Processor",
+        "name": "Batch Image Processor",
         "operatingSystem": "Web",
-        "applicationCategory": "Graphics & Design",
-        "description": "A web-based tool for Second Life creators to resize and compress images for virtual world content creation, with advanced options for quality and performance.",
-        "url": "https://yourwebsite.com"
+        "applicationCategory": "UtilityApplication",
+        "description": "A web-based tool for optimizing and converting multiple images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.",
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
     }
     </script>
     
 </head>
-
 <body>
-    <link rel=stylesheet href=./css/styles.css>
-
-    <h1>Images Processor</h1>
-    <div class=container>
-        <div id=drop-zone>Drop images here or click to select</div>
-        <div class=status-container>
-            <div id=status>0 images loaded</div>
+    <link rel="stylesheet" href="./css/styles.css">
+    <div class="container">
+        <div class="header">
+            <h1>Batch Image Processor</h1>
+            <p>Optimize and convert multiple images for Assets and web applications</p>
         </div>
-        <form id=settings>
-            <div class=section>
-                <h3>Resize Options</h3>
-                <label title="Maximum power of 2 size for dimensions.">
-                    <input type=checkbox id=Max-size checked> Max size:
-                    <select id=max-power2>
-                        <option value=2>2</option>
-                        <option value=4>4</option>
-                        <option value=8>8</option>
-                        <option value=16>16</option>
-                        <option value=32>32</option>
-                        <option value=64>64</option>
-                        <option value=128>128</option>
-                        <option value=256>256</option>
-                        <option value=512>512</option>
-                        <option value=1024 selected>1024</option>
-                        <option value=2048>2048</option>
-                        <option value=4096>4096</option>
-                        <option value=8192>8192</option>
-                    </select>
-                </label>
-                <label title="Resize both width and height to the nearest power of 2, not exceeding max size.">
-                    <input type=checkbox name=retype id=fix-power2 checked> Fix to power of 2
-                </label>
-                <div class=row>
-                    <label title="Resize all images to the specified fixed size.">
-                        <input type=checkbox name=retype id=fixed-size> Fixed size
-                    </label>
-                    <label title="Fixed width in pixels.">
-                        Width: <input type=number id=fixed-width min=1 max=4096 step=1 disabled>
-                    </label>
-                    <label title="Fixed height in pixels.">
-                        Height: <input type=number id=fixed-height min=1 max=4096 step=1 disabled>
-                    </label>
-                </div>
-                <label title="Maintain aspect ratio when resizing to fixed size (fit within dimensions).">
-                    <input type=checkbox id=aspect-lock disabled> Lock aspect ratio
-                </label>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-area-content">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your images here or click to browse</div>
+                <div class="upload-subtext"></div>
             </div>
-            <div class=section>
-                <h3>Output Options</h3>
-                <div class=note>
-                    Note: Perform a manual visual check of the desired compression using
-                    <a href=https://mdoneilsl.github.io/app/ImageProcessor/ target=_blank>Image Processor</a>.
-                </div>
-                <label title="Template type: 'asset' disables WebP.">
-                    Template:
-                    <select id=template>
-                        <option value=web>Web</option>
-                        <option value=asset>Asset</option>
-                    </select>
-                </label>
-                <div class=row>
-                    Format:
-                    <div title="Output image format." class=format-options>
-                        <label><input type=radio name=format value=jpeg id=format-jpg> JPG</label>
-                        <label><input type=radio name=format value=png id=format-png checked> PNG</label>
-                        <label><input type=radio name=format value=webp id=format-webp> WebP</label>
+            <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h3>Preview the individual quality test using <a href="https://mdoneilsl.github.io/app/ImageProcessor/">this tool</a> first.</h3>
+            </div>
+            <div class="control-group">
+                <h3>Scaling Settings</h3>
+                <div class="control-row">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="maxSize">
+                        <label for="maxSize" class="control-label" title="Enable to limit the maximum dimension to a power of 2 value.">Max size:</label>
                     </div>
-                    <label title="Quality for JPG and WebP (0-100).">
-                        Quality: <input type=range id=quality min=0 max=100 value=100>
-                        <span id=quality-value>100</span>
-                    </label>
+                    <select id="maxPower2" title="Enable to limit the maximum dimension to a power of 2 value.">
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="8">8</option>
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                        <option value="128">128</option>
+                        <option value="256">256</option>
+                        <option value="512">512</option>
+                        <option value="1024" selected>1024</option>
+                        <option value="2048">2048</option>
+                        <option value="4096">4096</option>
+                        <option value="8192">8192</option>
+                    </select>
                 </div>
-                <label title="Lossless compression for WebP (may not be fully lossless in all browsers).">
-                    <input type=checkbox id=lossless disabled> Lossless (WebP)
-                </label>
-            </div>
-            <div class="section pic">
-                <h3>Pica Options <button type=button class=help-button id=pica-help>?</button></h3>
-                <div class=warning>
-                    Warning: All Pica options are exposed due to the large variety in browser models, versions, and
-                    personal browser settings. Not all combinations will work for everyone.
-                </div>
-                <div class=block>
-                    <label title="Pica resize filter.">
-                        Filter:
-                        <select id=pica-filter>
-                            <option value=mks2013>MKS2013 (default)</option>
-                            <option value=lanczos>Lanczos</option>
-                            <option value=hamming>Hamming</option>
-                            <option value=box>Box</option>
+                <div class="control-row size-container">
+                    <div class="input-group">
+                        <label for="sclAlgo" title="Choose between fixed dimensions or nearest power of 2.">Scaling Method</label>
+                        <select id="sclAlgo" title="Choose between fixed dimensions or nearest power of 2.">
+                            <option value="0">Fix</option>
+                            <option value="1">Near Pow 2</option>
                         </select>
-                    </label>
+                    </div>
+                    <div class="size-sel-div">
+                        <div id="fix_sel_sec" class="dimension-controls">
+                            <div class="input-group">
+                                <label for="widthNumIn" title="Set the exact width in pixels for fixed mode.">Width</label>
+                                <input type="number" id="widthNumIn" min="1" max="1024" value="512" title="Set the exact width in pixels for fixed mode.">
+                            </div>
+                            <div class="input-group">
+                                <label for="heightNumIn" title="Set the exact height in pixels for fixed mode.">Height</label>
+                                <input type="number" id="heightNumIn" min="1" max="1024" value="512" title="Set the exact height in pixels for fixed mode.">
+                            </div>
+                        </div>
+                        <div id="pow2_sel_sec" class="dimension-controls" style="display:none">
+                            <div class="input-group">
+                                <label class="control-label" title="Select the power of 2 value for width in power mode.">Width (Power of 2):</label>
+                                <select id="widthPower2" title="Select the power of 2 value for width in power mode.">
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                    <option value="32">32</option>
+                                    <option value="64">64</option>
+                                    <option value="128">128</option>
+                                    <option value="256">256</option>
+                                    <option value="512" selected>512</option>
+                                    <option value="1024">1024</option>
+                                    <option value="2048">2048</option>
+                                    <option value="4096">4096</option>
+                                    <option value="8192">8192</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="control-label" title="Select the power of 2 value for height in power mode.">Height (Power of 2):</label>
+                                <select id="heightPower2" title="Select the power of 2 value for height in power mode.">
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                    <option value="32">32</option>
+                                    <option value="64">64</option>
+                                    <option value="128">128</option>
+                                    <option value="256">256</option>
+                                    <option value="512" selected>512</option>
+                                    <option value="1024">1024</option>
+                                    <option value="2048">2048</option>
+                                    <option value="4096">4096</option>
+                                    <option value="8192">8192</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class=block>
-                    <label title="Unsharp amount (>=0, usually 100-200).">
-                        Unsharp Amount: <input type=number id=unsharp-amount min=0 step=1 value=0>
-                    </label>
-                    <label title="Unsharp radius (0.5-2.0).">
-                        Unsharp Radius: <input type=number id=unsharp-radius min=0.5 max=2 step=0.1 value=0.5>
-                    </label>
-                    <label title="Unsharp threshold (0-255).">
-                        Unsharp Threshold: <input type=number id=unsharp-threshold min=0 max=255 step=1 value=0>
-                    </label>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <label title="Scale the image dimensions while trying to maintain aspect ratio when possible.">Image Scale</label>
+                        <span class="value-display" id="scaleValue">100%</span>
+                    </div>
+                    <input type="range" id="scaleSlider" min="0.01" max="500" step="0.01" value="100" title="Scale the image dimensions while trying to maintain aspect ratio when possible.">
                 </div>
-                <div class=blok>
-                    <label title="Preserve alpha channel if present.">
-                        <input type=checkbox id=alpha checked> Preserve Alpha
-                    </label>
+                <div class="control-row space">
+                    <label class="control-label" title="Select the resampling filter for resizing.">Filter:</label>
+                    <select id="sclFilter" title="Select the resampling filter for resizing.">
+                        <option value="-1">None</option>
+                        <option value="0">Box</option>
+                        <option value="1">Hamming</option>
+                        <option value="2">Lanczos2</option>
+                        <option value="3">Lanczos3</option>
+                        <option value="4" selected>MKS2013</option>
+                        <option value="5">Bicubic</option>
+                    </select>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sclGamma">
+                        <label for="sclGamma" class="control-label" title="Apply gamma correction during resizing to preserve color accuracy.">Gamma Correction</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sclUnsharp">
+                        <label for="sclUnsharp" class="control-label" title="Apply unsharp mask to sharpen the image after resizing.">Unsharp Mask</label>
+                    </div>
                 </div>
-                <div class=block>
-                    <label title="Tile size for processing.">
-                        Tile: <input type=number id=tile value=1024 min=1>
-                    </label>
-                    <label title="Idle timeout for workers (ms).">
-                        Idle: <input type=number id=idle value=2000 min=0>
-                    </label>
-                    <label title="Max concurrency (workers).">
-                        Concurrency: <input type=number id=concurrency value=4 min=1 max=16>
-                    </label>
-                </div>
-                <div class=block>
-                    <label title="Use web workers for processing.">
-                        <input type=checkbox id=use-ww checked> Use Web Workers
-                    </label>
-                    <label title="Use WASM if available.">
-                        <input type=checkbox id=use-wasm checked> Use WASM
-                    </label>
-                    <label title="Use JS fallback.">
-                        <input type=checkbox id=use-js checked> Use JS
-                    </label>
-                    <label title="Use createImageBitmap if available (buggy in some browsers, disabled by default).">
-                        <input type=checkbox id=use-cib> Use CID
-                    </label>
+                <div class="ushr-sec">
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label title="The strength of the sharpening effect.">Unsharp Amount</label>
+                            <span class="value-display" id="unsharpAmountValue">0</span>
+                        </div>
+                        <input type="range" id="unsharpAmount" min="0" max="400" value="0" title="The strength of the sharpening effect.">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label title="The radius of the sharpening Gaussian.">Unsharp Radius</label>
+                            <span class="value-display" id="unsharpRadiusValue">1.0</span>
+                        </div>
+                        <input type="range" id="unsharpRadius" min="0.1" max="4" step="0.1" value="1.0" title="The radius of the sharpening Gaussian.">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <label title="The threshold for applying sharpening.">Unsharp Threshold</label>
+                            <span class="value-display" id="unsharpThresholdValue">0</span>
+                        </div>
+                        <input type="range" id="unsharpThreshold" min="0" max="255" value="0" title="The threshold for applying sharpening.">
+                    </div>
                 </div>
             </div>
-            <div id=progress>
-                <div id=prog-bar></div>
-                <span id=prog-text>0%</span>
+            <div class="control-group">
+                <h3>Compression Settings</h3>
+                <div class="type-controls">
+                    <div class="input-group">
+                        <label class="control-label" title="Preset configurations for different use cases (Web, GLTF, SL Upload).">Template:</label>
+                        <select id="template" title="Preset configurations for different use cases (Web, GLTF, SL Upload).">
+                            <option value="web">Web</option>
+                            <option value="gltf">GLTF</option>
+                            <option value="slupload">SL Upload</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="control-label" title="Control how the alpha channel (transparency) is handled.">Alpha Channel:</label>
+                        <select id="alphaChannel" title="Control how the alpha channel (transparency) is handled.">
+                            <option value="unchange">Unchanged</option>
+                            <option value="add">Force Add</option>
+                            <option value="remove">Force Remove</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="control-label" title="Choose the output image format.">Format:</label>
+                        <select id="format" title="Choose the output image format.">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                            <option value="avif">AVIF</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <label title="Set the compression quality (higher means better quality, larger file).">Quality</label>
+                        <span class="value-display" id="qualityValue">100%</span>
+                    </div>
+                    <input type="range" id="qualityRange" min="0.001" max="1" step="0.001" value="1" title="Set the compression quality (higher means better quality, larger file).">
+                </div>
             </div>
-            <div class=button-group>
-                <button type=button id=reset>Reset Settings</button>
-                <button type=button id=process disabled>Process and Download</button>
+        </div>
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div id="progress">
+                <div id="prog-bar" style="width: 0%;"></div>
+                <span id="prog-text">0%</span>
             </div>
-        </form>
-        <div id=error></div>
+        </div>
+        <div class="action-buttons">
+            <button id="processButton" disabled>
+                <span>⚙️</span> Process
+            </button>
+            <button id="resetButton">
+                <span>🔄</span> Reset
+            </button>
+            <a id="saveButton" style="display: none;">
+                <span>💾</span> Download ZIP
+            </a>
+        </div>
+        <footer>
+            <p>©2025 Batch Image Processor. All rights reserved.</p>
+            <p>Batch Image Processor is not affiliated with Linden Research. Second Life and SL are trademarks of Linden Research, Inc.</p>
+            <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL-3.0 License</a></p>
+            <p>Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" target="_blank">Second Life Profile</a></p>
+        </footer>
     </div>
-
-    <footer class="section" style="margin-top: auto; text-align: center; font-size: 0.9em; color: #555;">
-        <p>© 2025 Images Processor. All rights reserved.</p>
-        <p>Images Processor is a tool designed for Second Life® users and is not affiliated with or sponsored by Linden
-            Research, Inc.</p>
-        <p>Built with <a href="https://github.com/nodeca/pica">Pica</a> (MIT License) by <a
-                href="https://github.com/nodeca">Nodeca</a> and <a href="https://stuk.github.io/jszip/">JSZip</a> (MIT
-            License) by <a href="https://github.com/Stuk">Stuart Knightley</a>. See <a href="/licenses">license
-                details</a>.</p>
-            <p>Developed by MdONeil under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>.
-            Contact:
-            <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a>
-        </p>
-    </footer>
-
-
-
-    <dialog id=pica-dialog>
-        <h2>Pica Options</h2>
-        <p>Pica is a high-quality image resizing library. These options control how images are processed:</p>
-        <ul>
-            <li><strong>Filter:</strong> Choose the algorithm for resizing (e.g., Lanczos for sharp results).</li>
-            <li><strong>Unsharp:</strong> Adjusts sharpness after resizing (amount, radius, threshold).</li>
-            <li><strong>Alpha:</strong> Preserves transparency if present in the original image.</li>
-            <li><strong>Tile:</strong> Size of image chunks for processing (affects memory usage).</li>
-            <li><strong>Idle:</strong> Timeout for web workers (ms) to free resources.</li>
-            <li><strong>Concurrency:</strong> Number of simultaneous processing tasks.</li>
-            <li><strong>Web Workers, WASM, JS, CID:</strong> Enable/disable specific processing methods for
-                compatibility and performance.</li>
-        </ul>
-        <p>Not all options work in every browser due to variations in support and settings.</p>
-        <button type=button onclick='document.getElementById("pica-dialog").close()'>Close</button>
-    </dialog>
-
-    <script src=https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js></script>
-    <script src=https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js></script>
-    <script src=./js/script.js></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
 </body>
-
 </html>

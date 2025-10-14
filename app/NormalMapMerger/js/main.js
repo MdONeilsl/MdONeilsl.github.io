@@ -311,7 +311,6 @@ class NormalMapMerger {
             mask_data.fill(intensity);
         } else {
             mask_data = get_image_data(this.datas.mask, 0, 0, this.datas.mask.width, this.datas.mask.height);
-
             if (this.datas.base.width !== this.datas.mask.width || this.datas.base.height !== this.datas.mask.height) {
                 mask_data = resize_img_canv(
                     mask_data,
@@ -320,7 +319,7 @@ class NormalMapMerger {
                     this.datas.base.width,
                     this.datas.base.height,
                     false
-                );
+                ).data;
             }
         }
 

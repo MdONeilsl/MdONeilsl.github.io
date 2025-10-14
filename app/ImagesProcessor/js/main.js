@@ -1,5 +1,5 @@
 /*
-    Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
+    Batch Image Processor: Optimize and convert multiple images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
     Copyright (C) 2025  MdONeil 
 
     This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,8 @@ import { clamp } from "../../../lib/module/math.js";
 import { scale_image_worker } from "../../../lib/module/worker.js";
 
 // Global variables
-let original_file, original_img;
-let has_transparency_val = false;
-let divider_position = 50;
+let files_data = [];
+let is_processing = false;
 
 // Cached DOM elements
 const dom_elements = {
@@ -39,15 +38,7 @@ const dom_elements = {
     unsharp_threshold: document.getElementById('unsharpThreshold'),
     format: document.getElementById('format'),
     quality_range: document.getElementById('qualityRange'),
-    optimized_preview: document.getElementById('optimizedPreview'),
-    base64_uri: document.getElementById('base64Uri'),
-    original_dimensions: document.getElementById('originalDimensions'),
-    optimized_dimensions: document.getElementById('optimizedDimensions'),
-    optimized_size: document.getElementById('optimizedSize'),
-    space_saved: document.getElementById('spaceSaved'),
-    save_button: document.getElementById('saveButton'),
-    original_preview: document.getElementById('originalPreview'),
-    original_size: document.getElementById('originalSize'),
+    quality_value: document.getElementById('qualityValue'),
     template: document.getElementById('template'),
     alpha_channel: document.getElementById('alphaChannel'),
     max_size: document.getElementById('maxSize'),
@@ -61,38 +52,36 @@ const dom_elements = {
     scale_value: document.getElementById('scaleValue'),
     upload_area: document.getElementById('uploadArea'),
     file_input: document.getElementById('fileInput'),
-    quality_value: document.getElementById('qualityValue'),
-    preview_container: document.getElementById('previewContainer'),
-    preview_divider: document.getElementById('previewDivider'),
     unsharp_amount_value: document.getElementById('unsharpAmountValue'),
     unsharp_radius_value: document.getElementById('unsharpRadiusValue'),
     unsharp_threshold_value: document.getElementById('unsharpThresholdValue'),
-    copy_button: document.getElementById('copyButton')
+    process_button: document.getElementById('processButton'),
+    reset_button: document.getElementById('resetButton'),
+    save_button: document.getElementById('saveButton'),
+    progress_container: document.getElementById('progressContainer'),
+    prog_bar: document.getElementById('prog-bar'),
+    prog_text: document.getElementById('prog-text'),
 };
 
 const filters_const = ['box', 'hamming', 'lanczos2', 'lanczos3', 'mks2013', 'bicubic'];
 const powers_const = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192];
 
 /**
- * Debounces a function call.
- * @param {Function} func - The function to debounce.
- * @param {number} wait - The debounce wait time in milliseconds.
- * @returns {Function} The debounced function.
+ * Updates the progress bar.
+ * @param {number} percent - The progress percentage.
  */
-const debounce = (func, wait) => {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), wait);
-    };
+const update_progress = (percent) => {
+    dom_elements.prog_bar.style.width = `${percent}%`;
+    dom_elements.prog_text.textContent = `${Math.round(percent)}%`;
 };
 
 /**
- * Processes the image with current settings.
+ * Processes a single image with current settings.
+ * @param {HTMLImageElement} original_img - The original image.
+ * @param {string} filename - The original filename.
+ * @returns {Promise<{blob: Blob, filename: string}>} The processed image blob and filename.
  */
-const process_image = async () => {
-    if (!original_img) return;
-
+const process_single = async (original_img, filename) => {
     const settings = {
         width: parseInt(dom_elements.width_num_in.value, 10),
         height: parseInt(dom_elements.height_num_in.value, 10),
@@ -142,69 +131,81 @@ const process_image = async () => {
     const ctx = canvas.getContext('2d');
     ctx.putImageData(new ImageData(pixels, settings.width, settings.height), 0, 0);
 
-    const preview_data_url = canvas.toDataURL(`image/${settings.format}`, settings.quality);
-    dom_elements.optimized_preview.style.backgroundImage = `url(${preview_data_url})`;
-    dom_elements.base64_uri.value = preview_data_url;
-
-    dom_elements.original_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
-    dom_elements.optimized_dimensions.textContent = `${settings.width} × ${settings.height} px`;
-
-    const new_size = await get_new_size(pixels, settings.width, settings.height, settings.quality, settings.format);
-    dom_elements.optimized_size.textContent = format_size_units(new_size);
-
-    const saved = original_file ? (1 - new_size / original_file.size) * 100 : 0;
-    dom_elements.space_saved.textContent = `${saved.toFixed(2)}%`;
-
-    canvas.toBlob((blob) => {
-        if (blob) {
-            dom_elements.save_button.dataset.blob = URL.createObjectURL(blob);
-            dom_elements.save_button.dataset.ext = settings.format;
-        }
-    }, `image/${settings.format}`);
+    return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+            resolve({ blob, filename: `${filename.split('.')[0]}_optimized.${settings.format}` });
+        }, `image/${settings.format}`, settings.quality);
+    });
 };
 
-// Debounced version of process_image
-const debounced_process_image = debounce(process_image, 300);
-
 /**
- * Handles the selected file.
- * @param {File} file - The selected image file.
+ * Processes all selected images and creates a ZIP file.
  */
-const handle_file = (file) => {
-    if (!file || !file.type.startsWith('image/')) {
-        alert('Please select a valid image file.');
-        return;
+const batch_process = async () => {
+    if (is_processing || files_data.length === 0) return;
+
+    is_processing = true;
+    dom_elements.process_button.disabled = true;
+    dom_elements.progress_container.style.display = 'block';
+    update_progress(0);
+
+    const zip = new JSZip();
+    const total = files_data.length;
+    let processed = 0;
+
+    for (const data of files_data) {
+        const result = await process_single(data.img, data.file.name);
+        zip.file(result.filename, result.blob);
+        processed++;
+        update_progress((processed / total) * 100);
     }
 
-    original_file = file;
-    const reader = new FileReader();
+    const zip_blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(zip_blob);
+    dom_elements.save_button.href = url;
+    dom_elements.save_button.download = 'optimized_images.zip';
+    dom_elements.save_button.style.display = 'inline-flex';
 
-    reader.onload = (e) => {
-        original_img = new Image();
-        original_img.onload = () => {
-            has_transparency_val = has_transparency(get_image_data(original_img, 0, 0, original_img.width, original_img.height));
-            dom_elements.original_preview.style.backgroundImage = `url(${e.target.result})`;
-            dom_elements.original_size.textContent = format_size_units(original_file.size);
-
-            dom_elements.width_num_in.value = original_img.width;
-            dom_elements.height_num_in.value = original_img.height;
-            dom_elements.original_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
-            dom_elements.optimized_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
-
-            document.querySelector('.upload-text').textContent = `Selected: ${file.name}`;
-            document.querySelector('.upload-subtext').textContent = `${original_img.width} × ${original_img.height}px • ${(file.size / 1024).toFixed(2)} KB`;
-
-            update_format_options();
-            process_image();
-        };
-        original_img.src = e.target.result;
-    };
-
-    reader.readAsDataURL(file);
+    is_processing = false;
+    dom_elements.process_button.disabled = false;
 };
 
 /**
- * Updates format options based on template and transparency.
+ * Handles the selected files.
+ * @param {FileList} files - The selected image files.
+ */
+const handle_files = (files) => {
+    if (files.length === 0) return;
+
+    const upload_text = document.querySelector('.upload-text');
+    upload_text.textContent = `Selected: ${files.length} files`;
+    document.querySelector('.upload-subtext').textContent = '';
+
+    const promises = Array.from(files).map((file) => {
+        if (!file.type.startsWith('image/')) return null;
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const has_trans = has_transparency(get_image_data(img, 0, 0, img.width, img.height));
+                    resolve({ file, img, has_trans });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }).filter(p => p);
+
+    Promise.all(promises).then((data) => {
+        files_data = data;
+        dom_elements.process_button.disabled = files_data.length === 0;
+        update_format_options();
+    });
+};
+
+/**
+ * Updates format options based on template and alpha.
  */
 const update_format_options = () => {
     const template = dom_elements.template.value;
@@ -213,17 +214,14 @@ const update_format_options = () => {
 
     let formats = ['jpeg', 'png', 'webp', 'avif'];
 
-    alpha_select.disabled = false;
-
     if (template === 'slupload' || template === 'gltf') {
         formats = formats.filter((item) => item !== 'avif' && item !== 'webp');
     }
 
     const alphsel = alpha_select.value;
-
-    if (alphsel === 'remove' || (alphsel === 'unchanged' && !has_transparency_val)) {
+    if (alphsel === 'remove') {
         formats = formats.filter((item) => item !== 'avif' && item !== 'webp' && item !== 'png');
-    } else if (alphsel === 'add' || (alphsel === 'unchanged' && has_transparency_val)) {
+    } else if (alphsel === 'add') {
         formats = formats.filter((item) => item !== 'jpeg');
     }
 
@@ -231,59 +229,42 @@ const update_format_options = () => {
 };
 
 /**
- * Formats size in units.
- * @param {number} bytes - The size in bytes.
- * @returns {string} The formatted size.
+ * Resets the application state.
  */
-const format_size_units = (bytes) => {
-    if (bytes === 0) return '0 bytes';
-    const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    const size = bytes / 1024 ** i;
-    return `${size.toFixed(2)} ${sizes[i]}`;
-};
-
-/**
- * Gets the new size of the image.
- * @param {Uint8ClampedArray} data - The image data.
- * @param {number} width - The width.
- * @param {number} height - The height.
- * @param {number} quality - The quality.
- * @param {string} type - The format type.
- * @returns {Promise<number>} The new size.
- */
-const get_new_size = (data, width, height, quality, type) =>
-    new Promise((resolve) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.putImageData(new ImageData(data, width, height), 0, 0);
-
-        canvas.toBlob(
-            (blob) => resolve(blob ? blob.size : 0),
-            `image/${type}`,
-            quality
-        );
-    });
-
-/**
- * Saves the optimized image.
- */
-const save_image = () => {
-    const save_button = dom_elements.save_button;
-
-    if (!save_button.dataset.blob) {
-        alert('No optimized image to save. Please process an image first.');
-        return;
-    }
-
-    const link = document.createElement('a');
-    link.href = save_button.dataset.blob;
-    link.download = `optimized.${save_button.dataset.ext}`;
-    link.click();
-
-    setTimeout(() => URL.revokeObjectURL(save_button.dataset.blob), 100);
+const reset_app = () => {
+    files_data = [];
+    document.querySelector('.upload-text').textContent = 'Drop your images here or click to browse';
+    document.querySelector('.upload-subtext').textContent = '';
+    dom_elements.process_button.disabled = true;
+    dom_elements.save_button.style.display = 'none';
+    dom_elements.save_button.removeAttribute('href');
+    dom_elements.save_button.removeAttribute('download');
+    dom_elements.progress_container.style.display = 'none';
+    update_progress(0);
+    dom_elements.file_input.value = '';
+    dom_elements.width_num_in.value = 512;
+    dom_elements.height_num_in.value = 512;
+    dom_elements.width_power2.value = 512;
+    dom_elements.height_power2.value = 512;
+    dom_elements.scale_slider.value = 100;
+    dom_elements.scale_value.textContent = '100%';
+    dom_elements.scl_filter.value = 4;
+    dom_elements.scl_gamma.checked = false;
+    dom_elements.scl_unsharp.checked = false;
+    dom_elements.unsharp_amount.value = 0;
+    dom_elements.unsharp_amount_value.textContent = '0';
+    dom_elements.unsharp_radius.value = 1.0;
+    dom_elements.unsharp_radius_value.textContent = '1.0';
+    dom_elements.unsharp_threshold.value = 0;
+    dom_elements.unsharp_threshold_value.textContent = '0';
+    dom_elements.quality_range.value = 1;
+    dom_elements.quality_value.textContent = '100%';
+    dom_elements.template.value = 'web';
+    dom_elements.alpha_channel.value = 'unchange';
+    dom_elements.scl_algo.value = '0';
+    dom_elements.fix_sel_sec.style.display = 'grid';
+    dom_elements.pow2_sel_sec.style.display = 'none';
+    update_format_options();
 };
 
 /**
@@ -293,16 +274,12 @@ const initialize_scaling_controls = () => {
     const default_values = {
         width_num_in: 512,
         height_num_in: 512,
-        width_power2: 1024,
-        height_power2: 1024,
+        width_power2: 512,
+        height_power2: 512,
         scale_slider: 100,
         max_power2: 1024
     };
 
-    /**
-     * Updates max constraints.
-     * @param {number} max_value - The max value.
-     */
     const update_max_constraints = (max_value) => {
         dom_elements.width_num_in.max = max_value;
         dom_elements.height_num_in.max = max_value;
@@ -313,16 +290,12 @@ const initialize_scaling_controls = () => {
         dom_elements.width_power2.innerHTML = options_html;
         dom_elements.height_power2.innerHTML = options_html;
         dom_elements.scale_slider.max = Math.min(500, (max_value / Math.max(parseInt(dom_elements.width_num_in.value, 10), parseInt(dom_elements.height_num_in.value, 10))) * 100);
-
         dom_elements.width_num_in.value = Math.min(parseInt(dom_elements.width_num_in.value, 10), max_value);
         dom_elements.height_num_in.value = Math.min(parseInt(dom_elements.height_num_in.value, 10), max_value);
         dom_elements.width_power2.value = Math.min(parseInt(dom_elements.width_power2.value, 10), max_value);
         dom_elements.height_power2.value = Math.min(parseInt(dom_elements.height_power2.value, 10), max_value);
     };
 
-    /**
-     * Restores default values.
-     */
     const restore_defaults = () => {
         dom_elements.width_num_in.max = default_values.max_power2;
         dom_elements.height_num_in.max = default_values.max_power2;
@@ -339,26 +312,17 @@ const initialize_scaling_controls = () => {
         dom_elements.height_power2.value = default_values.height_power2;
         dom_elements.scale_slider.value = default_values.scale_slider;
         dom_elements.scale_value.textContent = `${default_values.scale_slider}%`;
-        debounced_process_image();
     };
 
-    /**
-     * Updates dimensions from scale.
-     */
     const update_dimensions_from_scale = () => {
         const scale = parseFloat(dom_elements.scale_slider.value) / 100;
         const base_width = dom_elements.scl_algo.value === '0' ? default_values.width_num_in : parseInt(dom_elements.width_power2.value, 10);
         const base_height = dom_elements.scl_algo.value === '0' ? default_values.height_num_in : parseInt(dom_elements.height_power2.value, 10);
         const max_value = dom_elements.max_size.checked ? parseInt(dom_elements.max_power2.value, 10) : default_values.max_power2;
-
         dom_elements.width_num_in.value = Math.min(Math.round(base_width * scale), max_value);
         dom_elements.height_num_in.value = Math.min(Math.round(base_height * scale), max_value);
-        debounced_process_image();
     };
 
-    /**
-     * Toggles scaling method visibility.
-     */
     const toggle_scaling_method = () => {
         const is_fix = dom_elements.scl_algo.value === '0';
         dom_elements.fix_sel_sec.style.display = is_fix ? 'grid' : 'none';
@@ -372,13 +336,11 @@ const initialize_scaling_controls = () => {
         } else {
             restore_defaults();
         }
-        debounced_process_image();
     });
 
     dom_elements.max_power2.addEventListener('change', () => {
         if (dom_elements.max_size.checked) {
             update_max_constraints(parseInt(dom_elements.max_power2.value, 10));
-            debounced_process_image();
         }
     });
 
@@ -386,21 +348,16 @@ const initialize_scaling_controls = () => {
 
     dom_elements.width_power2.addEventListener('change', () => {
         dom_elements.width_num_in.value = dom_elements.width_power2.value;
-        debounced_process_image();
     });
 
     dom_elements.height_power2.addEventListener('change', () => {
         dom_elements.height_num_in.value = dom_elements.height_power2.value;
-        debounced_process_image();
     });
 
     dom_elements.scale_slider.addEventListener('input', () => {
         dom_elements.scale_value.textContent = `${dom_elements.scale_slider.value}%`;
         update_dimensions_from_scale();
     });
-
-    dom_elements.width_num_in.addEventListener('input', debounced_process_image);
-    dom_elements.height_num_in.addEventListener('input', debounced_process_image);
 
     toggle_scaling_method();
 };
@@ -419,18 +376,16 @@ document.addEventListener('DOMContentLoaded', () => {
     dom_elements.upload_area.addEventListener('drop', (e) => {
         e.preventDefault();
         dom_elements.upload_area.classList.remove('dragover');
-        handle_file(e.dataTransfer.files[0]);
+        handle_files(e.dataTransfer.files);
     });
 
     dom_elements.upload_area.addEventListener('click', () => dom_elements.file_input.click());
-    dom_elements.file_input.addEventListener('change', (e) => handle_file(e.target.files[0]));
+    dom_elements.file_input.addEventListener('change', (e) => handle_files(e.target.files));
 
     dom_elements.quality_range.addEventListener('input', () => {
         const value = Math.round(dom_elements.quality_range.value * 100);
         dom_elements.quality_value.textContent = `${value}%`;
     });
-
-    dom_elements.quality_range.addEventListener('change', debounced_process_image);
 
     dom_elements.unsharp_amount.addEventListener('input', () => {
         dom_elements.unsharp_amount_value.textContent = dom_elements.unsharp_amount.value;
@@ -446,58 +401,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initialize_scaling_controls();
 
-    dom_elements.scl_filter.addEventListener('change', debounced_process_image);
-    dom_elements.scl_gamma.addEventListener('change', debounced_process_image);
-    dom_elements.scl_unsharp.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_amount.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_radius.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_threshold.addEventListener('change', debounced_process_image);
+    dom_elements.template.addEventListener('change', update_format_options);
+    dom_elements.alpha_channel.addEventListener('change', update_format_options);
 
-    dom_elements.template.addEventListener('change', () => {
-        update_format_options();
-        debounced_process_image();
-    });
-    dom_elements.alpha_channel.addEventListener('change', () => {
-        update_format_options();
-        debounced_process_image();
-    });
-    dom_elements.format.addEventListener('change', debounced_process_image);
+    dom_elements.process_button.addEventListener('click', batch_process);
+    dom_elements.reset_button.addEventListener('click', reset_app);
 
-    let is_dragging = false;
-    dom_elements.preview_divider.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        is_dragging = true;
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!is_dragging) return;
-
-        const rect = dom_elements.preview_container.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        divider_position = clamp((x / rect.width) * 100, 0, 100);
-
-        //dom_elements.optimized_preview.style.clipPath = `inset(0 ${100 - divider_position}% 0 0)`;
-        dom_elements.optimized_preview.style.clipPath = `inset(0 0 0 ${divider_position}%)`;
-        dom_elements.preview_divider.style.left = `${divider_position}%`;
-    });
-
-    document.addEventListener('mouseup', () => {
-        is_dragging = false;
-    });
-
-    dom_elements.save_button.addEventListener('click', save_image);
-
-    dom_elements.copy_button.addEventListener('click', () => {
-        dom_elements.base64_uri.select();
-        document.execCommand('copy');
-
-        const original_text = dom_elements.copy_button.innerHTML;
-        dom_elements.copy_button.innerHTML = '<span>✓</span> Copied!';
-
-        setTimeout(() => {
-            dom_elements.copy_button.innerHTML = original_text;
-        }, 2000);
-    });
+    
 
     update_format_options();
 
