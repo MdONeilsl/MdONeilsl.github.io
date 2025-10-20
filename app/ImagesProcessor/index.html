@@ -23,10 +23,12 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Batch Image Processor: Optimize and convert multiple images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.">
+    <meta name="description"
+        content="Batch Image Processor: Optimize and convert multiple images (PNG, JPEG, WebP, GLTF) for Second Life users and web applications.">
     <meta name="keywords" content="image converter, PNG, JPEG, WebP, GLTF, Second Life tool, image optimization, web">
     <meta name="author" content="MdONeil">
     <title>Batch Image Processor</title>
@@ -46,8 +48,9 @@
         "license": "https://www.gnu.org/licenses/gpl-3.0.html"
     }
     </script>
-    
+
 </head>
+
 <body>
     <link rel="stylesheet" href="./css/styles.css">
     <div class="container">
@@ -64,21 +67,21 @@
             </div>
             <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
         </div>
-        
+
         <div class="controls">
             <div class="control-group">
-                <h3>Preview the individual quality test using <a href="https://mdoneilsl.github.io/app/ImageProcessor/">this tool</a> first.</h3>
+                <h3>Preview the individual quality test using <a
+                        href="https://mdoneilsl.github.io/app/ImageProcessor/">this tool</a> first.</h3>
             </div>
             <div class="control-group">
                 <h3>Scaling Settings</h3>
                 <div class="control-row">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="maxSize">
-                        <label for="maxSize" class="control-label" title="Enable to limit the maximum dimension to a power of 2 value.">Max size:</label>
+                        <input type="checkbox" id="max_chk">
+                        <label for="max_chk" class="control-label"
+                            title="Enable to limit the maximum dimension to a power of 2 value.">Max size:</label>
                     </div>
-                    <select id="maxPower2" title="Enable to limit the maximum dimension to a power of 2 value.">
-                        <option value="2">2</option>
-                        <option value="4">4</option>
+                    <select id="max_val" title="Enable to limit the maximum dimension to a power of 2 value.">
                         <option value="8">8</option>
                         <option value="16">16</option>
                         <option value="32">32</option>
@@ -94,29 +97,34 @@
                 </div>
                 <div class="control-row size-container">
                     <div class="input-group">
-                        <label for="sclAlgo" title="Choose between fixed dimensions or nearest power of 2.">Scaling Method</label>
-                        <select id="sclAlgo" title="Choose between fixed dimensions or nearest power of 2.">
+                        <label for="step_sel" title="Choose between fixed dimensions or nearest power of 2.">Scaling
+                            Method</label>
+                        <select id="step_sel" title="Choose between fixed dimensions or nearest power of 2.">
                             <option value="0">Fix</option>
                             <option value="1">Near Pow 2</option>
                         </select>
                     </div>
                     <div class="size-sel-div">
-                        <div id="fix_sel_sec" class="dimension-controls">
+                        <div id="num_sec" class="dimension-controls">
                             <div class="input-group">
-                                <label for="widthNumIn" title="Set the exact width in pixels for fixed mode.">Width</label>
-                                <input type="number" id="widthNumIn" min="1" max="1024" value="512" title="Set the exact width in pixels for fixed mode.">
+                                <label for="width_num"
+                                    title="Set the exact width in pixels for fixed mode.">Width</label>
+                                <input type="number" id="width_num" min="1" max="1024" value="512"
+                                    title="Set the exact width in pixels for fixed mode.">
                             </div>
                             <div class="input-group">
-                                <label for="heightNumIn" title="Set the exact height in pixels for fixed mode.">Height</label>
-                                <input type="number" id="heightNumIn" min="1" max="1024" value="512" title="Set the exact height in pixels for fixed mode.">
+                                <label for="height_num"
+                                    title="Set the exact height in pixels for fixed mode.">Height</label>
+                                <input type="number" id="height_num" min="1" max="1024" value="512"
+                                    title="Set the exact height in pixels for fixed mode.">
                             </div>
                         </div>
-                        <div id="pow2_sel_sec" class="dimension-controls" style="display:none">
+                        <div id="pow2_sec" class="dimension-controls" style="display:none">
                             <div class="input-group">
-                                <label class="control-label" title="Select the power of 2 value for width in power mode.">Width (Power of 2):</label>
-                                <select id="widthPower2" title="Select the power of 2 value for width in power mode.">
-                                    <option value="2">2</option>
-                                    <option value="4">4</option>
+                                <label class="control-label"
+                                    title="Select the power of 2 value for width in power mode.">Width (Power of
+                                    2):</label>
+                                <select id="width_pow2" title="Select the power of 2 value for width in power mode.">
                                     <option value="8">8</option>
                                     <option value="16">16</option>
                                     <option value="32">32</option>
@@ -131,10 +139,10 @@
                                 </select>
                             </div>
                             <div class="input-group">
-                                <label class="control-label" title="Select the power of 2 value for height in power mode.">Height (Power of 2):</label>
-                                <select id="heightPower2" title="Select the power of 2 value for height in power mode.">
-                                    <option value="2">2</option>
-                                    <option value="4">4</option>
+                                <label class="control-label"
+                                    title="Select the power of 2 value for height in power mode.">Height (Power of
+                                    2):</label>
+                                <select id="height_pow2" title="Select the power of 2 value for height in power mode.">
                                     <option value="8">8</option>
                                     <option value="16">16</option>
                                     <option value="32">32</option>
@@ -153,68 +161,85 @@
                 </div>
                 <div class="slider-container">
                     <div class="slider-header">
-                        <label title="Scale the image dimensions while trying to maintain aspect ratio when possible.">Image Scale</label>
-                        <span class="value-display" id="scaleValue">100%</span>
+                        <label
+                            title="Scale the image dimensions while trying to maintain aspect ratio when possible.">Image
+                            Scale</label>
+                        <span class="value-display" id="sldr_disp">100%</span>
                     </div>
-                    <input type="range" id="scaleSlider" min="0.01" max="500" step="0.01" value="100" title="Scale the image dimensions while trying to maintain aspect ratio when possible.">
+                    <input type="range" id="scl_slider" min="0.01" max="500" step="0.01" value="100"
+                        title="Scale the image dimensions while trying to maintain aspect ratio when possible.">
                 </div>
                 <div class="control-row space">
                     <label class="control-label" title="Select the resampling filter for resizing.">Filter:</label>
-                    <select id="sclFilter" title="Select the resampling filter for resizing.">
-                        <option value="-1">None</option>
-                        <option value="0">Box</option>
-                        <option value="1">Hamming</option>
-                        <option value="2">Lanczos2</option>
-                        <option value="3">Lanczos3</option>
-                        <option value="4" selected>MKS2013</option>
-                        <option value="5">Bicubic</option>
+                    <select id="filter_sel" title="Select the resampling filter for resizing.">
+                        <option value="none">None</option>
+                        <option value="box">Box</option>
+                        <option value="hamming">Hamming</option>
+                        <option value="lanczos2">Lanczos2</option>
+                        <option value="lanczos3">Lanczos3</option>
+                        <option value="mks2013" selected>MKS2013</option>
+                        <option value="bicubic">Bicubic</option>
                     </select>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="sclGamma">
-                        <label for="sclGamma" class="control-label" title="Apply gamma correction during resizing to preserve color accuracy.">Gamma Correction</label>
+                        <input type="checkbox" id="gama_chk">
+                        <label for="gama_chk" class="control-label"
+                            title="Apply gamma correction during resizing to preserve color accuracy.">Gamma
+                            Correction</label>
                     </div>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="sclUnsharp">
-                        <label for="sclUnsharp" class="control-label" title="Apply unsharp mask to sharpen the image after resizing.">Unsharp Mask</label>
+                        <input type="checkbox" id="unsharp_chk">
+                        <label for="unsharp_chk" class="control-label"
+                            title="Apply unsharp mask to sharpen the image after resizing.">Unsharp Mask</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="force_chk">
+                        <label for="force_chk" class="control-label">Force Process</label>
                     </div>
                 </div>
                 <div class="ushr-sec">
                     <div class="slider-container">
                         <div class="slider-header">
                             <label title="The strength of the sharpening effect.">Unsharp Amount</label>
-                            <span class="value-display" id="unsharpAmountValue">0</span>
+                            <span class="value-display" id="ush_a_disp">0</span>
                         </div>
-                        <input type="range" id="unsharpAmount" min="0" max="400" value="0" title="The strength of the sharpening effect.">
+                        <input type="range" id="ush_amount" min="0" max="400" value="0"
+                            title="The strength of the sharpening effect.">
                     </div>
                     <div class="slider-container">
                         <div class="slider-header">
                             <label title="The radius of the sharpening Gaussian.">Unsharp Radius</label>
-                            <span class="value-display" id="unsharpRadiusValue">1.0</span>
+                            <span class="value-display" id="ush_r_disp">1.0</span>
                         </div>
-                        <input type="range" id="unsharpRadius" min="0.1" max="4" step="0.1" value="1.0" title="The radius of the sharpening Gaussian.">
+                        <input type="range" id="ush_radius" min="0.1" max="4" step="0.1" value="1.0"
+                            title="The radius of the sharpening Gaussian.">
                     </div>
                     <div class="slider-container">
                         <div class="slider-header">
                             <label title="The threshold for applying sharpening.">Unsharp Threshold</label>
-                            <span class="value-display" id="unsharpThresholdValue">0</span>
+                            <span class="value-display" id="ush_t_disp">0</span>
                         </div>
-                        <input type="range" id="unsharpThreshold" min="0" max="255" value="0" title="The threshold for applying sharpening.">
+                        <input type="range" id="ush_threshold" min="0" max="255" value="0"
+                            title="The threshold for applying sharpening.">
                     </div>
                 </div>
             </div>
+            <input type="checkbox" id="force_chk" style="display: none;">
             <div class="control-group">
                 <h3>Compression Settings</h3>
                 <div class="type-controls">
                     <div class="input-group">
-                        <label class="control-label" title="Preset configurations for different use cases (Web, GLTF, SL Upload).">Template:</label>
-                        <select id="template" title="Preset configurations for different use cases (Web, GLTF, SL Upload).">
+                        <label class="control-label"
+                            title="Preset configurations for different use cases (Web, GLTF, SL Upload).">Template:</label>
+                        <select id="template"
+                            title="Preset configurations for different use cases (Web, GLTF, SL Upload).">
                             <option value="web">Web</option>
                             <option value="gltf">GLTF</option>
                             <option value="slupload">SL Upload</option>
                         </select>
                     </div>
                     <div class="input-group">
-                        <label class="control-label" title="Control how the alpha channel (transparency) is handled.">Alpha Channel:</label>
+                        <label class="control-label"
+                            title="Control how the alpha channel (transparency) is handled.">Alpha Channel:</label>
                         <select id="alphaChannel" title="Control how the alpha channel (transparency) is handled.">
                             <option value="unchange">Unchanged</option>
                             <option value="add">Force Add</option>
@@ -233,10 +258,12 @@
                 </div>
                 <div class="slider-container">
                     <div class="slider-header">
-                        <label title="Set the compression quality (higher means better quality, larger file).">Quality</label>
+                        <label
+                            title="Set the compression quality (higher means better quality, larger file).">Quality</label>
                         <span class="value-display" id="qualityValue">100%</span>
                     </div>
-                    <input type="range" id="qualityRange" min="0.001" max="1" step="0.001" value="1" title="Set the compression quality (higher means better quality, larger file).">
+                    <input type="range" id="qualityRange" min="0.001" max="1" step="0.001" value="1"
+                        title="Set the compression quality (higher means better quality, larger file).">
                 </div>
             </div>
         </div>
@@ -259,12 +286,16 @@
         </div>
         <footer>
             <p>©2025 Batch Image Processor. All rights reserved.</p>
-            <p>Batch Image Processor is not affiliated with Linden Research. Second Life and SL are trademarks of Linden Research, Inc.</p>
-            <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL-3.0 License</a></p>
-            <p>Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" target="_blank">Second Life Profile</a></p>
+            <p>Batch Image Processor is not affiliated with Linden Research. Second Life and SL are trademarks of Linden
+                Research, Inc.</p>
+            <p>Developed by MdONeil under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL-3.0
+                    License</a></p>
+            <p>Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                    target="_blank">Second Life Profile</a></p>
         </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js"></script>
     <script type="module" src="./js/main.js"></script>
 </body>
+
 </html>

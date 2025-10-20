@@ -27,51 +27,60 @@ varying vec2 v_src_pixel;
 varying vec2 v_source_clamp;
 varying vec2 v_uv_step;
 
-float terp(float t, float a, float b, float c, float d) {
-    float t2 = t * t;
-    float t3 = t2 * t;
-    return 0.5 * (2.0 * b + (c - a) * t + (2.0 * a - 5.0 * b + 4.0 * c - d) * t2 + (-a + 3.0 * b - 3.0 * c + d) * t3);
-}
-
-vec4 texel(float px, float py) {
-    px = clamp(px, 0.0, v_source_clamp.x);
-    py = clamp(py, 0.0, v_source_clamp.y);
-    vec2 uv = (vec2(px, py) + 0.5) * v_uv_step;
-    vec4 color = texture2D(source_tex, uv);
-    return vec4(color.rgb * 2.0 - 1.0, color.a);
-}
-
 void main() {
     vec2 src_pixel = v_src_pixel;
-    
     float fx = floor(src_pixel.x);
     float fy = floor(src_pixel.y);
-    
-    float dx = src_pixel.x - fx;
-    float dy = src_pixel.y - fy;
+    float u = src_pixel.x - fx;
+    float v = src_pixel.y - fy;
 
-    vec4 rgba;
-    for(int ch = 0; ch < 4; ++ch) {
-        float row0 = terp(dx, texel(fx - 1.0, fy - 1.0)[ch], texel(fx, fy - 1.0)[ch], texel(fx + 1.0, fy - 1.0)[ch], texel(fx + 2.0, fy - 1.0)[ch]);
-        float row1 = terp(dx, texel(fx - 1.0, fy)[ch], texel(fx, fy)[ch], texel(fx + 1.0, fy)[ch], texel(fx + 2.0, fy)[ch]);
-        float row2 = terp(dx, texel(fx - 1.0, fy + 1.0)[ch], texel(fx, fy + 1.0)[ch], texel(fx + 1.0, fy + 1.0)[ch], texel(fx + 2.0, fy + 1.0)[ch]);
-        float row3 = terp(dx, texel(fx - 1.0, fy + 2.0)[ch], texel(fx, fy + 2.0)[ch], texel(fx + 1.0, fy + 2.0)[ch], texel(fx + 2.0, fy + 2.0)[ch]);
-        rgba[ch] = clamp(terp(dy, row0, row1, row2, row3), ch < 3 ? -1.0 : 0.0, 1.0);
+    vec2 px00 = vec2(fx, fy);
+    vec2 px10 = vec2(fx + 1.0, fy);
+    vec2 px01 = vec2(fx, fy + 1.0);
+    vec2 px11 = vec2(fx + 1.0, fy + 1.0);
+
+    px00.x = clamp(px00.x, 0.0, v_source_clamp.x);
+    px00.y = clamp(px00.y, 0.0, v_source_clamp.y);
+    px10.x = clamp(px10.x, 0.0, v_source_clamp.x);
+    px10.y = clamp(px10.y, 0.0, v_source_clamp.y);
+    px01.x = clamp(px01.x, 0.0, v_source_clamp.x);
+    px01.y = clamp(px01.y, 0.0, v_source_clamp.y);
+    px11.x = clamp(px11.x, 0.0, v_source_clamp.x);
+    px11.y = clamp(px11.y, 0.0, v_source_clamp.y);
+
+    vec2 uv00 = (px00 + 0.5) * v_uv_step;
+    vec2 uv10 = (px10 + 0.5) * v_uv_step;
+    vec2 uv01 = (px01 + 0.5) * v_uv_step;
+    vec2 uv11 = (px11 + 0.5) * v_uv_step;
+
+    vec4 tex00 = texture2D(source_tex, uv00);
+    vec4 tex10 = texture2D(source_tex, uv10);
+    vec4 tex01 = texture2D(source_tex, uv01);
+    vec4 tex11 = texture2D(source_tex, uv11);
+
+    vec3 N00 = 2.0 * tex00.rgb - 1.0;
+    vec3 N10 = 2.0 * tex10.rgb - 1.0;
+    vec3 N01 = 2.0 * tex01.rgb - 1.0;
+    vec3 N11 = 2.0 * tex11.rgb - 1.0;
+
+    vec3 interpolatedNormal = 
+        (1.0 - u) * (1.0 - v) * N00 +
+        u * (1.0 - v) * N10 +
+        (1.0 - u) * v * N01 +
+        u * v * N11;
+
+    vec3 finalNormal = normalize(interpolatedNormal);
+    vec3 outputNormal = (finalNormal + 1.0) * 0.5;
+
+    float outputAlpha = 
+        (1.0 - u) * (1.0 - v) * tex00.a +
+        u * (1.0 - v) * tex10.a +
+        (1.0 - u) * v * tex01.a +
+        u * v * tex11.a;
+
+    if(outputAlpha != outputAlpha) {
+        outputAlpha = 1.0;
     }
-
-    vec3 normal = rgba.rgb;
-    float len = length(normal);
-    if(len > 1e-8) {
-        normal /= len;
-    } else {
-        normal = vec3(0.0, 0.0, 1.0);
-    }
-
-    vec4 color = vec4((normal + 1.0) / 2.0, rgba.a);
-    if(color.a != color.a) {
-        color.a = 1.0;
-    }
-    color.a = clamp(color.a, 0.0, 1.0);
-
-    gl_FragColor = color;
+    outputAlpha = clamp(outputAlpha, 0.0, 1.0);
+    gl_FragColor = vec4(outputNormal, outputAlpha);
 }

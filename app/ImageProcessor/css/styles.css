@@ -398,7 +398,7 @@ button {
     --surface-light: #2d2d2d;
     --text-primary: #e9ecef;
     --text-secondary: #adb5bd;
-    --transition: all .2s ease;
+    --transition: all .02s ease;
     --warning: #ffd166
 }
 

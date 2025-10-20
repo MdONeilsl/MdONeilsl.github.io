@@ -1,28 +1,15 @@
 
-/*
-    Normal Map Scaler.
-    Copyright (C) 2025  MdONeil 
+/**
+ * Normal Map Scaler.
+ * @copyright 2025 MdONeil
+ * @license GNU GPL v3
+ */
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+import { get_file_name_from_url, save_file } from "../../../lib/module/files.js";
+import { canvas_to_blob, get_image_data, load_image } from "../../../lib/module/image.js";
+import { init_workers_pool, scale_normal_map } from "../../../lib/module/worker.js";
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
-*/
-
-import { save_file } from "../../../lib/module/files.js";
-import { get_image_data, load_image } from "../../../lib/module/image.js";
-import { scale_normal_map_worker } from "../../../lib/module/worker.js";
-
+// DOM element cache
 let drop_zone,
     file_input,
     width_select,
@@ -34,115 +21,150 @@ let drop_zone,
     download_button,
     reset_button;
 
+// Application state
 let files = [];
-let zip_file_name;
-
+let zip_file_name = "";
 let uid = 0;
 
-//worker.onmessage = e=> console.log(e.data);
-//worker.postMessage(`test`);
+// Reusable objects to minimize GC
+const canvas_pool = [];
+const ctx_options = { willReadFrequently: false };
 
 /**
- * Generates output file name
- * @param {File} file - Original file
- * @param {number} target_width - Target width
- * @param {number} target_height - Target height
- * @param {boolean} should_scale - Whether scaling was performed
- * @returns {string} Output file name
+ * Generates output file name.
+ * @param {File} file - original file
+ * @param {number} target_width - target width
+ * @param {number} target_height - target height
+ * @param {boolean} should_scale - whether scaling was performed
+ * @returns {string} output file name
  */
 const generate_output_name = (file, target_width, target_height, should_scale) => {
-    const base_name = file.name.replace(/\.[^/.]+$/, "");
+    const base_name = get_file_name_from_url(file.name);
     let result = should_scale
         ? `${base_name}_scaled_${target_width || 'orig'}x${target_height || 'orig'}.png`
         : file.name;
-    if (result.length > 20) {
-        // Ensure we don't cut off the file extension
-        const ext = '.png';
-        const allowedBaseLen = 20 - ext.length;
-        if (should_scale) {
-            result = result.substring(0, allowedBaseLen) + ext;
-        } else {
-            // For non-scaled, just truncate to 20 chars
-            result = result.substring(0, 20);
-        }
-    }
-    return `${++uid}${result}`;
+    
+    // Early return for short names
+    if (result.length <= 20) return `${++uid}${result}`;
+    
+    // Optimized truncation logic
+    const ext = '.png';
+    const allowed_base_len = 20 - ext.length;
+    const truncated_name = should_scale 
+        ? result.substring(0, allowed_base_len) + ext
+        : result.substring(0, 20);
+    
+    return `${++uid}${truncated_name}`;
 };
 
 /**
- * Displays preview of original and scaled images
- * @param {string} file_name - Name of the file
- * @param {HTMLImageElement} original_img - Original image
- * @param {HTMLCanvasElement} scaled_canvas - Scaled image canvas
+ * Gets or creates canvas from pool.
+ * @param {number} width - canvas width
+ * @param {number} height - canvas height
+ * @returns {HTMLCanvasElement} canvas element
+ */
+const get_canvas_from_pool = (width, height) => {
+    for (let i = 0; i < canvas_pool.length; i++) {
+        const canvas = canvas_pool[i];
+        if (canvas.width === width && canvas.height === height) {
+            return canvas_pool.splice(i, 1)[0];
+        }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+};
+
+/**
+ * Returns canvas to pool.
+ * @param {HTMLCanvasElement} canvas - canvas to recycle
+ */
+const return_canvas_to_pool = (canvas) => {
+    const ctx = canvas.getContext('2d', ctx_options);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas_pool.push(canvas);
+};
+
+/**
+ * Calculates display dimensions with maximum size constraint.
+ * @param {number} width - original width
+ * @param {number} height - original height
+ * @param {number} max_size - maximum display size
+ * @returns {Object} display dimensions
+ */
+const calculate_display_dimensions = (width, height, max_size = 128) => {
+    if (width <= max_size && height <= max_size) {
+        return { display_width: width, display_height: height };
+    }
+    
+    const ratio = width / height;
+    let display_width, display_height;
+    
+    if (ratio > 1) {
+        display_width = max_size;
+        display_height = Math.round(max_size / ratio);
+    } else {
+        display_height = max_size;
+        display_width = Math.round(max_size * ratio);
+    }
+    
+    return { display_width, display_height };
+};
+
+/**
+ * Displays preview of original and scaled images.
+ * @param {string} file_name - name of the file
+ * @param {HTMLImageElement} original_img - original image
+ * @param {HTMLCanvasElement} scaled_canvas - scaled image canvas
  */
 const display_preview = (file_name, original_img, scaled_canvas) => {
-    const preview = document.createElement('div');
-    preview.className = 'preview';
-
     const original_width = original_img.naturalWidth || original_img.width;
     const original_height = original_img.naturalHeight || original_img.height;
     const scaled_width = scaled_canvas.width;
     const scaled_height = scaled_canvas.height;
 
-    // Calculate display dimensions for original image
-    let original_display_width = original_width;
-    let original_display_height = original_height;
-    if (original_width > 128 || original_height > 128) {
-        const ratio = original_width / original_height;
-        if (ratio > 1) {
-            original_display_width = 128;
-            original_display_height = Math.round(128 / ratio);
-        } else {
-            original_display_height = 128;
-            original_display_width = Math.round(128 * ratio);
-        }
-    }
+    // Calculate display dimensions in single pass
+    const original_dims = calculate_display_dimensions(original_width, original_height);
+    const scaled_dims = calculate_display_dimensions(scaled_width, scaled_height);
 
-    // Calculate display dimensions for scaled image
-    let scaled_display_width = scaled_width;
-    let scaled_display_height = scaled_height;
-    if (scaled_width > 128 || scaled_height > 128) {
-        const ratio = scaled_width / scaled_height;
-        if (ratio > 1) {
-            scaled_display_width = 128;
-            scaled_display_height = Math.round(128 / ratio);
-        } else {
-            scaled_display_height = 128;
-            scaled_display_width = Math.round(128 * ratio);
-        }
-    }
-
+    // Batch DOM creation
+    const preview = document.createElement('div');
+    preview.className = 'preview';
     preview.innerHTML = `
         <h3 class="truncated-text" title="${file_name}">${file_name}</h3>
         <p>Original (${original_width}x${original_height})</p>
-        <canvas width="${original_display_width}" height="${original_display_height}"></canvas>
+        <canvas width="${original_dims.display_width}" height="${original_dims.display_height}"></canvas>
         <p>Scaled (${scaled_width}x${scaled_height})</p>
-        <canvas class="scaled" width="${scaled_display_width}" height="${scaled_display_height}"></canvas>
+        <canvas class="scaled" width="${scaled_dims.display_width}" height="${scaled_dims.display_height}"></canvas>
     `;
 
-    preview_container.appendChild(preview);
-
+    // Batch canvas operations
     const original_canvas = preview.querySelector('canvas:not(.scaled)');
-    const original_ctx = original_canvas.getContext('2d', { willReadFrequently: false });
+    const original_ctx = original_canvas.getContext('2d', ctx_options);
     original_ctx.imageSmoothingEnabled = false;
-    original_ctx.drawImage(original_img, 0, 0, original_display_width, original_display_height);
+    original_ctx.drawImage(original_img, 0, 0, original_dims.display_width, original_dims.display_height);
 
     const scaled_canvas_preview = preview.querySelector('canvas.scaled');
-    const scaled_ctx = scaled_canvas_preview.getContext('2d', { willReadFrequently: false });
+    const scaled_ctx = scaled_canvas_preview.getContext('2d', ctx_options);
     scaled_ctx.imageSmoothingEnabled = false;
-    scaled_ctx.drawImage(scaled_canvas, 0, 0, scaled_display_width, scaled_display_height);
+    scaled_ctx.drawImage(scaled_canvas, 0, 0, scaled_dims.display_width, scaled_dims.display_height);
+
+    preview_container.appendChild(preview);
 };
 
 /**
- * Updates the file selection status display
+ * Updates the file selection status display.
  */
 const update_file_status = () => {
-    drop_zone.textContent = files.length ? `${files.length} file(s) selected` : 'Drag and drop normal maps here or click to select';
+    drop_zone.textContent = files.length 
+        ? `${files.length} file(s) selected` 
+        : 'Drag and drop normal maps here or click to select';
     process_button.disabled = files.length === 0;
 };
 
 /**
- * Initializes UI for processing
+ * Initializes UI for processing.
  */
 const initialize_ui = () => {
     error_message.textContent = '';
@@ -153,11 +175,11 @@ const initialize_ui = () => {
 };
 
 /**
- * Determines if scaling is needed
- * @param {HTMLImageElement} img - Source image
- * @param {number} target_width - Target width
- * @param {number} target_height - Target height
- * @returns {boolean} Whether scaling is required
+ * Determines if scaling is needed.
+ * @param {HTMLImageElement} img - source image
+ * @param {number} target_width - target width
+ * @param {number} target_height - target height
+ * @returns {boolean} whether scaling is required
  */
 const should_scale_image = (img, target_width, target_height) => {
     const natural_width = img.naturalWidth || img.width;
@@ -169,124 +191,95 @@ const should_scale_image = (img, target_width, target_height) => {
     return natural_width !== target_width || natural_height !== target_height;
 };
 
-
-
 /**
- * Creates canvas from scaled data
- * @param {Uint8ClampedArray} scaled_data - Scaled image data
- * @param {number} target_width - Target width
- * @param {number} target_height - Target height
- * @returns {HTMLCanvasElement} Scaled image canvas
+ * Creates canvas from scaled data using pool.
+ * @param {Uint8ClampedArray|HTMLImageElement} scaled_data - scaled image data
+ * @param {number} target_width - target width
+ * @param {number} target_height - target height
+ * @returns {HTMLCanvasElement} scaled image canvas
  */
 const create_scaled_canvas = (scaled_data, target_width, target_height) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = target_width;
-    canvas.height = target_height;
-    const ctx = canvas.getContext('2d', { willReadFrequently: false });
-    const image_data = ctx.createImageData(target_width, target_height);
-    image_data.data.set(scaled_data);
-    ctx.putImageData(image_data, 0, 0);
+    const canvas = get_canvas_from_pool(target_width, target_height);
+    const ctx = canvas.getContext('2d', ctx_options);
+    
+    if (scaled_data instanceof Uint8ClampedArray) {
+        ctx.putImageData(new ImageData(scaled_data, target_width, target_height), 0, 0);
+    } else if (scaled_data instanceof Image) {
+        ctx.drawImage(scaled_data, 0, 0);
+    }
+    
     return canvas;
 };
 
 /**
- * Converts canvas to PNG blob
- * @param {HTMLCanvasElement} canvas - Source canvas
- * @returns {Promise<Blob>} PNG blob
+ * Processes an image file asynchronously.
+ * @param {File} file - the input image file
+ * @param {number} target_width - desired width for scaling
+ * @param {number} target_height - desired height for scaling
+ * @param {JSZip} zip - the JSZip instance to store the processed file
+ * @returns {Promise<boolean>} resolves to true on success, false on failure
  */
-const canvas_to_blob = async (canvas) => {
-    if (canvas.toBlob) {
-        return new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+const process_file = async (file, target_width, target_height, zip) => {
+    try {
+        const img = await load_image(file);
+        const natural_width = img.naturalWidth || img.width;
+        const natural_height = img.naturalHeight || img.height;
+        const should_scale = should_scale_image(img, target_width, target_height);
+
+        let scaled_canvas;
+        if (should_scale) {
+            const scale_width = target_width > 0 ? target_width : natural_width;
+            const scale_height = target_height > 0 ? target_height : natural_height;
+            const src_data = get_image_data(img, 0, 0, natural_width, natural_height);
+
+            const scaled_data = await scale_normal_map(src_data, natural_width, natural_height, scale_width, scale_height);
+            scaled_canvas = create_scaled_canvas(scaled_data, scale_width, scale_height);
+        } else {
+            scaled_canvas = create_scaled_canvas(img, natural_width, natural_height);
+        }
+
+        const blob = await canvas_to_blob(scaled_canvas);
+        const output_name = generate_output_name(file, target_width, target_height, should_scale);
+        
+        zip.file(output_name, blob);
+        display_preview(file.name, img, scaled_canvas);
+        
+        // Return canvas to pool after display
+        setTimeout(() => return_canvas_to_pool(scaled_canvas), 1000);
+        
+        return true;
+    } catch (err) {
+        error_message.textContent = `Error processing ${file.name}: ${err.message}. Continuing with other files.`;
+        return false;
     }
-
-    return new Promise(resolve => {
-        const data_url = canvas.toDataURL('image/png');
-        fetch(data_url)
-            .then(res => res.blob())
-            .then(resolve);
-    });
-};
-
-
-
-/**
- * Processes an image file asynchronously without waiting, adding it to a zip.
- * @param {File} file - The input image file.
- * @param {number} target_width - Desired width for scaling.
- * @param {number} target_height - Desired height for scaling.
- * @param {JSZip} zip - The JSZip instance to store the processed file.
- * @returns {Promise<boolean>} Resolves to true on success, false on failure.
- */
-const process_file = (file, target_width, target_height, zip) => {
-    return new Promise((resolve) => {
-        load_image(file)
-            .then(img => {
-                const natural_width = img.naturalWidth || img.width;
-                const natural_height = img.naturalHeight || img.height;
-                const should_scale = should_scale_image(img, target_width, target_height);
-
-                let scaled_canvas;
-                if (should_scale) {
-                    const scale_width = target_width > 0 ? target_width : natural_width;
-                    const scale_height = target_height > 0 ? target_height : natural_height;
-                    const src_data = get_image_data(img, 0, 0, natural_width, natural_height);
-
-                    return scale_normal_map_worker(src_data, natural_width, natural_height, scale_width, scale_height)
-                        .then(scaled_data => {
-                            scaled_canvas = create_scaled_canvas(scaled_data, scale_width, scale_height);
-                            return { scaled_canvas, blob: canvas_to_blob(scaled_canvas), should_scale, img };
-                        });
-                } else {
-                    scaled_canvas = document.createElement('canvas');
-                    scaled_canvas.width = natural_width;
-                    scaled_canvas.height = natural_height;
-                    const ctx = scaled_canvas.getContext('2d', { willReadFrequently: false });
-                    ctx.drawImage(img, 0, 0);
-                    return { scaled_canvas, blob: canvas_to_blob(scaled_canvas), should_scale, img };
-                }
-            })
-            .then(({ scaled_canvas, blob, should_scale, img }) => {
-                return Promise.resolve(blob).then(blob => {
-                    console.log(scaled_canvas, blob, should_scale, img);
-                    const output_name = generate_output_name(file, target_width, target_height, should_scale);
-                    zip.file(output_name, blob);
-                    display_preview(file.name, img, scaled_canvas);
-                    resolve(true);
-                });
-            })
-            .catch(err => {
-                console.error(`Error processing ${file.name}:`, err);
-                error_message.textContent = `Error processing ${file.name}: ${err.message}. Continuing with other files.`;
-                resolve(false);
-            });
-    });
 };
 
 /**
- * Finalizes processing and prepares download
+ * Finalizes processing and prepares download.
  * @param {JSZip} zip - ZIP archive instance
- * @param {File[]} files - Processed files
- * @param {number} target_width - Target width used
- * @param {number} target_height - Target height used
- * @param {boolean} has_valid_normal_map - Whether valid maps were processed
+ * @param {File[]} files - processed files
+ * @param {number} target_width - target width used
+ * @param {number} target_height - target height used
+ * @param {boolean} has_valid_normal_map - whether valid maps were processed
  */
 const finalize_processing = async (zip, files, target_width, target_height, has_valid_normal_map) => {
-    if (has_valid_normal_map && Object.keys(zip.files).length > 0) {
-        const zip_blob = await zip.generateAsync({ type: 'blob' });
-        const size_label = `${target_width || 'orig'}x${target_height || 'orig'}`;
-        const base_name = files[0].name.split('.')[0];
-        zip_file_name = `${base_name}_scaled_normal_maps_${size_label}.zip`;
-
-        download_button.textContent = `Download ${zip_file_name}`;
-        download_button.style.display = "block";
-        download_button.onclick = () => save_file(zip_blob, zip_file_name);
-    } else {
+    if (!has_valid_normal_map || Object.keys(zip.files).length === 0) {
         error_message.textContent = 'No valid normal maps were processed.';
+        return;
     }
+
+    const zip_blob = await zip.generateAsync({ type: 'blob' });
+    const size_label = `${target_width || 'orig'}x${target_height || 'orig'}`;
+    const base_name = get_file_name_from_url(files[0].name);
+    zip_file_name = `${base_name}_scaled_normal_maps_${size_label}.zip`;
+
+    download_button.textContent = `Download ${zip_file_name}`;
+    download_button.style.display = "block";
+    download_button.onclick = () => save_file(zip_blob, zip_file_name);
 };
 
 /**
- * Resets the application to initial state
+ * Resets the application to initial state.
  */
 const reset_app = () => {
     files = [];
@@ -301,9 +294,69 @@ const reset_app = () => {
     file_input.value = '';
     width_select.value = "512";
     height_select.value = "512";
+    
+    // Clear canvas pool on reset
+    canvas_pool.length = 0;
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+// Event handler optimizations
+const handle_dragover = (e) => {
+    e.preventDefault();
+    drop_zone.classList.add('dragover');
+};
+
+const handle_dragleave = () => {
+    drop_zone.classList.remove('dragover');
+};
+
+const handle_drop = (e) => {
+    e.preventDefault();
+    drop_zone.classList.remove('dragover');
+    files = Array.from(e.dataTransfer.files);
+    update_file_status();
+};
+
+const handle_file_input_change = () => {
+    files = Array.from(file_input.files);
+    update_file_status();
+};
+
+const handle_process_click = async () => {
+    if (files.length === 0) return;
+
+    initialize_ui();
+
+    const target_width = parseInt(width_select.value) || 0;
+    const target_height = parseInt(height_select.value) || 0;
+    const zip = new JSZip();
+    let has_valid_normal_map = false;
+    const total_files = files.length;
+
+    // Process files in batches to avoid blocking
+    const batch_size = 3;
+    for (let i = 0; i < total_files; i += batch_size) {
+        const batch = files.slice(i, i + batch_size);
+        const results = await Promise.all(
+            batch.map(file => 
+                process_file(file, target_width, target_height, zip)
+                    .then(success => {
+                        if (success) has_valid_normal_map = true;
+                        progress_bar.value = ((i + batch.indexOf(file) + 1) / total_files) * 100;
+                        return success;
+                    })
+            )
+        );
+        
+        // Small delay to allow UI updates
+        await new Promise(resolve => setTimeout(resolve, 16));
+    }
+
+    await finalize_processing(zip, files, target_width, target_height, has_valid_normal_map);
+    progress_bar.style.display = 'none';
+};
+
+window.addEventListener('DOMContentLoaded', async () => {
+    // Cache DOM elements
     drop_zone = document.getElementById('dropZone');
     file_input = document.getElementById('fileInput');
     width_select = document.getElementById('widthSelect');
@@ -315,56 +368,18 @@ window.addEventListener('DOMContentLoaded', () => {
     download_button = document.getElementById('downloadButton');
     reset_button = document.getElementById('resetButton');
 
+    // Event listeners with optimized handlers
     drop_zone.addEventListener('click', () => file_input.click());
-
-    drop_zone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        drop_zone.classList.add('dragover');
-    });
-
-    drop_zone.addEventListener('dragleave', () => {
-        drop_zone.classList.remove('dragover');
-    });
-
-    drop_zone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        drop_zone.classList.remove('dragover');
-        files = Array.from(e.dataTransfer.files);
-        update_file_status();
-    });
-
-    file_input.addEventListener('change', () => {
-        files = Array.from(file_input.files);
-        update_file_status();
-    });
-
-    process_button.addEventListener('click', () => {
-        if (files.length === 0) return;
-
-        initialize_ui();
-
-        const target_width = parseInt(width_select.value) || 0;
-        const target_height = parseInt(height_select.value) || 0;
-        const zip = new JSZip();
-        let has_valid_normal_map = false;
-
-        const total_files = files.length;
-        let processed = 0;
-
-        Promise.all(files.map(file =>
-            process_file(file, target_width, target_height, zip)
-                .then(success => {
-                    if (success) has_valid_normal_map = true;
-                    processed++;
-                    progress_bar.value = (processed / total_files) * 100;
-                    return success;
-                })
-        ))
-            .then(() => finalize_processing(zip, files, target_width, target_height, has_valid_normal_map))
-            .finally(() => {
-                progress_bar.style.display = 'none';
-            });
-    });
-
+    drop_zone.addEventListener('dragover', handle_dragover);
+    drop_zone.addEventListener('dragleave', handle_dragleave);
+    drop_zone.addEventListener('drop', handle_drop);
+    file_input.addEventListener('change', handle_file_input_change);
+    process_button.addEventListener('click', handle_process_click);
     reset_button.addEventListener('click', reset_app);
+
+    // Initialize worker pool
+    await init_workers_pool([{
+        url: "../../../lib/worker/normal_map_ww.js",
+        type: "module"
+    }]);
 });

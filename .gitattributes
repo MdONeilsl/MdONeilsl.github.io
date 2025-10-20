@@ -1,2 +1,21 @@
-# Auto detect text files and perform LF normalization
+# Treat all files as text by default and normalize line endings
 * text=auto
+
+# Force LF endings for web source files
+*.html text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+
+# Mark common binary assets as binary to disable text processing
+*.png binary
+*.jpg binary
+*.gif binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.ico binary
+
+# Optional: prevent merge conflicts on minified or compiled assets
+#*.min.js binary

@@ -1,39 +1,7 @@
 .git
 .vscode
-index_dum.html
+*.test.*
 
-app/PBR_img/tmp_idx.html
-app/ShapeMixer/tmp_idx.html
-app/prim_gif/tmp_idx.html
-app/Segmenter/tmp_idx.html
-app/NormalMapScaler/tmp_idx.html
-app/NormalMapMerger/tmp_idx.html
-app/Fragmentedframe/tmp_idx.html
-app/2DFonts/index_style.html
-app/CSSProcessor/index_style.html
-app/CSSProcessor/js/main.ref.js
-app/DataCompacter/index_style.html
-app/Fragmentedframe/js/main.ref.js
-app/ImageProcessor/index_style.html
-app/ImageProcessor/js/main.ref.js
-app/PBRPacker/index_style.html
-app/PBRPacker/js/main.js
-app/PBRPacker/js/main.test.js
-app/3DFonts/index_style.html
-app/NormalMapScaler/js/main.work.js
-app/NormalMapScaler/assets
-app/NormalMapMerger/js/main.module.js
-app/NormalMapMerger/js/test.js
-app/NormalMapMerger/index.test.html
-app/ImagesProcessor/index.test.html
-app/ImagesProcessor/js/script .test.js
-app/ImagesProcessor/css/styles.test.css
-app/ImagesProcessor/js/main.test.js
-
-lib/test
+lib/test/
 lib/module/html.js
 lib/module/gl.js
-lib/worker/test.js
-lib/class/UltimateImageProcessor.js
-lib/class/gpgpu copy.js
-

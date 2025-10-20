@@ -1,174 +1,175 @@
-/*
-    Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
-    Copyright (C) 2025  MdONeil 
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about
-*/
-
-import { get_image_data, has_transparency, resize_img_canv } from "../../../lib/module/image.js";
-import { clamp } from "../../../lib/module/math.js";
-import { scale_image_worker } from "../../../lib/module/worker.js";
-
-// Global variables
-let original_file, original_img;
-let has_transparency_val = false;
-let divider_position = 50;
-
-// Cached DOM elements
-const dom_elements = {
-    width_num_in: document.getElementById('widthNumIn'),
-    height_num_in: document.getElementById('heightNumIn'),
-    scl_filter: document.getElementById('sclFilter'),
-    scl_gamma: document.getElementById('sclGamma'),
-    scl_unsharp: document.getElementById('sclUnsharp'),
-    unsharp_amount: document.getElementById('unsharpAmount'),
-    unsharp_radius: document.getElementById('unsharpRadius'),
-    unsharp_threshold: document.getElementById('unsharpThreshold'),
-    format: document.getElementById('format'),
-    quality_range: document.getElementById('qualityRange'),
-    optimized_preview: document.getElementById('optimizedPreview'),
-    base64_uri: document.getElementById('base64Uri'),
-    original_dimensions: document.getElementById('originalDimensions'),
-    optimized_dimensions: document.getElementById('optimizedDimensions'),
-    optimized_size: document.getElementById('optimizedSize'),
-    space_saved: document.getElementById('spaceSaved'),
-    save_button: document.getElementById('saveButton'),
-    original_preview: document.getElementById('originalPreview'),
-    original_size: document.getElementById('originalSize'),
-    template: document.getElementById('template'),
-    alpha_channel: document.getElementById('alphaChannel'),
-    max_size: document.getElementById('maxSize'),
-    max_power2: document.getElementById('maxPower2'),
-    scl_algo: document.getElementById('sclAlgo'),
-    fix_sel_sec: document.getElementById('fix_sel_sec'),
-    pow2_sel_sec: document.getElementById('pow2_sel_sec'),
-    width_power2: document.getElementById('widthPower2'),
-    height_power2: document.getElementById('heightPower2'),
-    scale_slider: document.getElementById('scaleSlider'),
-    scale_value: document.getElementById('scaleValue'),
-    upload_area: document.getElementById('uploadArea'),
-    file_input: document.getElementById('fileInput'),
-    quality_value: document.getElementById('qualityValue'),
-    preview_container: document.getElementById('previewContainer'),
-    preview_divider: document.getElementById('previewDivider'),
-    unsharp_amount_value: document.getElementById('unsharpAmountValue'),
-    unsharp_radius_value: document.getElementById('unsharpRadiusValue'),
-    unsharp_threshold_value: document.getElementById('unsharpThresholdValue'),
-    copy_button: document.getElementById('copyButton')
-};
-
-const filters_const = ['box', 'hamming', 'lanczos2', 'lanczos3', 'mks2013', 'bicubic'];
-const powers_const = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192];
-
 /**
- * Debounces a function call.
- * @param {Function} func - The function to debounce.
- * @param {number} wait - The debounce wait time in milliseconds.
- * @returns {Function} The debounced function.
+ * Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Assets and web applications
+ * @copyright 2025 MdONeil
+ * @license GPL-3.0-or-later
  */
-const debounce = (func, wait) => {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), wait);
-    };
+import { drop_zone } from "../../../lib/html/drop_zone.js";
+import { img_scl_crt } from "../../../lib/html/img_scl_crt.js";
+import { get_file_name_from_url, save_file } from "../../../lib/module/files.js";
+import { debounce } from "../../../lib/module/function.js";
+import { canvas_to_blob, get_image_data, has_transparency, scale_image_array } from "../../../lib/module/image.js";
+import { clamp } from "../../../lib/module/math.js";
+import { init_workers_pool, scale_image_map } from "../../../lib/module/worker.js";
+
+let uploader, scl_crt;
+
+// Global state with optimized data structures
+const state = {
+    original_file: null,
+    original_img: null,
+    has_transparency_val: false,
+    divider_position: 50,
+    active_blob: null
+};
+
+// DOM elements cache with direct references
+const elements = {};
+
+// Initialize DOM elements cache in one batch
+const initialize_dom_cache = () => {
+    const element_ids = [
+        'max_chk', 'max_val', 'step_sel', 'width_num', 'height_num',
+        'width_pow2', 'height_pow2', 'scl_slider', 'filter_sel', 'gama_chk',
+        'unsharp_chk', 'ush_amount', 'ush_radius', 'ush_threshold',
+        'format', 'qualityRange', 'optimizedPreview', 'base64Uri',
+        'originalDimensions', 'optimizedDimensions', 'optimizedSize',
+        'spaceSaved', 'saveButton', 'originalPreview', 'originalSize',
+        'template', 'alphaChannel', 'num_sec', 'pow2_sec', 'sldr_disp',
+        'uploadArea', 'fileInput', 'qualityValue', 'previewContainer',
+        'previewDivider', 'ush_a_disp', 'ush_r_disp',
+        'ush_t_disp', 'copyButton', 'force_chk'
+    ];
+
+    element_ids.forEach(id => {
+        elements[id] = document.getElementById(id);
+    });
 };
 
 /**
- * Processes the image with current settings.
+ * Process image with current settings
  */
 const process_image = async () => {
-    if (!original_img) return;
+    if (!state.original_img) return;
 
-    const settings = {
-        width: parseInt(dom_elements.width_num_in.value, 10),
-        height: parseInt(dom_elements.height_num_in.value, 10),
-        filter: parseInt(dom_elements.scl_filter.value, 10),
-        gamma_correction: dom_elements.scl_gamma.checked,
-        unsharp_mask: dom_elements.scl_unsharp.checked,
-        unsharp_amount: parseFloat(dom_elements.unsharp_amount.value),
-        unsharp_radius: parseFloat(dom_elements.unsharp_radius.value),
-        unsharp_threshold: parseFloat(dom_elements.unsharp_threshold.value),
-        format: dom_elements.format.value,
-        quality: parseFloat(dom_elements.quality_range.value)
-    };
+    // Batch DOM reads for settings
+    const width = scl_crt.width;
+    const height = scl_crt.height;
+    const filter = scl_crt.filter;
+    const gamma_correction = scl_crt.gama;
+    const unsharp_mask = scl_crt.unsharp;
+    const unsharp_amount_val = scl_crt.ush_amount;
+    const unsharp_radius_val = scl_crt.ush_radius;
+    const unsharp_threshold_val = scl_crt.ush_threshold;
 
-    let pixels = get_image_data(original_img, 0, 0, original_img.width, original_img.height);
+    let pixels = get_image_data(
+        state.original_img,
+        0, 0,
+        state.original_img.width,
+        state.original_img.height
+    );
 
-    if (settings.width !== original_img.width || settings.height !== original_img.height) {
-        if (settings.filter < 0) {
-            pixels = resize_img_canv(
+    // Scale image if dimensions changed
+    if (width !== state.original_img.width || height !== state.original_img.height || scl_crt.force) {
+        if (filter === "none") {
+            pixels = scale_image_array(
                 pixels,
-                original_img.width,
-                original_img.height,
-                settings.width,
-                settings.height,
-                false
+                state.original_img.width,
+                state.original_img.height,
+                width,
+                height,
             );
         } else {
-            pixels = await scale_image_worker(
+            pixels = await scale_image_map(
                 pixels,
-                original_img.width,
-                original_img.height,
-                settings.width,
-                settings.height,
+                state.original_img.width,
+                state.original_img.height,
+                width,
+                height,
                 {
-                    filter: filters_const[settings.filter],
-                    gamma_correct: settings.gamma_correction,
-                    unsharp_amount: settings.unsharp_mask ? settings.unsharp_amount : 0,
-                    unsharp_radius: settings.unsharp_radius,
-                    unsharp_threshold: settings.unsharp_threshold
+                    filter_sel: filter,
+                    gamma_correct: gamma_correction,
+                    unsharp_amount: unsharp_mask ? unsharp_amount_val : 0,
+                    unsharp_radius: unsharp_radius_val,
+                    unsharp_threshold: unsharp_threshold_val
                 }
             );
         }
     }
 
-    const canvas = document.createElement('canvas');
-    canvas.width = settings.width;
-    canvas.height = settings.height;
+    // Reuse canvas to reduce memory allocation
+    let canvas = elements._process_canvas;
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        elements._process_canvas = canvas;
+    }
     const ctx = canvas.getContext('2d');
-    ctx.putImageData(new ImageData(pixels, settings.width, settings.height), 0, 0);
 
-    const preview_data_url = canvas.toDataURL(`image/${settings.format}`, settings.quality);
-    dom_elements.optimized_preview.style.backgroundImage = `url(${preview_data_url})`;
-    dom_elements.base64_uri.value = preview_data_url;
+    // Set canvas dimensions once
+    if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+    }
 
-    dom_elements.original_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
-    dom_elements.optimized_dimensions.textContent = `${settings.width} × ${settings.height} px`;
+    // Create ImageData efficiently
+    const image_data = pixels instanceof ImageData ? pixels : new ImageData(pixels, width, height);
+    ctx.putImageData(image_data, 0, 0);
 
-    const new_size = await get_new_size(pixels, settings.width, settings.height, settings.quality, settings.format);
-    dom_elements.optimized_size.textContent = format_size_units(new_size);
-
-    const saved = original_file ? (1 - new_size / original_file.size) * 100 : 0;
-    dom_elements.space_saved.textContent = `${saved.toFixed(2)}%`;
-
-    canvas.toBlob((blob) => {
-        if (blob) {
-            dom_elements.save_button.dataset.blob = URL.createObjectURL(blob);
-            dom_elements.save_button.dataset.ext = settings.format;
-        }
-    }, `image/${settings.format}`);
+    debounced_process_format();
 };
 
-// Debounced version of process_image
+/**
+ * Process image format and update display
+ */
+const process_format = async () => {
+    const canvas = elements._process_canvas;
+    if (!canvas) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const format_val = elements.format.value;
+    const quality_val = +elements.qualityRange.value;
+
+    const [preview_data_url, blob] = await Promise.all([
+        canvas.toDataURL(`image/${format_val}`, quality_val),
+        canvas_to_blob(canvas, format_val, quality_val)
+    ]);
+
+    // Update visual elements
+    elements.optimizedPreview.style.backgroundImage = `url(${preview_data_url})`;
+    elements.optimizedDimensions.textContent = `${width} × ${height} px`;
+    elements.optimizedSize.textContent = format_size_units(blob.size);
+
+    // Calculate savings with color coding
+    let saved = 0;
+    if (state.original_file) {
+        saved = ((1 - blob.size / state.original_file.size) * 100);
+    }
+
+    // Format the saved percentage with sign
+    const saved_formatted = `${saved >= 0 ? '+' : ''}${saved.toFixed(2)}%`;
+    elements.spaceSaved.textContent = saved_formatted;
+
+    // Set color based on savings
+    if (saved === 0) {
+        elements.spaceSaved.style.color = 'white';
+    } else if (saved > 0) {
+        elements.spaceSaved.style.color = 'green';
+    } else {
+        elements.spaceSaved.style.color = 'red';
+    }
+
+    // Update data elements
+    elements.base64Uri.value = preview_data_url;
+    state.active_blob = blob;
+};
+
+// Debounced image processing
 const debounced_process_image = debounce(process_image, 300);
+const debounced_process_format = debounce(process_format, 300);
 
 /**
- * Handles the selected file.
- * @param {File} file - The selected image file.
+ * Handle file selection
+ * @param {File} file - Selected image file
  */
 const handle_file = (file) => {
     if (!file || !file.type.startsWith('image/')) {
@@ -176,334 +177,299 @@ const handle_file = (file) => {
         return;
     }
 
-    original_file = file;
+    state.original_file = file;
     const reader = new FileReader();
 
     reader.onload = (e) => {
-        original_img = new Image();
-        original_img.onload = () => {
-            has_transparency_val = has_transparency(get_image_data(original_img, 0, 0, original_img.width, original_img.height));
-            dom_elements.original_preview.style.backgroundImage = `url(${e.target.result})`;
-            dom_elements.original_size.textContent = format_size_units(original_file.size);
+        if (!state.original_img) {
+            state.original_img = new Image();
+        }
 
-            dom_elements.width_num_in.value = original_img.width;
-            dom_elements.height_num_in.value = original_img.height;
-            dom_elements.original_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
-            dom_elements.optimized_dimensions.textContent = `${original_img.width} × ${original_img.height} px`;
+        const img = state.original_img;
+        img.onload = () => {
+            scl_crt.setup(img);
 
-            document.querySelector('.upload-text').textContent = `Selected: ${file.name}`;
-            document.querySelector('.upload-subtext').textContent = `${original_img.width} × ${original_img.height}px • ${(file.size / 1024).toFixed(2)} KB`;
+            // Check transparency
+            const image_data = get_image_data(img, 0, 0, img.width, img.height);
+            state.has_transparency_val = has_transparency(image_data);
 
+            update_ui_after_file_load(e.target.result, file, img);
             update_format_options();
             process_image();
         };
-        original_img.src = e.target.result;
+
+        img.onerror = () => {
+            alert('Failed to load image. Please try another file.');
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.onerror = () => {
+        alert('Failed to read file. Please try again.');
     };
 
     reader.readAsDataURL(file);
 };
 
 /**
- * Updates format options based on template and transparency.
+ * Update UI after file load
+ * @param {string} result - File reader result
+ * @param {File} file - Original file
+ * @param {HTMLImageElement} img - Loaded image
  */
-const update_format_options = () => {
-    const template = dom_elements.template.value;
-    const format_select = dom_elements.format;
-    const alpha_select = dom_elements.alpha_channel;
+const update_ui_after_file_load = (result, file, img) => {
 
-    let formats = ['jpeg', 'png', 'webp', 'avif'];
+    elements.originalPreview.style.backgroundImage = `url(${result})`;
+    elements.originalSize.textContent = format_size_units(file.size);
+    elements.originalDimensions.textContent = `${img.width} × ${img.height} px`;
+    elements.optimizedDimensions.textContent = `${img.width} × ${img.height} px`;
 
-    alpha_select.disabled = false;
-
-    if (template === 'slupload' || template === 'gltf') {
-        formats = formats.filter((item) => item !== 'avif' && item !== 'webp');
+    // Update upload text
+    const upload_text = document.querySelector('.upload-text');
+    const upload_subtext = document.querySelector('.upload-subtext');
+    if (upload_text && upload_subtext) {
+        upload_text.textContent = `Selected: ${file.name}`;
+        upload_subtext.textContent = `${img.width} × ${img.height}px • ${format_size_units(file.size)}`;
     }
-
-    const alphsel = alpha_select.value;
-
-    if (alphsel === 'remove' || (alphsel === 'unchanged' && !has_transparency_val)) {
-        formats = formats.filter((item) => item !== 'avif' && item !== 'webp' && item !== 'png');
-    } else if (alphsel === 'add' || (alphsel === 'unchanged' && has_transparency_val)) {
-        formats = formats.filter((item) => item !== 'jpeg');
-    }
-
-    format_select.innerHTML = formats.map((type) => `<option value="${type}">${type.toUpperCase()}</option>`).join('');
 };
 
 /**
- * Formats size in units.
- * @param {number} bytes - The size in bytes.
- * @returns {string} The formatted size.
+ * Update format options based on current settings
+ */
+const update_format_options = () => {
+    const template = elements.template.value;
+    const alpha_select = elements.alphaChannel.value;
+    let formats = ['jpeg', 'png', 'webp', 'avif'];
+
+    // Filter formats based on template
+    if (template === 'slupload' || template === 'gltf') {
+        formats = formats.filter(item => item !== 'avif' && item !== 'webp');
+    }
+
+    // Filter based on alpha channel settings
+    const formats_to_remove = new Set();
+    if (alpha_select === 'remove' || (alpha_select === 'unchanged' && !state.has_transparency_val)) {
+        formats_to_remove.add('png').add('webp').add('avif');
+    } else if (alpha_select === 'add' || (alpha_select === 'unchanged' && state.has_transparency_val)) {
+        formats_to_remove.add('jpeg');
+    }
+
+    formats = formats.filter(item => !formats_to_remove.has(item));
+
+    // Batch format option updates
+    const fragment = document.createDocumentFragment();
+    formats.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type.toUpperCase();
+        fragment.appendChild(option);
+    });
+
+    elements.format.innerHTML = '';
+    elements.format.appendChild(fragment);
+};
+
+/**
+ * Format bytes into human-readable size string
+ * @param {number} bytes - Size in bytes
+ * @returns {string} Formatted size string
  */
 const format_size_units = (bytes) => {
-    if (bytes === 0) return '0 bytes';
+    if (!bytes || bytes === 0) return '0 bytes';
+    if (bytes < 1024) return `${bytes} bytes`;
+
+    const k = 1024;
     const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    const size = bytes / 1024 ** i;
+    let i = 0;
+    let size = bytes;
+
+    while (size >= k && i < sizes.length - 1) {
+        size /= k;
+        i++;
+    }
+
     return `${size.toFixed(2)} ${sizes[i]}`;
 };
 
 /**
- * Gets the new size of the image.
- * @param {Uint8ClampedArray} data - The image data.
- * @param {number} width - The width.
- * @param {number} height - The height.
- * @param {number} quality - The quality.
- * @param {string} type - The format type.
- * @returns {Promise<number>} The new size.
- */
-const get_new_size = (data, width, height, quality, type) =>
-    new Promise((resolve) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.putImageData(new ImageData(data, width, height), 0, 0);
-
-        canvas.toBlob(
-            (blob) => resolve(blob ? blob.size : 0),
-            `image/${type}`,
-            quality
-        );
-    });
-
-/**
- * Saves the optimized image.
+ * Save optimized image
  */
 const save_image = () => {
-    const save_button = dom_elements.save_button;
-
-    if (!save_button.dataset.blob) {
+    if (!state.active_blob) {
         alert('No optimized image to save. Please process an image first.');
         return;
     }
 
-    const link = document.createElement('a');
-    link.href = save_button.dataset.blob;
-    link.download = `optimized.${save_button.dataset.ext}`;
-    link.click();
-
-    setTimeout(() => URL.revokeObjectURL(save_button.dataset.blob), 100);
+    const name = get_file_name_from_url(state.original_file.name);
+    const format_val = elements.format.value;
+    save_file(state.active_blob, `${name}.process.${format_val}`);
 };
 
 /**
- * Initializes scaling controls.
+ * Handle file input
+ * @param {FileList} files - Selected files
  */
-const initialize_scaling_controls = () => {
-    const default_values = {
-        width_num_in: 512,
-        height_num_in: 512,
-        width_power2: 1024,
-        height_power2: 1024,
-        scale_slider: 100,
-        max_power2: 1024
-    };
-
-    /**
-     * Updates max constraints.
-     * @param {number} max_value - The max value.
-     */
-    const update_max_constraints = (max_value) => {
-        dom_elements.width_num_in.max = max_value;
-        dom_elements.height_num_in.max = max_value;
-        const options_html = powers_const
-            .filter((power) => power <= max_value)
-            .map((power) => `<option value="${power}">${power}</option>`)
-            .join('');
-        dom_elements.width_power2.innerHTML = options_html;
-        dom_elements.height_power2.innerHTML = options_html;
-        dom_elements.scale_slider.max = Math.min(500, (max_value / Math.max(parseInt(dom_elements.width_num_in.value, 10), parseInt(dom_elements.height_num_in.value, 10))) * 100);
-
-        dom_elements.width_num_in.value = Math.min(parseInt(dom_elements.width_num_in.value, 10), max_value);
-        dom_elements.height_num_in.value = Math.min(parseInt(dom_elements.height_num_in.value, 10), max_value);
-        dom_elements.width_power2.value = Math.min(parseInt(dom_elements.width_power2.value, 10), max_value);
-        dom_elements.height_power2.value = Math.min(parseInt(dom_elements.height_power2.value, 10), max_value);
-    };
-
-    /**
-     * Restores default values.
-     */
-    const restore_defaults = () => {
-        dom_elements.width_num_in.max = default_values.max_power2;
-        dom_elements.height_num_in.max = default_values.max_power2;
-        const options_html = powers_const
-            .filter((power) => power <= default_values.max_power2)
-            .map((power) => `<option value="${power}">${power}</option>`)
-            .join('');
-        dom_elements.width_power2.innerHTML = options_html;
-        dom_elements.height_power2.innerHTML = options_html;
-        dom_elements.scale_slider.max = 500;
-        dom_elements.width_num_in.value = default_values.width_num_in;
-        dom_elements.height_num_in.value = default_values.height_num_in;
-        dom_elements.width_power2.value = default_values.width_power2;
-        dom_elements.height_power2.value = default_values.height_power2;
-        dom_elements.scale_slider.value = default_values.scale_slider;
-        dom_elements.scale_value.textContent = `${default_values.scale_slider}%`;
-        debounced_process_image();
-    };
-
-    /**
-     * Updates dimensions from scale.
-     */
-    const update_dimensions_from_scale = () => {
-        const scale = parseFloat(dom_elements.scale_slider.value) / 100;
-        const base_width = dom_elements.scl_algo.value === '0' ? default_values.width_num_in : parseInt(dom_elements.width_power2.value, 10);
-        const base_height = dom_elements.scl_algo.value === '0' ? default_values.height_num_in : parseInt(dom_elements.height_power2.value, 10);
-        const max_value = dom_elements.max_size.checked ? parseInt(dom_elements.max_power2.value, 10) : default_values.max_power2;
-
-        dom_elements.width_num_in.value = Math.min(Math.round(base_width * scale), max_value);
-        dom_elements.height_num_in.value = Math.min(Math.round(base_height * scale), max_value);
-        debounced_process_image();
-    };
-
-    /**
-     * Toggles scaling method visibility.
-     */
-    const toggle_scaling_method = () => {
-        const is_fix = dom_elements.scl_algo.value === '0';
-        dom_elements.fix_sel_sec.style.display = is_fix ? 'grid' : 'none';
-        dom_elements.pow2_sel_sec.style.display = is_fix ? 'none' : 'grid';
-        update_dimensions_from_scale();
-    };
-
-    dom_elements.max_size.addEventListener('change', () => {
-        if (dom_elements.max_size.checked) {
-            update_max_constraints(parseInt(dom_elements.max_power2.value, 10));
-        } else {
-            restore_defaults();
-        }
-        debounced_process_image();
-    });
-
-    dom_elements.max_power2.addEventListener('change', () => {
-        if (dom_elements.max_size.checked) {
-            update_max_constraints(parseInt(dom_elements.max_power2.value, 10));
-            debounced_process_image();
-        }
-    });
-
-    dom_elements.scl_algo.addEventListener('change', toggle_scaling_method);
-
-    dom_elements.width_power2.addEventListener('change', () => {
-        dom_elements.width_num_in.value = dom_elements.width_power2.value;
-        debounced_process_image();
-    });
-
-    dom_elements.height_power2.addEventListener('change', () => {
-        dom_elements.height_num_in.value = dom_elements.height_power2.value;
-        debounced_process_image();
-    });
-
-    dom_elements.scale_slider.addEventListener('input', () => {
-        dom_elements.scale_value.textContent = `${dom_elements.scale_slider.value}%`;
-        update_dimensions_from_scale();
-    });
-
-    dom_elements.width_num_in.addEventListener('input', debounced_process_image);
-    dom_elements.height_num_in.addEventListener('input', debounced_process_image);
-
-    toggle_scaling_method();
+const handle_file_input = (files) => {
+    if (files.length > 0) handle_file(files[0]);
 };
 
-// Initialize event listeners when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    dom_elements.upload_area.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dom_elements.upload_area.classList.add('dragover');
-    });
+/**
+ * Handle copy button click
+ */
+const handle_copy_click = async () => {
+    if (!elements.base64Uri.value) {
+        alert('No image data to copy. Please process an image first.');
+        return;
+    }
 
-    dom_elements.upload_area.addEventListener('dragleave', () => {
-        dom_elements.upload_area.classList.remove('dragover');
-    });
+    try {
+        await navigator.clipboard.writeText(elements.base64Uri.value);
+        show_temporary_feedback(elements.copyButton, '✓ Copied!', 2000);
+    } catch {
+        // Fallback for older browsers
+        try {
+            elements.base64Uri.select();
+            document.execCommand('copy');
+            show_temporary_feedback(elements.copyButton, '✓ Copied!', 2000);
+        } catch {
+            show_temporary_feedback(elements.copyButton, '✗ Copy failed!', 2000);
+        }
+    }
+};
 
-    dom_elements.upload_area.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dom_elements.upload_area.classList.remove('dragover');
-        handle_file(e.dataTransfer.files[0]);
-    });
+/**
+ * Show temporary feedback on buttons
+ * @param {HTMLElement} element - Button element
+ * @param {string} message - Feedback message
+ * @param {number} duration - Display duration in ms
+ */
+const show_temporary_feedback = (element, message, duration) => {
+    const original_html = element.innerHTML;
+    element.innerHTML = `<span>${message}</span>`;
 
-    dom_elements.upload_area.addEventListener('click', () => dom_elements.file_input.click());
-    dom_elements.file_input.addEventListener('change', (e) => handle_file(e.target.files[0]));
+    setTimeout(() => {
+        element.innerHTML = original_html;
+    }, duration);
+};
 
-    dom_elements.quality_range.addEventListener('input', () => {
-        const value = Math.round(dom_elements.quality_range.value * 100);
-        dom_elements.quality_value.textContent = `${value}%`;
-    });
+/**
+ * Initialize application
+ */
+const initialize_application = () => {
+    initialize_dom_cache();
 
-    dom_elements.quality_range.addEventListener('change', debounced_process_image);
+    uploader = new drop_zone(
+        elements.uploadArea,
+        elements.fileInput,
+        handle_file_input,
+        null, 'image/*',
+        { multiple: false, directory: false }
+    );
 
-    dom_elements.unsharp_amount.addEventListener('input', () => {
-        dom_elements.unsharp_amount_value.textContent = dom_elements.unsharp_amount.value;
-    });
+    const controls = {
+        max_chk: elements.max_chk,
+        max_val: elements.max_val,
+        step_sel: elements.step_sel,
 
-    dom_elements.unsharp_radius.addEventListener('input', () => {
-        dom_elements.unsharp_radius_value.textContent = dom_elements.unsharp_radius.value;
-    });
+        num_sec: elements.num_sec,
+        width_num: elements.width_num,
+        height_num: elements.height_num,
 
-    dom_elements.unsharp_threshold.addEventListener('input', () => {
-        dom_elements.unsharp_threshold_value.textContent = dom_elements.unsharp_threshold.value;
-    });
+        pow2_sec: elements.pow2_sec,
+        width_pow2: elements.width_pow2,
+        height_pow2: elements.height_pow2,
 
-    initialize_scaling_controls();
+        scl_slider: elements.scl_slider,
+        sldr_disp: elements.sldr_disp,
 
-    dom_elements.scl_filter.addEventListener('change', debounced_process_image);
-    dom_elements.scl_gamma.addEventListener('change', debounced_process_image);
-    dom_elements.scl_unsharp.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_amount.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_radius.addEventListener('change', debounced_process_image);
-    dom_elements.unsharp_threshold.addEventListener('change', debounced_process_image);
+        filter_sel: elements.filter_sel,
+        gama_chk: elements.gama_chk,
+        unsharp_chk: elements.unsharp_chk,
+        force_chk: elements.force_chk,
 
-    dom_elements.template.addEventListener('change', () => {
+        ush_amount: elements.ush_amount,
+        ush_a_disp: elements.ush_a_disp,
+
+        ush_radius: elements.ush_radius,
+        ush_r_disp: elements.ush_r_disp,
+
+        ush_threshold: elements.ush_threshold,
+        ush_t_disp: elements.ush_t_disp
+    };
+
+    scl_crt = new img_scl_crt(controls, debounced_process_image);
+
+    // Event listeners
+    elements.template.addEventListener('change', () => {
         update_format_options();
-        debounced_process_image();
+        debounced_process_format();
     });
-    dom_elements.alpha_channel.addEventListener('change', () => {
-        update_format_options();
-        debounced_process_image();
-    });
-    dom_elements.format.addEventListener('change', debounced_process_image);
 
+    elements.alphaChannel.addEventListener('change', () => {
+        update_format_options();
+        debounced_process_format();
+    });
+
+    elements.format.addEventListener('change', debounced_process_format);
+    elements.qualityRange.addEventListener('change', debounced_process_format);
+
+    elements.qualityRange.addEventListener('input', e => {
+        const value = parseFloat(e.target.value) * 100;
+        elements.qualityValue.textContent = `${+(value.toFixed(2))}%`;
+    });
+
+    // Preview divider handling
     let is_dragging = false;
-    dom_elements.preview_divider.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        is_dragging = true;
-    });
 
-    document.addEventListener('mousemove', (e) => {
+    const handle_mouse_move = (e) => {
         if (!is_dragging) return;
 
-        const rect = dom_elements.preview_container.getBoundingClientRect();
+        const rect = elements.previewContainer.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        divider_position = clamp((x / rect.width) * 100, 0, 100);
+        state.divider_position = clamp((x / rect.width) * 100, 10, 90);
 
-        //dom_elements.optimized_preview.style.clipPath = `inset(0 ${100 - divider_position}% 0 0)`;
-        dom_elements.optimized_preview.style.clipPath = `inset(0 0 0 ${divider_position}%)`;
-        dom_elements.preview_divider.style.left = `${divider_position}%`;
-    });
+        elements.originalPreview.style.clipPath = `inset(0 ${100 - state.divider_position}% 0 0)`;
+        elements.optimizedPreview.style.clipPath = `inset(0 0 0 ${state.divider_position}%)`;
+        elements.previewDivider.style.left = `${state.divider_position}%`;
+    };
 
-    document.addEventListener('mouseup', () => {
+    const handle_mouse_up = () => {
         is_dragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', handle_mouse_move);
+        document.removeEventListener('mouseup', handle_mouse_up);
+    };
+
+    elements.previewDivider.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        is_dragging = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        document.addEventListener('mousemove', handle_mouse_move);
+        document.addEventListener('mouseup', handle_mouse_up);
     });
 
-    dom_elements.save_button.addEventListener('click', save_image);
+    // Action handlers
+    if (elements.saveButton) {
+        elements.saveButton.addEventListener('click', save_image);
+    }
 
-    dom_elements.copy_button.addEventListener('click', () => {
-        dom_elements.base64_uri.select();
-        document.execCommand('copy');
+    if (elements.copyButton) {
+        elements.copyButton.addEventListener('click', handle_copy_click);
+    }
 
-        const original_text = dom_elements.copy_button.innerHTML;
-        dom_elements.copy_button.innerHTML = '<span>✓</span> Copied!';
+    // Initialize worker pool
+    init_workers_pool([{
+        url: "../../../lib/worker/image_ww.js",
+        type: "module"
+    }]);
+};
 
-        setTimeout(() => {
-            dom_elements.copy_button.innerHTML = original_text;
-        }, 2000);
-    });
-
-    update_format_options();
-
-    dom_elements.quality_value.textContent = `${Math.round(dom_elements.quality_range.value * 100)}%`;
-    dom_elements.scale_value.textContent = `${Math.round(dom_elements.scale_slider.value)}%`;
-    dom_elements.unsharp_amount_value.textContent = dom_elements.unsharp_amount.value;
-    dom_elements.unsharp_radius_value.textContent = dom_elements.unsharp_radius.value;
-    dom_elements.unsharp_threshold_value.textContent = dom_elements.unsharp_threshold.value;
-});
+// Initialize application when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize_application);
+} else {
+    initialize_application();
+}

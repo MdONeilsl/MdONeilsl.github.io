@@ -1,4 +1,3 @@
-
 <!--
 /*
     Image Processor: Optimize and convert images (PNG, JPEG, WebP, GLTF) for Assets and web applications.
@@ -73,12 +72,10 @@
 
                 <div class="control-row">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="maxSize">
-                        <label for="maxSize" class="control-label">Max size:</label>
+                        <input type="checkbox" id="max_chk">
+                        <label for="max_chk" class="control-label">Max size:</label>
                     </div>
-                    <select id="maxPower2">
-                        <option value="2">2</option>
-                        <option value="4">4</option>
+                    <select id="max_val">
                         <option value="8">8</option>
                         <option value="16">16</option>
                         <option value="32">32</option>
@@ -95,38 +92,36 @@
 
                 <div class="control-row size-container">
                     <div class="input-group">
-                        <label for="sclAlgo">Scaling Method</label>
-                        <select id="sclAlgo">
+                        <label for="step_sel">Scaling Method</label>
+                        <select id="step_sel">
                             <option value="0">Fix</option>
                             <option value="1">Near Pow 2</option>
                         </select>
                     </div>
                     <div class="size-sel-div">
-                        <div id="fix_sel_sec" class="dimension-controls">
+                        <div id="num_sec" class="dimension-controls">
                             <div class="input-group">
-                                <label for="widthNumIn">Width</label>
-                                <input type="number" id="widthNumIn" min="1" max="1024" value="512">
+                                <label for="width_num">Width</label>
+                                <input type="number" id="width_num" min="8" max="8192" value="512">
                             </div>
                             <div class="input-group">
-                                <label for="heightNumIn">Height</label>
-                                <input type="number" id="heightNumIn" min="1" max="1024" value="512">
+                                <label for="height_num">Height</label>
+                                <input type="number" id="height_num" min="8" max="8192" value="512">
                             </div>
                         </div>
 
-                        <div id="pow2_sel_sec" class="dimension-controls" style="display:none">
+                        <div id="pow2_sec" class="dimension-controls" style="display:none">
                             <div class="input-group">
                                 <label class="control-label">Width (Power of 2):</label>
-                                <select id="widthPower2">
-                                    <option value="2">2</option>
-                                    <option value="4">4</option>
+                                <select id="width_pow2">
                                     <option value="8">8</option>
                                     <option value="16">16</option>
                                     <option value="32">32</option>
                                     <option value="64">64</option>
                                     <option value="128">128</option>
                                     <option value="256">256</option>
-                                    <option value="512"selected>512</option>
-                                    <option value="1024" >1024</option>
+                                    <option value="512" selected>512</option>
+                                    <option value="1024">1024</option>
                                     <option value="2048">2048</option>
                                     <option value="4096">4096</option>
                                     <option value="8192">8192</option>
@@ -134,17 +129,15 @@
                             </div>
                             <div class="input-group">
                                 <label class="control-label">Height (Power of 2):</label>
-                                <select id="heightPower2">
-                                    <option value="2">2</option>
-                                    <option value="4">4</option>
+                                <select id="height_pow2">
                                     <option value="8">8</option>
                                     <option value="16">16</option>
                                     <option value="32">32</option>
                                     <option value="64">64</option>
                                     <option value="128">128</option>
                                     <option value="256">256</option>
-                                    <option value="512"selected>512</option>
-                                    <option value="1024" >1024</option>
+                                    <option value="512" selected>512</option>
+                                    <option value="1024">1024</option>
                                     <option value="2048">2048</option>
                                     <option value="4096">4096</option>
                                     <option value="8192">8192</option>
@@ -157,31 +150,36 @@
                 <div class="slider-container">
                     <div class="slider-header">
                         <label>Image Scale (keep aspect-ratio when possible)</label>
-                        <span class="value-display" id="scaleValue">100%</span>
+                        <span class="value-display" id="sldr_disp">100%</span>
                     </div>
-                    <input type="range" id="scaleSlider" min="0.01" max="500" step="0.01" value="100">
+                    <input type="range" id="scl_slider" min="0.01" max="300" step="0.01" value="100">
                 </div>
 
                 <div class="control-row space">
-                    <label class="control-label">Filter:</label>
-                    <select id="sclFilter">
-                        <option value="-1">None</option>
-                        <option value="0">Box</option>
-                        <option value="1">Hamming</option>
-                        <option value="2">Lanczos2</option>
-                        <option value="3">Lanczos3</option>
-                        <option value="4" selected>MKS2013</option>
-                        <option value="5">Bicubic</option>
+                    <label class="control-label">filter_sel:</label>
+                    <select id="filter_sel">
+                        <option value="none">None</option>
+                        <option value="box">Box</option>
+                        <option value="hamming">Hamming</option>
+                        <option value="lanczos2">Lanczos2</option>
+                        <option value="lanczos3">Lanczos3</option>
+                        <option value="mks2013" selected>MKS2013</option>
+                        <option value="bicubic">Bicubic</option>
                     </select>
 
                     <div class="checkbox-group">
-                        <input type="checkbox" id="sclGamma">
-                        <label for="sclGamma" class="control-label">Gamma Correction</label>
+                        <input type="checkbox" id="gama_chk">
+                        <label for="gama_chk" class="control-label">Gamma Correction</label>
                     </div>
 
                     <div class="checkbox-group">
-                        <input type="checkbox" id="sclUnsharp">
-                        <label for="sclUnsharp" class="control-label">Unsharp Mask</label>
+                        <input type="checkbox" id="unsharp_chk">
+                        <label for="unsharp_chk" class="control-label">Unsharp Mask</label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="force_chk">
+                        <label for="force_chk" class="control-label">Force Process</label>
                     </div>
                 </div>
 
@@ -189,25 +187,25 @@
                     <div class="slider-container">
                         <div class="slider-header">
                             <label>Unsharp Amount</label>
-                            <span class="value-display" id="unsharpAmountValue">0</span>
+                            <span class="value-display" id="ush_a_disp">0</span>
                         </div>
-                        <input type="range" id="unsharpAmount" min="0" max="400" value="0">
+                        <input type="range" id="ush_amount" min="0.01" max="400" value="0">
                     </div>
 
                     <div class="slider-container">
                         <div class="slider-header">
                             <label>Unsharp Radius</label>
-                            <span class="value-display" id="unsharpRadiusValue">1.0</span>
+                            <span class="value-display" id="ush_r_disp">1.0</span>
                         </div>
-                        <input type="range" id="unsharpRadius" min="0.1" max="4" step="0.1" value="1.0">
+                        <input type="range" id="ush_radius" min="0.1" max="4" step="0.1" value="1.0">
                     </div>
 
                     <div class="slider-container">
                         <div class="slider-header">
                             <label>Unsharp Threshold</label>
-                            <span class="value-display" id="unsharpThresholdValue">0</span>
+                            <span class="value-display" id="ush_t_disp">0</span>
                         </div>
-                        <input type="range" id="unsharpThreshold" min="0" max="255" value="0">
+                        <input type="range" id="ush_threshold" min="0" max="255" value="0">
                     </div>
                 </div>
 
