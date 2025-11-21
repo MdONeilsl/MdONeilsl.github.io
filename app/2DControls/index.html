@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2D UI Controls Designer - Create and customize buttons, checkboxes, switches, sliders, and spinboxes">
+    <meta name="keywords" content="UI design, controls, CSS, web design, interface elements">
+    <meta name="author" content="UI Controls Designer">
+    <title>2D Controls Designer</title>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "2D Controls Designer",
+        "operatingSystem": "Web",
+        "applicationCategory": "UtilityApplication",
+        "description": "2D UI Controls Designer - Create and customize buttons, checkboxes, switches, sliders, and spinboxes",
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
+    }
+    </script>
+</head>
+
+<body>
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <header class="main-header">
+        <div class="header-content">
+            <h1>2D Controls Designer</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="left">
+                <select id="element-select">
+                    <option value="button">Button</option>
+                    <option value="checkbox">Checkbox</option>
+                    <option value="switch">Switch</option>
+                    <option value="slider">Slider</option>
+                    <option value="spinbox">Spinbox</option>
+                </select>
+
+                <button id="reset-btn">Reset to Defaults</button>
+
+                <details>
+                    <summary>Background Properties</summary>
+                    <div class="control-group">
+                        <div class="control-row">
+                            <div class="control-cell">
+                                <label for="opt_back_base_disp">Background base color:</label>
+                                <input type="text" id="opt_back_base_disp" value="#3498dbff">
+                                <input type="color" id="opt_back_base" value="#3498dbff" style="width:0;height:0">
+                            </div>
+                            <div class="control-cell"></div>
+
+                            <div class="control-cell">
+                                <input type="checkbox" class="mico-check" id="opt_back_topcol_chk">
+                                <label for="opt_back_topcol_disp">Background top color:</label>
+                                <input type="text" id="opt_back_topcol_disp" value="#ffffff">
+                                <input type="color" id="opt_back_topcol" value="#ffffff" style="width:0;height:0">
+                            </div>
+                            <div class="control-cell">
+                                <input type="checkbox" class="mico-check" id="opt_back_butcol_chk">
+                                <label for="opt_back_butcol_disp">Background bottom color:</label>
+                                <input type="text" id="opt_back_butcol_disp" value="#ffffff">
+                                <input type="color" id="opt_back_butcol" value="#ffffff" style="width:0;height:0">
+                            </div>
+
+                            <div class="control-cell"></div>
+                            <div class="control-cell"></div>
+                        </div>
+                    </div>
+
+                    <!-- Shadow Properties -->
+                    <div class="control-group">
+                        <div class="control-row">
+                            <div class="control-cell">
+                                <input type="checkbox" class="mico-check" id="opt_shadow_chk" checked>
+                                <label for="opt_shadow_color_disp">Shadow color:</label>
+                                <input type="text" id="opt_shadow_color_disp" value="#000000">
+                                <input type="color" id="opt_shadow_color" value="#000000" style="width:0;height:0">
+                            </div>
+                            <div class="control-cell"> </div>
+                            <div class="control-cell">
+                                <label for="opt_shadow_blur">
+                                    Shadow blur:
+                                    <input type="text" class="mico-text" id="opt_shadow_blur" value="4"> px
+                                </label>
+                                <input type="range" id="opt_shadow_blur_sld" min="0" max="50" step="1" value="4">
+                            </div>
+                            <div class="control-cell">
+                                <label for="opt_shadow_offset">
+                                    Shadow offset:
+                                    <input type="text" class="mico-text" id="opt_shadow_offset" value="2"> px
+                                </label>
+                                <input type="range" id="opt_shadow_offset_sld" min="0" max="20" step="1" value="2">
+                            </div>
+                            <div class="control-cell"></div>
+                            <div class="control-cell"></div>
+                        </div>
+                    </div>
+
+                    <!-- Gloss Properties -->
+                    <div class="control-group">
+                        <div class="control-row">
+                            <div class="control-cell">
+                                <input type="checkbox" class="mico-check" id="opt_gloss_chk" checked>
+                                <label for="opt_gloss_opacity">
+                                    Gloss opacity:
+                                    <input type="text" class="mico-text" id="opt_gloss_opacity" value="40">%
+                                </label>
+                                <input type="range" id="opt_gloss_opacity_sld" min="0" max="100" step="1" value="40">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary><input type="checkbox" id="border_chk" checked> Border Properties </summary>
+                    <div class="control-group">
+                        <div class="control-group">
+                            <div class="control-row">
+                                <div class="control-cell">
+                                    <label for="opt_border_radius">
+                                        Border radius:
+                                        <input type="text" class="mico-text" id="opt_border_radius" value="8">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_border_radius_sld" min="0" max="100" step="1" value="8">
+                                </div>
+                                <div class="control-cell">
+                                    <label for="opt_border_size">
+                                        Border size:
+                                        <input type="text" class="mico-text" id="opt_border_size" value="1">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_border_size_sld" min="0" max="100" step="1" value="1">
+                                </div>
+
+                                <div class="control-cell">
+                                    <div class="control-cell">
+                                        <label for="opt_text_color">Border color</label>
+                                        <input type="text" id="opt_border_color_disp" value="#000000">
+                                        <input type="color" id="opt_border_color" value="#000000" style="width:0;height:0">
+                                    </div>
+                                </div>
+                                <div class="control-cell"></div>
+
+                                <div class="control-cell"></div>
+                                <div class="control-cell"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Text Properties</summary>
+                    <div class="control-group">
+                        <div class="control-group">
+                            <div class="control-row">
+                                <div class="control-cell">
+                                    <input type="text" id="opt_txt_txt" data-opt="txt" placeholder="Text" value="Text">
+                                </div>
+                                <div class="control-cell">
+                                    <select id="opt_text_family">
+                                        <option value="Arial, sans-serif">Arial</option>
+                                        <option value="Helvetica, sans-serif">Helvetica</option>
+                                        <option value="Times New Roman, serif">Times New Roman</option>
+                                        <option value="Georgia, serif">Georgia</option>
+                                        <option value="Courier New, monospace">Courier New</option>
+                                        <option value="Verdana, sans-serif">Verdana</option>
+                                        <option value="Tahoma, sans-serif">Tahoma</option>
+                                        <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+                                        <option value="Roboto, sans-serif">Roboto</option>
+                                        <option value="Open Sans, sans-serif">Open Sans</option>
+                                        <option value="sans-serif">Sans Serif</option>
+                                        <option value="serif">Serif</option>
+                                        <option value="monospace">Monospace</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <div class="control-cell">
+                                    <label for="opt_text_color">Font color</label>
+                                    <input type="text" id="opt_text_color_disp" value="#000000">
+                                    <input type="color" id="opt_text_color" value="#000000" style="width:0;height:0">
+                                </div>
+                                <div class="control-cell">
+
+                                    <label for="opt_text_size">
+                                        Font size:
+                                        <input type="text" class="mico-text" id="opt_text_size" value="14">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_text_size_sld" min="4" max="100" step="1" value="14">
+                                    <div class="opt-row">
+                                        <label for="opt_text_bold">
+                                            <input type="checkbox" class="mico-check" id="opt_text_bold">
+                                            Bold
+                                        </label>
+                                        <label for="opt_text_italic">
+                                            <input type="checkbox" class="mico-check" id="opt_text_italic">
+                                            Italic
+                                        </label>
+                                        <label for="opt_text_uppercase">
+                                            <input type="checkbox" class="mico-check" id="opt_text_uppercase">
+                                            Uppercase
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Text Shadow Properties -->
+                            <div class="control-group">
+
+
+                                <div class="control-row">
+                                    <div class="control-cell">
+                                        <input type="checkbox" class="mico-check" id="opt_text_shadow_chk" checked>
+                                        <label for="opt_text_shadow_color_disp">Text shadow color:</label>
+                                        <input type="text" id="opt_text_shadow_color_disp" value="#000000">
+                                        <input type="color" id="opt_text_shadow_color" value="#000000"
+                                            style="width:0;height:0">
+                                    </div>
+                                    <div class="control-cell"></div>
+                                    <div class="control-cell">
+                                        <label for="opt_text_shadow_blur">
+                                            Text shadow blur:
+                                            <input type="text" class="mico-text" id="opt_text_shadow_blur" value="2">
+                                            px
+                                        </label>
+                                        <input type="range" id="opt_text_shadow_blur_sld" min="0" max="20" step="1"
+                                            value="2">
+                                    </div>
+
+                                    <div class="control-cell">
+                                        <label for="opt_text_shadow_offset">
+                                            Text shadow offset:
+                                            <input type="text" class="mico-text" id="opt_text_shadow_offset" value="1">
+                                            px
+                                        </label>
+                                        <input type="range" id="opt_text_shadow_offset_sld" min="0" max="10" step="1"
+                                            value="1">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Layout Properties</summary>
+                    <div class="control-group">
+                        <div class="control-group">
+                            <div class="control-row">
+                                <div class="control-cell">
+                                    <label for="opt_hpadding">
+                                        Horizontal padding:
+                                        <input type="text" class="mico-text" id="opt_hpadding" value="24">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_hpadding_sld" min="0" max="80" step="1" value="14">
+                                </div>
+                                <div class="control-cell">
+                                    <label for="opt_vpadding">
+                                        Vertical padding:
+                                        <input type="text" class="mico-text" id="opt_vpadding" value="24">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_vpadding_sld" min="0" max="80" step="1" value="24">
+                                </div>
+
+                                <div class="control-cell">
+                                    <label for="opt_hmargin">
+                                        Horizontal margin:
+                                        <input type="text" class="mico-text" id="opt_hmargin" value="24">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_hmargin_sld" min="0" max="80" step="1" value="14">
+                                </div>
+                                <div class="control-cell">
+                                    <label for="opt_vmargin">
+                                        Vertical margin:
+                                        <input type="text" class="mico-text" id="opt_vmargin" value="24">
+                                        px
+                                    </label>
+                                    <input type="range" id="opt_vmargin_sld" min="0" max="80" step="1" value="24">
+                                </div>
+
+                                <div class="control-cell"></div>
+                                <div class="control-cell"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+            <div class="right">
+                <div class="preview-area">
+
+                    <label>Preview Background: <input type="color" id="preview-bg" value="#1e1e1e"></label>
+
+                    <div class="preview-wrapper" id="preview-grid" style="flex-direction: var(--prev-ori, column);">
+
+                        <canvas id="pre_norm_wrapper" class="preview-item"></canvas>
+                        <canvas id="pre_acti_wrapper" class="preview-item"></canvas>
+                        <canvas id="pre_disa_wrapper" class="preview-item"></canvas>
+
+                    </div>
+
+                    <div id="save-section">
+                        <div class="save-options">
+                            <label>Format: <select id="format">
+                                    <option value="png">PNG</option>
+                                    <option value="jpeg">JPEG</option>
+                                    <option value="webp">WebP</option>
+                                </select></label>
+                            <label><input type="checkbox" id="include_bg_chk"> Include Background</label>
+                        </div>
+                        <button id="save_btn">Save ZIP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 2D Controls Designer. All rights reserved.</p>
+            <div class="footer-links">
+                <span>Powered by:</span>
+                <a href="https://stuk.github.io/jszip/" target="_blank">JSZip (MIT)</a>
+            </div>
+            <p class="footer-links">
+                <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about" aria-label="Contact us">Contact</a> |
+                <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" aria-label="License">GPL-3.0 License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>

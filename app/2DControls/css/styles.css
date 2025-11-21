@@ -1,0 +1,435 @@
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #007bff;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --dark-bg: #1a1a1a;
+    --dark-surface: #2d2d2d;
+    --darker-surface: #252525;
+    --dark-border: #404040;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--dark-bg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.main-header {
+    background: linear-gradient(135deg, var(--darker-surface) 0%, #333 100%);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.main-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tagline {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 0 20px 1rem;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.left, .right {
+    background: var(--dark-surface);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--dark-border);
+}
+
+.left {
+    width: 50%;
+}
+
+.right {
+    width: 50%;
+}
+
+/* Compact Form Elements */
+#element-select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--dark-border);
+    background: var(--darker-surface);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+#reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+#reset-btn:hover {
+    background: #0056b3;
+}
+
+/* Compact Details/Sections */
+details {
+    margin-bottom: 10px;
+    border: 1px solid var(--dark-border);
+    border-radius: 6px;
+    background: #363636;
+}
+
+details[open] {
+    background: #404040;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 12px;
+    background: #4a4a4a;
+    color: var(--text-primary);
+    transition: background 0.2s;
+    list-style: none;
+    font-size: 14px;
+    border-radius: 6px 6px 0 0;
+}
+
+details[open] summary {
+    background: #555555;
+    border-radius: 6px 6px 0 0;
+}
+
+/* Compact Control Groups */
+.control-group {
+    padding: 10px;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.control-row {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.control-cell {
+    width: 46%;
+}
+
+.control-group input[type=text],
+.control-group input[type=range],
+.control-group select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+    background: var(--darker-surface);
+    color: var(--text-secondary);
+}
+
+.control-group label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+    display: block;
+}
+
+/* Hide color inputs */
+input[type="color"]:not(#preview-bg) {
+    width: 0 !important;
+    height: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0;
+    position: absolute;
+}
+
+/* Compact Preview Area */
+.preview-area {
+    text-align: center;
+}
+
+#preview-bg {
+    margin-bottom: 15px;
+    background: var(--darker-surface);
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    width: 40px;
+    height: 30px;
+}
+
+.preview-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    min-height: 200px;
+    background: var(--preview-bg, #2d2d2d);
+    padding: 60px 40px;
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 1px;
+    border: 1px solid #666666;
+    white-space: nowrap;
+    background: #3d3d3d;
+}
+
+.preview-item label {
+    white-space: nowrap;
+    color: var(--text-secondary);
+}
+
+/* Compact Save Section */
+#save-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--dark-border);
+}
+
+#save_btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#save_btn:hover {
+    background: #218838;
+}
+
+.save-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.save-options label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.save-options select,
+.save-options input {
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid var(--dark-border);
+    background: var(--darker-surface);
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* Compact Micro Controls */
+.mico-text {
+    width: 30px !important;
+    height: 20px;
+    line-height: 1;
+    margin: 0 2px;
+    padding: 2px 4px;
+    text-align: center;
+    background: var(--darker-surface);
+    border: 1px solid var(--dark-border);
+    color: var(--text-secondary);
+    border-radius: 2px;
+    font-size: 11px;
+}
+
+.mico-check {
+    width: 14px !important;
+    height: 14px;
+    margin: 0 2px;
+    accent-color: var(--primary-color);
+}
+
+.opt-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.opt-row label {
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Compact Range Inputs */
+.control-group input[type=range] {
+    height: 4px;
+    max-width: 95%;
+    border: 1px solid #555555;
+    background-color: #676767;
+    -webkit-appearance: none;
+    cursor: pointer;
+    margin-top: 4px;
+    border-radius: 2px;
+}
+
+.control-group input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background-color: #26a7c4;
+    border: 1px solid #e6e6e6;
+    border-radius: 50%;
+}
+
+.control-group input[type=range]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background-color: #26a7c4;
+    border: 1px solid #e6e6e6;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Footer */
+.main-footer {
+    background: var(--darker-surface);
+    border-top: 1px solid var(--dark-border);
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.footer-content p {
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .left, .right {
+        width: 100%;
+    }
+    
+    .preview-wrapper {
+        padding: 40px 20px;
+        gap: 30px;
+    }
+    
+    .control-row {
+        flex-direction: column;
+    }
+    
+    .control-cell {
+        width: 100%;
+    }
+    
+    .save-options {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+details summary:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 1px;
+}
