@@ -1,4 +1,4 @@
-import { LIBRARY_DATA } from "./g.test.js";
+import { LIBRARY_DATA } from "./g.js";
 
 /**
  * Tracks all details elements for closing children behavior
