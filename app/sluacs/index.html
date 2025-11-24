@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLua Cheatsheet</title>
+    <meta name="description"
+        content="A comprehensive, compact, and searchable reference cheatsheet for the Luau standard libraries (SLua). Quick documentation for developers.">
+    <meta name="author" content="MdONeil">
+
+    <meta property="og:title" content="SLua Cheatsheet">
+    <meta property="og:description" content="Compact reference with search.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mdoneilsl.github.io/app/sluacs/">
+    <link rel="canonical" href="https://mdoneilsl.github.io/app/sluacs/">
+
+    <link rel="preload" href="./css/styles.test.css" as="style">
+    <link rel="stylesheet" href="./css/styles.test.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body class="body-style">
+    <div class="container">
+        <header class="header-style">
+            <div class="header-content">
+                <h1 class="h1-style">SLua Cheatsheet</h1>
+                <p class="subtitle-style">Compact reference with search</p>
+            </div>
+
+            <div class="header-controls">
+                <form role="search" class="search-form">
+                    <div class="search-container">
+                        <input type="text" id="search-input" class="search-input"
+                            placeholder="Search Luau functions, e.g., 'string.sub', 'table.insert'..."
+                            aria-label="Search Luau library functions and keywords" autocomplete="off" autocorrect="off"
+                            spellcheck="false">
+                        <span class="search-icon" aria-hidden="true">🔍</span>
+                    </div>
+                </form>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <section id="data-container" class="data-container-style">
+                <div class="loading-style" id="loading-message" role="status" aria-live="polite">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    Loading Luau Library Data... Please wait.
+                </div>
+
+            </section>
+        </main>
+
+        <footer class="footer-style">
+            <p>&copy; <span id="current-year">2025</span> MdONeil. All rights reserved. | <a
+                    href="https://create.secondlife.com/script/learn-slua/" target="_blank"
+                    rel="noopener noreferrer">Official SLuau Docs</a></p>
+            <p class="footer-note">Data provided is for reference and may be subject to changes in the Luau language.
+            </p>
+        </footer>
+    </div>
+
+    <script type="module" src="./js/main.test.js" defer></script>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+
+</html>

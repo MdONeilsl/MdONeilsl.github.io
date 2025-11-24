@@ -10,6 +10,7 @@ Below is a comprehensive list of tools available on the webpage:
 - [Shape Mixer](./app/ShapeMixer/): Blend and mix character shapes with advanced customization tools
 - [Audio Segmenter](./app/Segmenter/): Precise audio splitting and editing for perfect sound clips
 - [PBR Packer](./app/PBRPacker/): Combine PBR textures into optimized material maps
+- [2D Controls Designer](./app/2DControls/): Create and customize a 2D control texture with different states.
 - [PBR Image](./app/PBR_img/): Generate and process PBR texture maps from images
 - [Image Processor](./app/ImageProcessor/): Advanced image manipulation and optimization tools
 - [Images Processor](./app/ImagesProcessor/): Batch process multiple images with consistent settings
@@ -20,6 +21,7 @@ Below is a comprehensive list of tools available on the webpage:
 - [UV Atlasing](./app/uv_atlasing/): Create efficient texture atlases from UV layouts
 - [2D Fonts](./app/2DFonts/): Generate custom font textures and atlases
 - [3D Fonts](./app/3DFonts/): Create 3D text models from custom fonts
+- [SLua Cheatsheet](./app/sluacs/): Compact reference with search
 - [Fragmented Frame](./app/Fragmentedframe/): Create artistic fragmented image effects
 - [Data Compacter](./app/DataCompacter/): Compress and optimize data for efficient storage
 - [CSS Processor](./app/CSSProcessor/): Optimize and process CSS for better performance
