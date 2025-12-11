@@ -21,33 +21,33 @@ export const LIBRARY_DATA = {
             },
             uuid: {
                 return: "uuid",
-                params: [{ name: "s", type: "string?" }],
-                desc: "Creates a new UUID (Universally Unique Identifier). If a string is provided, it attempts to parse it; otherwise, it generates a new random UUID (SLua-specific).",
-                expl: "local new_id = uuid()"
+                params: [{ name: "s", type: "string" }],
+                desc: "Creates a new UUID (Universally Unique Identifier). If a string is provided, it attempts to parse it. (SLua-specific).",
+                expl: "local new_id = uuid(\"13fecc09-fac4-9841-825b-bc81a71a2c32\")"
             },
             touuid: {
                 return: "uuid?",
-                params: [{ name: "obj", type: "any" }],
-                desc: "Attempts to convert the given object into a UUID object. Returns nil if the conversion fails (SLua-specific).",
+                params: [{ name: "src", type: "string" }],
+                desc: "Attempts to convert the given string into a UUID object. Throws an error if src is not a string. (SLua-specific).",
                 expl: "local id = touuid(\"f47ac10b-58cc-4372-a567-0e02b2c3d479\")"
             },
             tovector: {
                 return: "vector?",
-                params: [{ name: "obj", type: "any" }],
-                desc: "Attempts to convert the given object into a vector (Vector3 or Vector4) object. Returns nil if the conversion fails (SLua-specific).",
-                expl: "local v = tovector(\"<1, 2, 3>\")"
+                params: [{ name: "obj", type: "string|vector" }],
+                desc: "Attempts to convert the given object into a vector object. Returns nil if the conversion fails (SLua-specific).",
+                expl: "local va = tovector(\"<1, 2, 3>\")\nlocal vb = tovector(\"<1, 2, 3\")\nlocal vc = tovector(\"<1, 2, inf\")\nlocal vd = tovector(\"<1, 2, nan\")"
             },
             rotation: {
-                return: "rotation",
+                return: "quaternion",
                 params: [{ name: "x", type: "number" }, { name: "y", type: "number" }, { name: "z", type: "number" }, { name: "s", type: "number" }],
                 desc: "Creates a new rotation object (quaternion-like) from components $x$, $y$, $z$, and $s$ (real/scalar part) (SLua-specific).",
                 expl: "local rot = rotation(0, 0, 0, 1)"
             },
             torotation: {
-                return: "rotation?",
-                params: [{ name: "obj", type: "any" }],
-                desc: "Attempts to convert the given object into a rotation object. Returns nil if the conversion fails (SLua-specific).",
-                expl: "local rot = torotation(\"<0, 0, 90> deg\")"
+                return: "quaternion?",
+                params: [{ name: "obj", type: "string|quaternion" }],
+                desc: "Attempts to convert the given object into a quaternion object. Returns nil if the conversion fails (SLua-specific).",
+                expl: "local rot = torotation(\"<0, 0, 0, 90>\") -- <0, 0, 0, 90>"
             },
             quaternion: {
                 return: "quaternion",
@@ -57,9 +57,9 @@ export const LIBRARY_DATA = {
             },
             toquaternion: {
                 return: "quaternion?",
-                params: [{ name: "obj", type: "any" }],
+                params: [{ name: "obj", type: "string|quaternion" }],
                 desc: "Attempts to convert the given object into a quaternion object. Returns nil if the conversion fails (SLua-specific).",
-                expl: "local q = toquaternion({0, 0, 0, 1})"
+                expl: "local qa = toquaternion(\"<0, 0, 0, 90>\")\nlocal qb = toquaternion(\"<inf, nan, inf, nan\")"
             },
             tostring: {
                 return: "string",
@@ -237,7 +237,7 @@ export const LIBRARY_DATA = {
                 return: "string",
                 params: [{ name: "f", type: "string" }, { name: "args", type: "...any" }],
                 desc: "Encodes all input parameters into a binary string according to the packing format string 'f'.",
-                expl: "local s = string.pack(\"i32\", 100)"
+                expl: "local s = string.pack(\"i16\", 100) -- d"
             },
             find: {
                 return: "(number, number)?",
@@ -255,7 +255,7 @@ export const LIBRARY_DATA = {
                 return: "number",
                 params: [{ name: "f", type: "string" }],
                 desc: "Given a pack format string 'f', returns the size in bytes of the resulting packed representation. The format cannot use variable-length specifiers.",
-                expl: "local size = string.packsize(\"i32\") -- size = 4"
+                expl: "local size = string.packsize(\"i5\") -- size = 5"
             },
             reverse: {
                 return: "string",
@@ -273,7 +273,7 @@ export const LIBRARY_DATA = {
                 return: "...any",
                 params: [{ name: "f", type: "string" }, { name: "s", type: "string" }],
                 desc: "Given a pack format string 'f', decodes the input binary string 's' and returns all resulting values.",
-                expl: "local num = string.unpack(\"i32\", string.pack(\"i32\", 100)) -- num = 100"
+                expl: "local num = string.unpack(\"i16\", string.pack(\"i16\", 100)) -- num = 100"
             },
             rep: {
                 return: "string",
@@ -724,7 +724,7 @@ export const LIBRARY_DATA = {
                 return: "any",
                 params: [{ name: "jsonString", type: "string" }],
                 desc: "Parses a JSON formatted string and returns the resulting Luau value (table, string, number, etc.). JSON 'null' values are decoded into the 'lljson.null' constant.",
-                expl: "local data = lljson.decode('{\"id\":1,\"value\":null}') -- data.value is lljson.null"
+                expl: "local data = lljson.decode(\"{\\\"id\\\":1,\\\"value\\\":null}\") -- data.value is lljson.null"
             }
         }
     },
@@ -888,7 +888,7 @@ export const LIBRARY_DATA = {
                 return: "table",
                 params: [{ name: "f", type: "function | number" }, { name: "what", type: "string?" }],
                 desc: "Returns a table containing information about a function 'f' or a function at a specific stack level (when 'f' is a number). The optional 'what' string controls which fields are returned (e.g., 'S' for source, 'l' for line, 'n' for name).",
-                expl: "local f_info = debug.info(myFunction, 'nS')"
+                expl: "local source, name, line = debug.info(myFunction, \"snl\") -- what: {\"s\", \"n\", \"l\", \"sn\", \"nl\", \"snl\"}"
             },
             traceback: {
                 return: "string",
