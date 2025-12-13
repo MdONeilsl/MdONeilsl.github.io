@@ -885,7 +885,7 @@ export const LIBRARY_DATA = {
     debug: {
         func: {
             info: {
-                return: "table",
+                return: "...any",
                 params: [{ name: "f", type: "function | number" }, { name: "what", type: "string?" }],
                 desc: "Returns a table containing information about a function 'f' or a function at a specific stack level (when 'f' is a number). The optional 'what' string controls which fields are returned (e.g., 'S' for source, 'l' for line, 'n' for name).",
                 expl: "local source, name, line = debug.info(myFunction, \"snl\") -- what: {\"s\", \"n\", \"l\", \"sn\", \"nl\", \"snl\"}"

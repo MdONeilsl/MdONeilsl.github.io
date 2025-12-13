@@ -17,6 +17,7 @@ Below is a comprehensive list of tools available on the webpage:
 - [Media to Prim](./app/prim_gif/): Convert media files to prim-friendly formats
 - [Normal Map Scaler](./app/NormalMapScaler/): Scale normal maps while preserving surface details
 - [Normal Map Merger](./app/NormalMapMerger/): Combine multiple normal maps into unified textures
+- [Normal from Heightmap](./app/NormFromHeight/): Convert heightmaps to normal
 - [UV Calculator](./app/uv_calc/): Calculate and optimize UV mapping coordinates
 - [UV Atlasing](./app/uv_atlasing/): Create efficient texture atlases from UV layouts
 - [2D Fonts](./app/2DFonts/): Generate custom font textures and atlases

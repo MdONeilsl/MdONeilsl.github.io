@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebApplication">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Convert heightmaps to normal maps online. Image processing tool with real-time preview, adjustable parameters, and instant download.">
+    <meta name="keywords"
+        content="heightmap, normal map, image processing, 3D texture, graphics tool, webgl, texture generation, normal map generator, heightmap converter">
+    <meta name="author" content="MdONeil">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Normal Map Generator from Heightmap - Online Image Processing Tool">
+    <meta property="og:description"
+        content="Convert heightmaps to normal maps online with real-time preview and adjustable parameters. Free professional graphics tool.">
+    <meta property="og:url" content="https://mdoneilsl.github.io/app/NormFromHeight/">
+    <meta property="og:site_name" content="Heightmap to Normal Map Converter">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Normal Map Generator from Heightmap">
+    <meta name="twitter:description"
+        content="Free online tool to convert heightmaps to normal maps with real-time processing and preview.">
+
+    <!-- Schema.org markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Heightmap to Normal Map Converter",
+        "description": "Online tool for converting heightmap images to normal maps with adjustable parameters and real-time preview",
+        "applicationCategory": "GraphicsApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript and modern web browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "MdONeil"
+        },
+        "creator": {
+            "@type": "Person",
+            "name": "MdONeil",
+            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+        }
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://mdoneilsl.github.io/app/NormFromHeight/">
+
+    <!-- Favicon and App Icons -->
+    <meta name="apple-mobile-web-app-title" content="Normal Map Tool">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="msapplication-navbutton-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- PWA Metadata -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Normal Map Tool">
+
+    <!-- Security Headers (in production, these should be set on server) -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:;">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Performance Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        as="style">
+    <link rel="preload" href="./js/main.js" as="script">
+
+    <title>Normal Map Generator from Heightmap</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header role="banner">
+        <h1 itemprop="headline">Normal map from heightmap</h1>
+    </header>
+
+    <div id="app-core" itemprop="mainContentOfPage">
+        <section id="upload-section" aria-labelledby="upload-heading">
+            <div id="drop-zone" role="region" aria-label="File upload area">
+                <p>Drag and Drop Heightmap Here</p>
+                <p class="small-text">or click to select file (JPEG, PNG, WebP)</p>
+                <input type="file" id="file_input" accept="image/jpeg, image/png, image/webp"
+                    aria-label="Select image file" style="display: none;">
+            </div>
+        </section>
+
+        <main id="app-content">
+            <section id="settings-section" aria-labelledby="settings-heading">
+                <h2 id="settings-heading">⚙️ Settings</h2>
+                <form id="image-settings" role="form" aria-label="Image processing settings">
+                    <div class="form-group">
+                        <label for="strength">Strength (0-10):</label>
+                        <input type="number" id="strength" name="strength" min="0.1" max="10" value="5" step="0.1"
+                            aria-describedby="strength-help">
+                        <span id="strength-help" class="visually-hidden">Adjusts the intensity of the normal map
+                            effect</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Channel Inversion:</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="invert_red" name="invert_red" aria-label="Invert red channel">
+                            <label for="invert_red">Invert Red Channel</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="invert_green" name="invert_green"
+                                aria-label="Invert green channel">
+                            <label for="invert_green">Invert Green Channel</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smoothing">Smoothing (0-3):</label>
+                        <div id="smoothing-container">
+                            <input type="range" id="smoothing" name="smoothing" min="0" max="3" value="0"
+                                aria-label="Smoothing level" aria-valuetext="Level 0">
+                            <span id="smoothing-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="use_scharr" name="use_scharr"
+                                aria-label="Use Scharr filter for edge detection">
+                            <label for="use_scharr">Use Scharr Filter</label>
+                        </div>
+                    </div>
+                </form>
+                <div id="status-message" role="status" aria-live="polite" aria-atomic="true">
+                    Drop an image above to begin processing.
+                </div>
+            </section>
+
+            <section id="preview-section" aria-labelledby="preview-heading">
+                <div class="canvas-container">
+                    <canvas id="image-canvas" role="img"
+                        aria-label="Image preview showing original and processed comparison" width="800" height="600">
+                        Your browser does not support the canvas element.
+                    </canvas>
+                    <input type="range" id="comparison-slider" min="0" max="100" value="50"
+                        aria-label="Comparison slider to adjust view between original and processed image"
+                        aria-valuetext="50 percent">
+                </div>
+            </section>
+
+            <section id="controls-section" aria-labelledby="controls-heading">
+                <button id="save-button" type="button" aria-label="Save processed image">
+                    💾 Save Image
+                </button>
+                <button id="reset-button" type="button" aria-label="Reset all settings to default">
+                    ↩️ Reset Settings
+                </button>
+            </section>
+        </main>
+    </div>
+
+    <footer role="contentinfo">
+        <p>&copy; <span id="current-year">2025</span>
+            <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                rel="author noopener noreferrer" itemprop="author">
+                MdONeil
+            </a>. All rights reserved.
+        </p>
+    </footer>
+
+    <script type="module" src="./js/main.js" defer></script>
+
+    <!-- Structured Data for Rich Results -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://mdoneilsl.github.io"
+        },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Tools",
+            "item": "https://mdoneilsl.github.io/app/NormFromHeight/"
+        },{
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Normal Map Generator",
+            "item": "https://mdoneilsl.github.io/app/NormFromHeight/"
+        }]
+    }
+    </script>
+
+
+    <!-- Accessibility enhancement -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles for accessibility */
+        :focus {
+            outline: 2px solid #4f46e5;
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</body>
+
+</html>
