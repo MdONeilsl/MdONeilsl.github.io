@@ -1313,5 +1313,129 @@ export const LIBRARY_DATA = {
                 expl: "detected[1]:getTouchPos()"
             }
         }
+    },
+    metamethods: {
+        func: {
+            __add: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the addition (+) operation when at least one operand is not a number.",
+                expl: "mt = {__add = function(a, b) return a.val + b.val end}"
+            },
+            __sub: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the subtraction (-) operation when at least one operand is not a number.",
+                expl: "mt = {__sub = function(a, b) return a.val - b.val end}"
+            },
+            __mul: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the multiplication (*) operation when at least one operand is not a number.",
+                expl: "mt = {__mul = function(a, b) return a.val * b.val end}"
+            },
+            __div: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the division (/) operation when at least one operand is not a number.",
+                expl: "mt = {__div = function(a, b) return a.val / b.val end}"
+            },
+            __mod: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the modulo (%) operation.",
+                expl: "mt = {__mod = function(a, b) return a.val % b.val end}"
+            },
+            __pow: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the exponentiation (^) operation.",
+                expl: "mt = {__pow = function(a, b) return a.val ^ b.val end}"
+            },
+            __unm: {
+                return: "any",
+                params: [{ name: "a", type: "any" }],
+                desc: "Handles the unary minus (-) operation on non-numbers.",
+                expl: "mt = {__unm = function(a) return -a.val end}"
+            },
+            __concat: {
+                return: "any",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles the concatenation (..) operation when operands are not coercible to strings.",
+                expl: "mt = {__concat = function(a, b) return a.val .. b.val end}"
+            },
+            __len: {
+                return: "any",
+                params: [{ name: "a", type: "any" }],
+                desc: "Handles the length (#) operator on non-strings/tables.",
+                expl: "mt = {__len = function(t) return #t.data end}"
+            },
+            __eq: {
+                return: "boolean",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles equality comparison (==) for tables/userdata.",
+                expl: "mt = {__eq = function(a, b) return a.val == b.val end}"
+            },
+            __lt: {
+                return: "boolean",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles less-than (<) comparison.",
+                expl: "mt = {__lt = function(a, b) return a.val < b.val end}"
+            },
+            __le: {
+                return: "boolean",
+                params: [{ name: "a", type: "any" }, { name: "b", type: "any" }],
+                desc: "Handles less-than-or-equal (<=) comparison.",
+                expl: "mt = {__le = function(a, b) return a.val <= b.val end}"
+            },
+            __index: {
+                return: "any",
+                params: [{ name: "t", type: "table" }, { name: "k", type: "any" }],
+                desc: "Handles table index access when key is missing (can be table or function).",
+                expl: "mt = {__index = function(t, k) return t.data[k] end}"
+            },
+            __newindex: {
+                return: "nil",
+                params: [{ name: "t", type: "table" }, { name: "k", type: "any" }, { name: "v", type: "any" }],
+                desc: "Handles table index assignment when key is missing (can be table or function).",
+                expl: "mt = {__newindex = function(t, k, v) rawset(t.data, k, v) end}"
+            },
+            __call: {
+                return: "...any",
+                params: [{ name: "func", type: "any" }, { name: "args", type: "...any" }],
+                desc: "Allows calling a non-function value as a function.",
+                expl: "mt = {__call = function(t, ...) return t.func(...) end}"
+            },
+            __tostring: {
+                return: "string",
+                params: [{ name: "obj", type: "any" }],
+                desc: "Customizes tostring() output for the object.",
+                expl: "mt = {__tostring = function(t) return \"Custom: \" .. t.val end}"
+            },
+            __gc: {
+                return: "nil",
+                params: [{ name: "obj", type: "userdata|table" }],
+                desc: "Called by garbage collector when object is collected.",
+                expl: "mt = {__gc = function(obj) print(\"Collected\") end}"
+            },
+            __mode: {
+                return: "nil",
+                params: [],
+                desc: "Set as string ('k', 'v', 'kv') to make table weak.",
+                expl: "mt = {__mode = \"kv\"}"
+            },
+            __metatable: {
+                return: "nil",
+                params: [],
+                desc: "Protects metatable; getmetatable() returns this value instead.",
+                expl: "mt = {__metatable = \"protected\"}"
+            },
+            __pairs: {
+                return: "(function, table, any)",
+                params: [{ name: "t", type: "table" }],
+                desc: "Customizes pairs() iterator.",
+                expl: "mt = {__pairs = function(t) return next, t.data, nil end}"
+            }
+        }
     }
 };

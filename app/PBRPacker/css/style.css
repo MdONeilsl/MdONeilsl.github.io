@@ -248,7 +248,7 @@ canvas {
     width: 100%;
     max-width: 130px;
     height: auto;
-    aspect-ratio: 1/1;
+    aspect-ratio: 1/1 !important;
     cursor: crosshair;
     transition: var(--transition);
     background: #f8f9fa;
