@@ -2,202 +2,282 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Font Texture Generator</title>
-    <meta name="description"
-        content="A customizable tool for generating font texture atlases with styling effects for games and web graphics, designed for Second Life content creators.">
-    <meta name="keywords"
-        content="Font, style, texture, 2D, atlases, effects, graphics, Second Life tool, virtual world app, font generator">
-    <meta name="author" content="MdONeil">
-    <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "2D Font Texture Generator",
-        "operatingSystem": "Web",
-        "applicationCategory": "Graphics Application",
-        "description": "A customizable tool for generating font texture atlases with styling effects for games and web graphics.",
-        "author": {
-            "@type": "Person",
-            "name": "MdONeil",
-            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
-        },
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "softwareVersion": "1.0.0",
-        "url": "https://mdoneilsl.github.io/app/2DFonts/",
-        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
-    }
-    </script>
-
+    <title>Dark Font Texture Generator</title>
+    <link rel="stylesheet" href="./css/styles.test.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Source+Code+Pro:wght@400;500&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <link rel="stylesheet" href="./css/style.css">
-    <div class="app_container">
-        <header class="header">
-            <div class="header_content">
-                <button id="tool_btn" class="button_icon" aria-label="Toggle settings panel">
-                    ⚙️ Settings
-                </button>
-
-                <div class="header_group">
-                    <div class="control_group">
-                        <span class="control_label">Width:</span>
-                        <select id="width_sel" class="select" aria-label="Canvas width">
-                            <option value="16">16</option>
-                            <option value="32">32</option>
-                            <option value="64">64</option>
-                            <option value="128">128</option>
-                            <option value="256" selected>256</option>
-                            <option value="512">512</option>
-                            <option value="1024">1024</option>
-                            <option value="2048">2048</option>
-                        </select>
-
-                        <span class="control_label">Height:</span>
-                        <select id="height_sel" class="select" aria-label="Canvas height">
-                            <option value="16">16</option>
-                            <option value="32">32</option>
-                            <option value="64">64</option>
-                            <option value="128">128</option>
-                            <option value="256" selected>256</option>
-                            <option value="512">512</option>
-                            <option value="1024">1024</option>
-                            <option value="2048">2048</option>
-                        </select>
-                    </div>
-
-                    <div class="control_group">
-                        <span class="control_label">Zoom:</span>
-                        <span id="ft_zoom_btn" class="control_label" aria-live="polite">100%</span>
-
-                        <div class="checkbox_group">
-                            <input type="checkbox" id="ft_grid_btn" class="checkbox" aria-label="Toggle grid">
-                            <label for="ft_grid_btn" class="control_label">Grid</label>
-                        </div>
-
-                        <button id="export_act" class="button" aria-label="Export canvas as PNG">
-                            📥 Export
-                        </button>
-                    </div>
-                </div>
+    <div class="container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1><i class="fas fa-font"></i> Font Texture Generator</h1>
+                <p class="subtitle">Generate font textures for 3D applications with custom backgrounds</p>
             </div>
         </header>
 
-        <main class="preview_area">
-            <canvas id="graph" class="preview_canvas" role="img" aria-label="Font texture preview"></canvas>
-        </main>
+        <!-- Main Content with 3 Panels (Left & Right swapped) -->
+        <div class="main-layout">
+            <!-- Left Panel (now contains language, dimensions, stats, actions) -->
+            <aside class="left-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-cogs"></i> Generator Settings</h2>
+                </div>
 
-        <footer class="footer">
-            <div class="footer_content">
-                <p class="footer_text">2D Font Texture Generator is not affiliated with or sponsored by Linden Research,
-                    Inc.</p>
-                <p class="footer_text">Developed by MdONeil under the GNU v3 License. Contact:
-                    <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
-                        class="footer_link">MdONeil</a>
-                </p>
-                <p class="footer_text">
-                    <a href="https://www.gnu.org/licenses/gpl-3.0.html" class="footer_link">GNU v3 License</a>
-                </p>
+                <div class="control-group">
+                    <h3><i class="fas fa-globe"></i> Language</h3>
+                    <div class="form-group">
+                        <select id="languageSelect" class="compact-select">
+                            <option value="en" selected>English</option>
+                            <option value="zh">Chinese</option>
+                            <option value="es">Spanish</option>
+                            <option value="hi">Hindi</option>
+                            <option value="ar">Arabic</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="bn">Bengali</option>
+                            <option value="ru">Russian</option>
+                            <option value="ja">Japanese</option>
+                            <option value="de">German</option>
+                            <option value="fr">French</option>
+                            <option value="ko">Korean</option>
+                            <option value="it">Italian</option>
+                            <option value="nl">Dutch</option>
+                            <option value="pl">Polish</option>
+                            <option value="tr">Turkish</option>
+                            <option value="vi">Vietnamese</option>
+                            <option value="th">Thai</option>
+                            <option value="fa">Persian</option>
+                            <option value="uk">Ukrainian</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="charsPerCaseSelect" class="compact-label">Characters per Case</label>
+                        <select id="charsPerCaseSelect" class="compact-select">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3 (Warning)</option>
+                            <option value="4">4 (Danger)</option>
+                            <option value="5">5 (Danger)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-expand"></i> Canvas Dimensions</h3>
+
+                    <div class="form-row compact-row">
+                        <div class="form-group half-width">
+                            <label for="canvasWidthSelect" class="compact-label">Width</label>
+                            <select id="canvasWidthSelect" class="compact-select">
+                                <option value="32">32px</option>
+                                <option value="64">64px</option>
+                                <option value="128">128px</option>
+                                <option value="256">256px</option>
+                                <option value="512" selected>512px</option>
+                                <option value="1024">1024px</option>
+                                <option value="2048">2048px</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group half-width">
+                            <label for="canvasHeightSelect" class="compact-label">Height</label>
+                            <select id="canvasHeightSelect" class="compact-select">
+                                <option value="32">32px</option>
+                                <option value="64">64px</option>
+                                <option value="128">128px</option>
+                                <option value="256">256px</option>
+                                <option value="512" selected>512px</option>
+                                <option value="1024">1024px</option>
+                                <option value="2048">2048px</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-chart-bar"></i> Texture Stats</h3>
+
+                    <div class="stats-grid">
+                        <div class="stat-item compact-stat">
+                            <div class="stat-label">Chars</div>
+                            <div class="stat-value" id="statChars">128</div>
+                        </div>
+
+                        <div class="stat-item compact-stat">
+                            <div class="stat-label">Textures</div>
+                            <div class="stat-value" id="statTextures">4</div>
+                        </div>
+
+                        <div class="stat-item compact-stat">
+                            <div class="stat-label">Grid</div>
+                            <div class="stat-value" id="statGrid">16×16</div>
+                        </div>
+
+                        <div class="stat-item compact-stat">
+                            <div class="stat-label">Memory</div>
+                            <div class="stat-value" id="statMemory">2.0MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group actions-group">
+                    <h3><i class="fas fa-bolt"></i> Actions</h3>
+
+                    <div class="action-buttons compact-buttons">
+                        <button id="downloadBtn" class="action-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <button id="clearBtn" class="action-btn">
+                            <i class="fas fa-trash-alt"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Workspace -->
+            <main class="center-workspace">
+                <div class="workspace-header compact-header">
+                    <h2><i class="fas fa-layer-group"></i> Texture Atlas Preview</h2>
+                    <div class="texture-count">
+                        <span id="textureCount">4 textures</span>
+                    </div>
+                </div>
+
+                <div class="texture-cards-grid">
+                    
+                </div>
+            </main>
+
+            <!-- Right Panel (now contains font properties) -->
+            <aside class="right-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-paint-brush"></i> Font Properties</h2>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-font"></i> Character Set</h3>
+                    <div class="form-group">
+                        <textarea id="charSetTextarea" class="compact-textarea" rows="4"
+                            placeholder="Enter characters..."> ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/~`"</textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-edit"></i> Font Settings</h3>
+
+                    <div class="form-group">
+                        <input list="fontList" id="fontSelector" class="compact-input" placeholder="Select font...">
+                        <datalist id="fontList">
+                            <option value="Arial">
+                            <option value="Helvetica">
+                            <option value="Times New Roman">
+                            <option value="Courier New">
+                            <option value="Georgia">
+                            <option value="Verdana">
+                            <option value="Source Code Pro">
+                            <option value="Roboto">
+                            <option value="Open Sans">
+                            <option value="Montserrat">
+                        </datalist>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-row">
+                            <label class="checkbox-label compact-checkbox">
+                                <input type="checkbox" id="boldCheckbox" checked>
+                                <span class="checkbox-custom"></span>
+                                <span>Bold</span>
+                            </label>
+                            <label class="checkbox-label compact-checkbox">
+                                <input type="checkbox" id="italicCheckbox">
+                                <span class="checkbox-custom"></span>
+                                <span>Italic</span>
+                            </label>
+                            <label class="checkbox-label compact-checkbox">
+                                <input type="checkbox" id="smallCapsCheckbox">
+                                <span class="checkbox-custom"></span>
+                                <span>Small Caps</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fontSizeInput" class="compact-label">Font Size</label>
+                        <div class="input-with-unit compact-input-group">
+                            <input type="number" id="fontSizeInput" min="8" max="72" value="14" class="compact-input">
+                            <span class="unit">px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fontTypeSelect" class="compact-label">Font Type</label>
+                        <select id="fontTypeSelect" class="compact-select">
+                            <option value="fill">Fill</option>
+                            <option value="stroke">Stroke</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-palette"></i> Colors</h3>
+
+                    <!-- Font Color - Stacked on top -->
+                    <div class="form-group">
+                        <label for="fontColorPicker" class="compact-label">Font Color</label>
+                        <div class="color-picker-group stacked">
+                            <input type="color" id="fontColorPicker" value="#ffffff">
+                            <div class="slider-container">
+                                <input type="range" id="fontAlpha" min="0" max="100" value="100" class="alpha-slider">
+                                <span id="fontAlphaValue" class="alpha-value">100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Background Color - Stacked below -->
+                    <div class="form-group">
+                        <label for="bgColorPicker" class="compact-label">Background Color</label>
+                        <div class="color-picker-group stacked">
+                            <input type="color" id="bgColorPicker" value="#1a1a2e">
+                            <div class="slider-container">
+                                <input type="range" id="bgAlpha" min="0" max="100" value="0" class="alpha-slider">
+                                <span id="bgAlphaValue" class="alpha-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button moved to right panel under colors -->
+                <div class="control-group generate-group">
+                    <button id="generateBtn" class="action-btn primary full-width">
+                        <i class="fas fa-sync-alt"></i> Generate Textures
+                    </button>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>Font Texture Generator v2.1 • For 3D Applications • © 2023</p>
             </div>
         </footer>
-    </div>
-
-    <div id="overlay" class="overlay hidden"></div>
-
-    <div id="tool_fld" class="settings_panel hidden">
-        <div class="settings_header">
-            <h2 class="settings_title">Font Settings</h2>
-            <button id="tool_close_btn" class="button_icon" aria-label="Close settings panel">✕</button>
-        </div>
-
-        <div class="settings_grid">
-            <input type="text" id="font_family" placeholder="Font family" class="text_input" aria-label="Font family">
-            <input type="text" id="char_list" placeholder="Characters to render" class="text_input"
-                aria-label="Characters to render">
-
-            <div class="settings_row">
-                <select id="font_weight" class="select" aria-label="Font weight">
-                    <option value="normal">Normal</option>
-                    <option value="bold">Bold</option>
-                </select>
-                <select id="font_style" class="select" aria-label="Font style">
-                    <option value="normal">Normal</option>
-                    <option value="italic">Italic</option>
-                </select>
-                <select id="fill_style" class="select" aria-label="Fill style">
-                    <option value="fill">Fill</option>
-                    <option value="stroke">Stroke</option>
-                </select>
-            </div>
-
-            <div class="settings_row">
-                <label class="settings_label">Text Color:</label>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" id="font_color" value="#000000" class="color_input" aria-label="Font color">
-                    <input type="range" id="font_alpha" class="range_input" step="0.01" min="0" max="1" value="1"
-                        aria-label="Font opacity">
-                </div>
-            </div>
-
-            <div class="settings_row">
-                <label class="settings_label">Background:</label>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" id="back_color" value="#FFFFFF" class="color_input"
-                        aria-label="Background color">
-                    <input type="range" id="back_alpha" class="range_input" step="0.01" min="0" max="1" value="0"
-                        aria-label="Background opacity">
-                </div>
-            </div>
-
-            <div class="settings_row">
-                <div class="checkbox_group">
-                    <input type="checkbox" id="shadow_chb" class="checkbox" aria-label="Enable shadow">
-                    <label for="shadow_chb" class="settings_label">Shadow</label>
-                </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" id="shadow_color" value="#000000" class="color_input" aria-label="Shadow color">
-                    <input type="range" id="shadow_x" class="range_input" value="0" max="10" min="-10" step="1"
-                        aria-label="Shadow X offset">
-                    <input type="range" id="shadow_y" class="range_input" value="0" max="10" min="-10" step="1"
-                        aria-label="Shadow Y offset">
-                </div>
-            </div>
-
-            <div class="settings_row">
-                <div class="checkbox_group">
-                    <input type="checkbox" id="glowing_chb" class="checkbox" aria-label="Enable glow">
-                    <label for="glowing_chb" class="settings_label">Glow</label>
-                </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" id="glowing_color" value="#FFFFFF" class="color_input" aria-label="Glow color">
-                    <input type="range" id="glowing_dist" class="range_input" max="20" min="0" step="1" value="1"
-                        aria-label="Glow distance">
-                </div>
-            </div>
-
-            <div class="settings_row">
-                <div class="checkbox_group">
-                    <input type="checkbox" id="blurred_chb" class="checkbox" aria-label="Enable blur">
-                    <label for="blurred_chb" class="settings_label">Blur</label>
-                </div>
-                <input type="range" id="blurred_dist" class="range_input" max="10" min="0" step="0.1" value="1"
-                    aria-label="Blur distance">
-            </div>
-        </div>
     </div>
 
     <div id="worker" style="display:none">
         <canvas id="canv_char"></canvas>
         <canvas id="canv_tex"></canvas>
+        <div id="sys_worker"></div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="./js/main.test.js" type="module"></script>
 </body>
 
 </html>

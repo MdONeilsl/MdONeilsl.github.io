@@ -1,23 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shape Mixer</title>
     <meta name="description"
-        content="Tool for Second Life users to mix shape data from different shapes and create uploadable XML files.">
-    <meta name="keywords" content="Second Life tool, shape mixer, appearance editor, XML file, avatar customization">
+        content="Tool for Second Life users to mix shape data from different avatars and create uploadable XML files. Export, combine, and customize your avatar appearance.">
+    <meta name="keywords"
+        content="Second Life, shape mixer, avatar customization, XML export, appearance editor, SL tool">
     <meta name="author" content="MdONeil">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#6366f1">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Shape Mixer - Second Life Avatar Tool">
+    <meta property="og:description" content="Mix and customize Second Life avatar shapes">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mdoneilsl.github.io/app/ShapeMixer/">
+
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "http://schema.org",
+        "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Shape Mixer",
-        "operatingSystem": "Web",
-        "applicationCategory": "Game",
-        "description": "Tool for Second Life users to mix shape data from different shapes and create uploadable XML files.",
+        "operatingSystem": "Web Browser",
+        "applicationCategory": "MultimediaApplication",
+        "description": "Tool for Second Life users to mix shape data from different avatars and create uploadable XML files.",
         "author": {
             "@type": "Person",
             "name": "MdONeil",
@@ -29,56 +44,131 @@
             "priceCurrency": "USD"
         },
         "url": "https://mdoneilsl.github.io/app/ShapeMixer/",
-        "license": "https://www.gnu.org/licenses/gpl-3.0.html"
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "datePublished": "2025-01-01",
+        "softwareVersion": "2.0.0"
     }
     </script>
-    
 </head>
 
 <body>
-    <link rel="stylesheet" href="./css/style.css">
     <div class="container">
         <div class="main-container">
-            <div class="header">
+            <header class="header" role="banner">
                 <h1 class="title">Shape Mixer</h1>
-                <p class="subtitle">Mix shape data from different Second Life avatars and create uploadable XML files</p>
-            </div>
+                <p class="subtitle">Tool for mixing Second Life avatar shapes with precision and ease</p>
+            </header>
 
-            <div class="loader-frame" id="loaderframe">
-                <h2 class="loader-title">Shape Mixer Interface</h2>
-                <p class="loader-content">Upload your avatar shapes to begin mixing and customizing your appearance.</p>
-            </div>
+            <main role="main">
+                <section aria-labelledby="mixer-title">
+                    <h2 id="mixer-title" class="loader-title">Shape Mixer Interface</h2>
 
-            <button id="save_btn" class="btn btn-primary">
-                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                </svg>
-                Save Shape
-            </button>
+                    <!-- Status Indicator -->
+                    <div id="status_indicator" class="status-indicator status-info" role="status" aria-live="polite">
+                        Application ready
+                    </div>
 
-            <div class="instructions-container">
-                <h2 class="instructions-title">Instructions</h2>
-                <ol class="instructions-list">
-                    <li>To export a shape: Navigate to Develop > Avatar > Character Tests > Appearance and export to XML format.</li>
-                    <li>To import a shape:
-                        <ul class="instructions-sublist">
-                            <li>From the shape editor window:</li>
-                            <li>Locate the "Import" button in the bottom right corner of the "Editing Shape" window.</li>
-                            <li>Select the button, choose the saved XML file, and the exported shape will be applied to your character.</li>
-                        </ul>
-                    </li>
-                </ol>
-            </div>
+                    <!-- Progress Bar -->
+                    <div class="progress-container" aria-hidden="true">
+                        <div id="progress_bar" class="progress-bar"></div>
+                    </div>
+
+                    <!-- File Loader Frame -->
+                    <div id="loaderframe" class="loader-frame" role="region" aria-labelledby="mixer-title">
+                        <p class="loader-content">Upload your avatar shape XML files to begin mixing and customizing
+                            your appearance. Each file can contribute different body parts to the final shape.</p>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button id="save_btn" class="btn btn-primary" disabled aria-describedby="save-help">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                            </path>
+                        </svg>
+                        Generate Mixed Shape
+                    </button>
+                    <p id="save-help" class="help-text">Select at least one category from loaded files to enable
+                        generation</p>
+                </section>
+
+                <!-- Instructions -->
+                <section class="instructions-container" aria-labelledby="instructions-title">
+                    <h2 id="instructions-title" class="instructions-title">Instructions</h2>
+                    <ol class="instructions-list">
+                        <li>
+                            <strong>Exporting Shapes:</strong>
+                            <ul class="instructions-sublist">
+                                <li>Open Second Life and navigate to: Develop → Avatar → Character Tests → Appearance
+                                </li>
+                                <li>Select the shape you want to export and click "Export to XML"</li>
+                                <li>Save the XML file to your computer</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Mixing Shapes:</strong>
+                            <ul class="instructions-sublist">
+                                <li>Upload multiple shape XML files using the interface above</li>
+                                <li>Select which body parts to use from each uploaded shape</li>
+                                <li>Only one shape can contribute to each body part category</li>
+                                <li>Click "Generate Mixed Shape" to create and download your custom shape</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Importing Shapes:</strong>
+                            <ul class="instructions-sublist">
+                                <li>In Second Life, open the Shape Editor (Appearance → Shape)</li>
+                                <li>Click the "Import" button in the bottom right corner</li>
+                                <li>Select your generated mixed shape XML file</li>
+                                <li>The new shape will be applied to your avatar immediately</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+            </main>
         </div>
 
-        <footer>
-            <p>Shape Mixer is not affiliated with or sponsored by Linden Research, Inc. Second Life is a trademark of Linden Research, Inc.</p>
-            <p>Developed by MdONeil under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>.
-                Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
+        <footer role="contentinfo">
+            <p><strong>Shape Mixer v2.0.0</strong> - Professional Avatar Shape Customization Tool</p>
+            <p>This tool is not affiliated with or sponsored by Linden Research, Inc. Second Life® is a trademark of
+                Linden Research, Inc.</p>
+            <p>Developed by <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+                    rel="author">MdONeil</a>
+                under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="license">GNU GPL v3 License</a>.</p>
+            <p>Report issues or contribute on <a href="https://github.com/MdONeilSL/ShapeMixer">GitHub</a></p>
         </footer>
     </div>
 
-    <script src="./js/main.js" type="module"></script>
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="./css/style.test.css">
+
+    <!-- Load JavaScript -->
+    <script src="./js/main.test.js" type="module"></script>
+
+    <!-- No-JS fallback -->
+    <noscript>
+        <style>
+            .main-container {
+                display: none;
+            }
+
+            .no-js-message {
+                display: block;
+                text-align: center;
+                padding: 2rem;
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 0.5rem;
+                margin: 2rem;
+            }
+        </style>
+        <div class="no-js-message" role="alert">
+            <h2>JavaScript Required</h2>
+            <p>Shape Mixer requires JavaScript to function. Please enable JavaScript in your browser and refresh the
+                page.</p>
+        </div>
+    </noscript>
 </body>
 
 </html>

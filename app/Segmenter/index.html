@@ -1,56 +1,106 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Audio Segmenter</title>
-    <meta name="description" content="Tool for Second Life users to split audio files into 30-second WAV segments.">
-    <meta name="keywords" content="audio, sound, wav format, Second Life tool, audio processing, sound segmentation">
+    <meta name="description"
+        content="Split audio files into 30-second WAV segments optimized for Second Life. Professional, open-source, and privacy-first.">
+    <meta name="keywords" content="audio, sound, wav, second life, audio splitter, 30 seconds, segmenter, lsl">
     <meta name="author" content="MdONeil">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#3b82f6">
+
+    <!-- Open Graph / social media tags -->
+    <meta property="og:title" content="Audio Segmenter for Second Life">
+    <meta property="og:description"
+        content="Free tool to split audio into 30-second WAV segments.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mdoneilsl.github.io/app/Segmenter/">
+    <meta property="og:image" content="https://mdoneilsl.github.io/app/Segmenter/og-preview.png">
+
+    <!-- Fonts & icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Roboto+Mono&display=swap"
+        rel="stylesheet">
+
+    <!-- JSZip from CDN (MIT licensed) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel=stylesheet href=./css/style.css>
+
+    <!-- Main stylesheet (black theme) -->
+    <link rel="stylesheet" href="./css/style.test.css">
+
+    <!-- Structured data for rich results -->
     <script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Audio Segmenter",
-        "operatingSystem": "Web",
-        "applicationCategory": "Audio Processing",
-        "description": "Tool for Second Life users to split audio files into 30-second WAV segments.",
-        "author": {
-            "@type": "Person",
-            "name": "MdONeil",
-            "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
-        },
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        }
-        "url": "https://mdoneilsl.github.io/app/Segmenter/",
-      "license": "https://www.gnu.org/licenses/gpl-3.0.html",
-    }
-    </script>
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Audio Segmenter",
+    "operatingSystem": "Web",
+    "applicationCategory": "Multimedia",
+    "description": "Tool for Second Life users to split audio files into 30-second WAV segments.",
+    "author": {
+      "@type": "Person",
+      "name": "MdONeil",
+      "url": "secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "url": "https://mdoneilsl.github.io/app/Segmenter/",
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html"
+  }
+  </script>
+
+    <!-- 
+    <link rel="icon" type="image/png"
+        href="https://github.com/jasmine/jasmine/blob/master/images/jasmine_favicon.png?raw=true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/jasmine-html.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/boot0.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/4.1.1/boot1.min.js" defer></script>
+    -->
 </head>
+
 <body>
-    <div class="container">
+    <script type="module" src="../landing/js/splash.js"></script>
+    <main class="container">
         <h1>Audio Segmenter</h1>
-        <p>Upload an audio file to split it into 30-second WAV segments.</p>
+        <p>Upload any audio file — we'll split it into <strong>30‑second WAV segments</strong> ready for Second Life.
+        </p>
+
         <input type="file" id="mediaInput" accept="audio/*">
+
         <button id="processButton" disabled>Process Audio</button>
+
         <div id="progress"></div>
         <div id="error"></div>
-    </div>
-    <script src="./js/main.js"></script>
+    </main>
+
     <footer>
-        <p>© 2024 Audio Segmenter. All rights reserved.</p>
-        <p> Second Life® is a trademark of Linden Research, Inc. This tool is not affiliated with or sponsored by Linden Research.</p>
-        <p>Developed by MdONeil under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU v3 License</a>. Contact: <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a></p>
-        <p>Dependencies:</p>
+        <p>© 2025 Audio Segmenter · <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank"
+                rel="noopener">GNU GPL v3</a></p>
+        <p>Developed by <a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">MdONeil</a> for the
+            Second Life community.</p>
+        <p>Second Life® is a trademark of Linden Research. This tool is not affiliated with or endorsed by Linden Lab.
+        </p>
         <ul>
-            <li><a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener noreferrer">JSZip</a> (MIT License) by Stuart K.</li>
+            <li><a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener noreferrer">JSZip (MIT)</a></li>
+            <li><a href="https://github.com/mdoneilsl/Segmenter" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </li>
+            <li><a href="secondlife:///app/agent/ae929a12-297c-45be-9748-562ee17e937e/about">Contact</a></li>
         </ul>
     </footer>
+
+    <!-- Main application script (refactored version) -->
+    <script src="./js/main.test.js" type="module"></script>
+    <!-- <script type="module" src="./test/test.js"></script>-->
 </body>
+
 </html>

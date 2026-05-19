@@ -1,0 +1,144 @@
+{
+    "body": {
+        "tags": [],
+        "subs": ["head", "upper_body", "lower_body", "gender", "muscles_mass", "skin"]
+    },
+    "head": {
+        "tags": [],
+        "subs": ["face", "hair", "ears", "chin", "neck", "horns"]
+    },
+    "face": {
+        "tags": [],
+        "subs": ["eyes", "nose", "mouth", "forehead", "temples", "eyebrows", "cheeks"]
+    },
+    "eyes": {
+        "tags": [],
+        "subs": ["eyes_ball", "under_eye", "eyelids"]
+    },
+    "eyes_ball": { "tags": [] },
+    "under_eye": { "tags": [] },
+    "eyelids": { "tags": [] },
+    "nose": {
+        "tags": [],
+        "subs": ["bridge", "nostrils", "tip"]
+    },
+    "bridge": { "tags": [] },
+    "nostrils": { "tags": [] },
+    "tip": { "tags": [] },
+    "mouth": {
+        "tags": [],
+        "subs": ["lips", "teeth", "tongue"]
+    },
+    "lips": { "tags": [] },
+    "teeth": { "tags": [] },
+    "tongue": { "tags": [] },
+    "forehead": { "tags": [] },
+    "temples": { "tags": [] },
+    "eyebrows": { "tags": [] },
+    "cheeks": {
+        "tags": [],
+        "subs": ["cheekbones", "jawline"]
+    },
+    "cheekbones": { "tags": [] },
+    "jawline": { "tags": [] },
+    "hair": { "tags": [] },
+    "ears": { "tags": [] },
+    "chin": { "tags": [] },
+    "neck": { "tags": [] },
+    "horns": { "tags": [] },
+    "upper_body": {
+        "tags": [],
+        "subs": ["torso", "arms"]
+    },
+    "torso": {
+        "tags": [],
+        "subs": ["chest", "back", "shoulders", "flank", "abdomen", "waist"]
+    },
+    "chest": {
+        "tags": [],
+        "subs": ["sternum"]
+    },
+    "sternum": { "tags": [] },
+    "back": {
+        "tags": [],
+        "subs": ["back_upper", "back_lower", "scapula", "spine"]
+    },
+    "back_upper": {
+        "tags": [],
+        "subs": ["wings"]
+    },
+    "wings": { "tags": [] },
+    "back_lower": {
+        "tags": [],
+        "subs": ["tail"]
+    },
+    "tail": { "tags": [] },
+    "scapula": { "tags": [] },
+    "spine": { "tags": [] },
+    "shoulders": { "tags": [] },
+    "flank": { "tags": [] },
+    "abdomen": {
+        "tags": [],
+        "subs": ["belly"]
+    },
+    "belly": {
+        "tags": [],
+        "subs": ["navel"]
+    },
+    "navel": { "tags": [] },
+    "waist": { "tags": [] },
+    "arms": {
+        "tags": [],
+        "subs": ["upper_arm", "elbow", "forearm", "wrist", "veins", "hands"]
+    },
+    "upper_arm": { "tags": [] },
+    "elbow": { "tags": [] },
+    "forearm": { "tags": [] },
+    "wrist": { "tags": [] },
+    "veins": { "tags": [] },
+    "hands": {
+        "tags": [],
+        "subs": ["palm", "back_hand", "fingers"]
+    },
+    "palm": { "tags": [] },
+    "back_hand": { "tags": [] },
+    "fingers": {
+        "tags": [],
+        "subs": ["thumb", "knuckles", "nails_fingers"]
+    },
+    "thumb": { "tags": [] },
+    "knuckles": { "tags": [] },
+    "nails_fingers": { "tags": [] },
+    "lower_body": {
+        "tags": [],
+        "subs": ["groin", "thighs", "knees", "calves", "shin", "ankle", "feet"]
+    },
+    "groin": {
+        "tags": [],
+        "subs": ["hips", "genitals", "butt"]
+    },
+    "hips": { "tags": [] },
+    "genitals": { "tags": [] },
+    "butt": {
+        "tags": [],
+        "subs": ["asshole"]
+    },
+    "asshole": { "tags": [] },
+    "thighs": { "tags": [] },
+    "knees": { "tags": [] },
+    "calves": { "tags": [] },
+    "shin": { "tags": [] },
+    "ankle": { "tags": [] },
+    "feet": {
+        "tags": [],
+        "subs": ["toes"]
+    },
+    "toes": {
+        "tags": [],
+        "subs": ["nails_toes"]
+    },
+    "nails_toes": { "tags": [] },
+    "gender": { "tags": [] },
+    "muscles_mass": { "tags": [] },
+    "skin": { "tags": [] }
+}

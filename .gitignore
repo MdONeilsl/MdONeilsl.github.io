@@ -1,8 +1,13 @@
 .git
 .vscode
 *.test.*
+*test/
+
+app/HUD_Maker
 
 lib/test/
-lib/module/html.js
 lib/module/gl.js
 lib/gpu
+
+app/test_app
+lib/module/image/filter

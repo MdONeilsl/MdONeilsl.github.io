@@ -1,20 +1,22 @@
 :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --primary-light: #a5b4fc;
-    --surface: #0f0f23;
-    --surface-elevated: #1a1a2e;
-    --surface-hover: #252547;
+    --primary: #9D4EDD;         /* Neon Violet */
+    --primary-dark: #7B2CBF;
+    --primary-light: #C77DFF;
+    --secondary: #00F5D4;       /* Electric Cyan */
+    --secondary-dark: #00C4B4;
+    --surface: #000000;          /* Black background */
+    --surface-elevated: #0a0a0f;
+    --surface-hover: #16161f;
     --text-primary: #ffffff;
-    --text-secondary: #a0a0c0;
-    --text-muted: #6b6b8a;
-    --border: #2a2a4a;
-    --border-hover: #3a3a5a;
-    --gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-    --gradient-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --text-secondary: #b0b0d0;
+    --text-muted: #6a6a8a;
+    --border: #2a2a3a;
+    --border-hover: #4a4a6a;
+    --gradient: linear-gradient(135deg, #9D4EDD 0%, #C77DFF 40%, #00F5D4 100%);
+    --gradient-hover: linear-gradient(135deg, #7B2CBF 0%, #9D4EDD 50%, #00C4B4 100%);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -72,8 +74,8 @@ body {
 
 .profile_picture:hover {
     transform: scale(1.05);
-    border-color: var(--primary);
-    box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+    border-color: var(--secondary);
+    box-shadow: 0 0 30px rgba(0, 245, 212, 0.3);
 }
 
 .name {
@@ -145,7 +147,7 @@ body {
 }
 
 .social_link:hover {
-    border-color: var(--primary);
+    border-color: var(--secondary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -249,6 +251,161 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
+/* ===== NEW: ComfyUI Section (centered) ===== */
+.comfyui_section {
+    margin: 2rem 0 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.comfyui_card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    text-align: center;
+    max-width: 700px;
+    width: 100%;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.comfyui_card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient);
+    border-radius: var(--radius-lg);
+    z-index: -1;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.comfyui_card:hover::before {
+    opacity: 0.7;
+}
+
+.comfyui_card:hover {
+    transform: translateY(-4px);
+    border-color: var(--secondary);
+    box-shadow: 0 0 25px rgba(0, 245, 212, 0.2);
+}
+
+.comfyui_card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.comfyui_card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.comfyui_link {
+    display: inline-block;
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    padding: 0.6rem 1.5rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    margin-bottom: 1rem;
+}
+
+.comfyui_link:hover {
+    background: var(--secondary);
+    color: #000;
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+.comfyui_placeholder {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    border-top: 1px dashed var(--border);
+    padding-top: 1rem;
+}
+
+/* ===== NEW: Deprecated Tools Section ===== */
+.deprecated_section {
+    margin-top: 2rem;
+    padding: 2rem 0;
+    border-top: 2px solid var(--border);
+}
+
+.section_title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--text-muted), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.deprecated_intro {
+    color: var(--text-secondary);
+    margin-bottom: 1.8rem;
+    font-size: 0.95rem;
+}
+
+.deprecated_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.deprecated_card {
+    background: rgba(157, 78, 221, 0.05);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 1.2rem 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    backdrop-filter: blur(2px);
+}
+
+.deprecated_card:hover {
+    background: rgba(0, 245, 212, 0.05);
+    transform: translateX(6px);
+    border-left-color: var(--secondary);
+}
+
+.deprecated_card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.deprecated_card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.deprecated_badge {
+    display: inline-block;
+    background: rgba(157, 78, 221, 0.2);
+    color: var(--primary-light);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--primary);
+}
+
 .language_selector {
     position: fixed;
     top: 1.5rem;
@@ -269,8 +426,8 @@ body {
 
 .language_select:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.2);
 }
 
 .github_corner {
@@ -318,6 +475,18 @@ body {
         height: 44px;
     }
 
+    .comfyui_card {
+        padding: 1.5rem;
+    }
+
+    .comfyui_card h3 {
+        font-size: 1.4rem;
+    }
+
+    .deprecated_grid {
+        grid-template-columns: 1fr;
+    }
+
     .language_selector {
         top: 1rem;
         right: 1rem;
@@ -348,7 +517,6 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
