@@ -1,722 +1,997 @@
-(function () {
-    // ============ STATE ============
-    let allTagsData = {};                  // { tagName: [category1, ...] }
-    let classifiedTags = new Set();        // tags currently placed somewhere
-    let structureData = {};                // deep clone of initial structure
+/**
+ * @fileoverview Tag classifier application - Refactored enterprise edition.
+ * @version 1.0.0
+ */
 
-    // ============ INITIAL STRUCTURE ============
-    const initialStructure = {
-        "body": {
-            "tags": [],
-            "subs": ["head", "upper_body", "lower_body", "gender", "muscles_mass", "skin"]
+(function () {
+    'use strict';
+
+    // ===========================================================================
+    //  CONSTANTS (named constants to eliminate magic numbers)
+    // ===========================================================================
+    const TOAST_DURATION_MS = 2000;
+    const DRAG_HOVER_BACKGROUND = 'rgba(46,204,113,0.08)';
+    const LOCAL_TAGS_PATH = './data/tags.json';
+    const LOCAL_TEMPLATE_PATH = './data/body_template.json';
+    const SAVE_FILENAME_PREFIX = 'tags-three';
+    const DATE_FORMAT_OPTIONS = { year: 'numeric', month: '2-digit', day: '2-digit' };
+
+    // ===========================================================================
+    //  UTILITY FUNCTIONS (pure)
+    // ===========================================================================
+
+    
+    /**
+     * Creates a deep clone of an object.
+     * @template T
+     * @param {T} obj - The source object.
+     * @returns {T} A deep copy.
+     */
+    const deep_clone = (obj) => JSON.parse(JSON.stringify(obj));
+
+    /**
+     * Escapes HTML special characters.
+     * @param {string} unsafe - Raw string.
+     * @returns {string} Escaped string.
+     */
+    const escape_html = (unsafe) => unsafe
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    /**
+     * Generates a timestamp string for filenames.
+     * @returns {string} ISO-like timestamp without colons.
+     */
+    const get_timestamp = () => new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+
+    /**
+     * Sorts an array of strings alphabetically (locale‑aware).
+     * @param {string[]} arr - Input array.
+     * @returns {string[]} Sorted copy.
+     */
+    const sort_strings = (arr) => [...arr].sort((a, b) => a.localeCompare(b));
+
+    // ===========================================================================
+    //  DOM ELEMENT CACHE (singleton)
+    // ===========================================================================
+    const dom_cache = (() => {
+        const elements = {
+            tag_file_input: document.getElementById('tagFileInput'),
+            file_info: document.getElementById('fileInfo'),
+            show_filter_textarea: document.getElementById('showFilter'),
+            hide_filter_textarea: document.getElementById('hideFilter'),
+            name_filter_input: document.getElementById('nameFilterInput'),
+            available_container: document.getElementById('availableTagsContainer'),
+            sections_grid: document.getElementById('sectionsGrid'),
+            left_count: document.getElementById('leftCount'),
+            available_count: document.getElementById('availableCount'),
+            classified_count: document.getElementById('classifiedCount'),
+            total_count: document.getElementById('totalCount'),
+            right_tag_count: document.getElementById('rightTagCount'),
+            toast_container: document.getElementById('toastContainer'),
+            right_filter_input: document.getElementById('rightSectionFilter'),
+            right_filter_count: document.getElementById('rightFilterCount'),
+            load_template_btn: document.getElementById('loadTemplateBtn'),
+            template_file_input: document.getElementById('templateFileInput'),
+        };
+        return {
+            get: (name) => elements[name],
+            all: () => elements,
+        };
+    })();
+
+    // ===========================================================================
+    //  TOAST SERVICE (observer pattern)
+    // ===========================================================================
+    const toast_service = {
+        /**
+         * Displays a temporary notification.
+         * @param {string} message - Text to show.
+         */
+        show: (message) => {
+            const container = dom_cache.get('toast_container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), TOAST_DURATION_MS);
         },
-        "head": {
-            "tags": [],
-            "subs": ["face", "hair", "ears", "chin", "neck", "horns"]
-        },
-        "face": {
-            "tags": [],
-            "subs": ["eyes", "nose", "mouth", "forehead", "temples", "eyebrows", "cheeks"]
-        },
-        "eyes": {
-            "tags": [],
-            "subs": ["eyes_ball", "under_eye", "eyelids"]
-        },
-        "eyes_ball": { "tags": [] },
-        "under_eye": { "tags": [] },
-        "eyelids": { "tags": [] },
-        "nose": {
-            "tags": [],
-            "subs": ["bridge", "nostrils", "tip"]
-        },
-        "bridge": { "tags": [] },
-        "nostrils": { "tags": [] },
-        "tip": { "tags": [] },
-        "mouth": {
-            "tags": [],
-            "subs": ["lips", "teeth", "tongue"]
-        },
-        "lips": { "tags": [] },
-        "teeth": { "tags": [] },
-        "tongue": { "tags": [] },
-        "forehead": { "tags": [] },
-        "temples": { "tags": [] },
-        "eyebrows": { "tags": [] },
-        "cheeks": {
-            "tags": [],
-            "subs": ["cheekbones", "jawline"]
-        },
-        "cheekbones": { "tags": [] },
-        "jawline": { "tags": [] },
-        "hair": { "tags": [] },
-        "ears": { "tags": [] },
-        "chin": { "tags": [] },
-        "neck": { "tags": [] },
-        "horns": { "tags": [] },
-        "upper_body": {
-            "tags": [],
-            "subs": ["torso", "arms"]
-        },
-        "torso": {
-            "tags": [],
-            "subs": ["chest", "back", "shoulders", "flank", "abdomen", "waist"]
-        },
-        "chest": {
-            "tags": [],
-            "subs": ["sternum"]
-        },
-        "sternum": { "tags": [] },
-        "back": {
-            "tags": [],
-            "subs": ["back_upper", "back_lower", "scapula", "spine"]
-        },
-        "back_upper": {
-            "tags": [],
-            "subs": ["wings"]
-        },
-        "wings": { "tags": [] },
-        "back_lower": {
-            "tags": [],
-            "subs": ["tail"]
-        },
-        "tail": { "tags": [] },
-        "scapula": { "tags": [] },
-        "spine": { "tags": [] },
-        "shoulders": { "tags": [] },
-        "flank": { "tags": [] },
-        "abdomen": {
-            "tags": [],
-            "subs": ["belly"]
-        },
-        "belly": {
-            "tags": [],
-            "subs": ["navel"]
-        },
-        "navel": { "tags": [] },
-        "waist": { "tags": [] },
-        "arms": {
-            "tags": [],
-            "subs": ["upper_arm", "elbow", "forearm", "wrist", "veins", "hands"]
-        },
-        "upper_arm": { "tags": [] },
-        "elbow": { "tags": [] },
-        "forearm": { "tags": [] },
-        "wrist": { "tags": [] },
-        "veins": { "tags": [] },
-        "hands": {
-            "tags": [],
-            "subs": ["palm", "back_hand", "fingers"]
-        },
-        "palm": { "tags": [] },
-        "back_hand": { "tags": [] },
-        "fingers": {
-            "tags": [],
-            "subs": ["thumb", "knuckles", "nails_fingers"]
-        },
-        "thumb": { "tags": [] },
-        "knuckles": { "tags": [] },
-        "nails_fingers": { "tags": [] },
-        "lower_body": {
-            "tags": [],
-            "subs": ["groin", "thighs", "knees", "calves", "shin", "ankle", "feet"]
-        },
-        "groin": {
-            "tags": [],
-            "subs": ["hips", "genitals", "butt"]
-        },
-        "hips": { "tags": [] },
-        "genitals": { "tags": [] },
-        "butt": {
-            "tags": [],
-            "subs": ["asshole"]
-        },
-        "asshole": { "tags": [] },
-        "thighs": { "tags": [] },
-        "knees": { "tags": [] },
-        "calves": { "tags": [] },
-        "shin": { "tags": [] },
-        "ankle": { "tags": [] },
-        "feet": {
-            "tags": [],
-            "subs": ["toes"]
-        },
-        "toes": {
-            "tags": [],
-            "subs": ["nails_toes"]
-        },
-        "nails_toes": { "tags": [] },
-        "gender": { "tags": [] },
-        "muscles_mass": { "tags": [] },
-        "skin": { "tags": [] }
     };
 
-    function deepClone(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    }
+    // ===========================================================================
+    //  TAG DATA SERVICE (handles tags.json loading & validation)
+    // ===========================================================================
+    class tag_data_service {
+        /** @type {Record<string, string[]>} */
+        #all_tags = {};
+        /** @type {Set<string>} */
+        #classified_tags = new Set();
 
-    structureData = deepClone(initialStructure);
-
-    // ============ DOM REFS ============
-    const tagFileInput = document.getElementById('tagFileInput');
-    const fileInfo = document.getElementById('fileInfo');
-    const showFilterTA = document.getElementById('showFilter');
-    const hideFilterTA = document.getElementById('hideFilter');
-    const nameFilterInput = document.getElementById('nameFilterInput');
-    const availableTagsContainer = document.getElementById('availableTagsContainer');
-    const sectionsGrid = document.getElementById('sectionsGrid');
-    const leftCountEl = document.getElementById('leftCount');
-    const availableCountEl = document.getElementById('availableCount');
-    const classifiedCountEl = document.getElementById('classifiedCount');
-    const totalCountEl = document.getElementById('totalCount');
-    const rightTagCountEl = document.getElementById('rightTagCount');
-    const toastContainer = document.getElementById('toastContainer');
-    const rightSectionFilter = document.getElementById('rightSectionFilter');
-    const rightFilterCount = document.getElementById('rightFilterCount');
-    const loadTemplateBtn = document.getElementById('loadTemplateBtn');
-    const templateFileInput = document.getElementById('templateFileInput');
-
-    // ============ TOAST ============
-    function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        toastContainer.appendChild(toast);
-        setTimeout(() => {
-            if (toast.parentNode) toast.parentNode.removeChild(toast);
-        }, 2000);
-    }
-
-    function escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-
-    // ============ FILE LOADING (tags) ============
-    const parse_tags_file = async (json) => {
-        try {
+        /**
+         * Loads tags from a JSON string.
+         * @param {string} json - Raw JSON data.
+         * @throws {Error} On invalid format.
+         */
+        load_from_json(json) {
             const parsed = JSON.parse(json);
-            if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+            this.#validate_tags_object(parsed);
+            this.#all_tags = parsed;
+            this.#prune_classified_tags();
+            toast_service.show(`Loaded ${Object.keys(this.#all_tags).length} tags`);
+        }
+
+        /**
+         * Fetches tags from the default local file.
+         * @returns {Promise<void>}
+         */
+        async load_from_local() {
+            const response = await fetch(LOCAL_TAGS_PATH, { headers: { 'Content-Type': 'text/plain' } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const json = await response.text();
+            this.load_from_json(json);
+        }
+
+        /**
+         * Returns all tag definitions.
+         * @returns {Record<string, string[]>}
+         */
+        get_all_tags() {
+            return { ...this.#all_tags };
+        }
+
+        /**
+         * Checks whether a tag exists.
+         * @param {string} tag_name - Tag name.
+         * @returns {boolean}
+         */
+        has_tag(tag_name) {
+            return this.#all_tags.hasOwnProperty(tag_name);
+        }
+
+        /**
+         * Returns the categories of a tag.
+         * @param {string} tag_name
+         * @returns {string[]}
+         */
+        get_categories(tag_name) {
+            return this.#all_tags[tag_name] || [];
+        }
+
+        /**
+         * Total number of defined tags.
+         * @returns {number}
+         */
+        total_count() {
+            return Object.keys(this.#all_tags).length;
+        }
+
+        /**
+         * Marks a tag as classified (placed in a section).
+         * @param {string} tag_name
+         */
+        add_classified(tag_name) {
+            this.#classified_tags.add(tag_name);
+        }
+
+        /**
+         * Removes classification mark.
+         * @param {string} tag_name
+         */
+        remove_classified(tag_name) {
+            this.#classified_tags.delete(tag_name);
+        }
+
+        /**
+         * Checks if a tag is classified.
+         * @param {string} tag_name
+         * @returns {boolean}
+         */
+        is_classified(tag_name) {
+            return this.#classified_tags.has(tag_name);
+        }
+
+        /**
+         * Returns all classified tags.
+         * @returns {Set<string>}
+         */
+        get_classified_set() {
+            return new Set(this.#classified_tags);
+        }
+
+        /**
+         * Replaces the classified set.
+         * @param {Set<string>} new_set
+         */
+        set_classified_set(new_set) {
+            this.#classified_tags = new Set(new_set);
+        }
+
+        /**
+         * Resets all classification.
+         */
+        reset_classified() {
+            this.#classified_tags.clear();
+        }
+
+        /**
+         * Validates the tags object structure.
+         * @param {any} obj
+         * @private
+         */
+        #validate_tags_object(obj) {
+            if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
                 throw new Error('Invalid format: expected object');
             }
-            for (const [key, val] of Object.entries(parsed)) {
+            for (const [key, val] of Object.entries(obj)) {
                 if (!Array.isArray(val)) {
                     throw new Error(`Invalid value for tag "${key}": expected array of categories`);
                 }
             }
-            allTagsData = parsed;
-            // Clean up classified tags that no longer exist
-            const newClassified = new Set();
-            for (const t of classifiedTags) {
-                if (allTagsData[t] !== undefined) newClassified.add(t);
-            }
-            classifiedTags = newClassified;
-            // Remove from structure any tags not in new data
-            for (const sectionName of Object.keys(structureData)) {
-                structureData[sectionName].tags = structureData[sectionName].tags.filter(
-                    t => allTagsData[t] !== undefined
-                );
-            }
-            showToast(`Loaded ${Object.keys(allTagsData).length} tags`);
-            refreshAll();
-        } catch (err) {
-            alert('Error loading JSON: ' + err.message);
-            fileInfo.textContent = 'Invalid file';
         }
-    };
 
-    const load_local_tags = async () => {
-        try {
-            const response = await fetch('./data/tags.json', { 
-                headers: { 'Content-Type': 'text/plain' }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        /**
+         * Removes classified tags that no longer exist in the data.
+         * @private
+         */
+        #prune_classified_tags() {
+            const valid = new Set();
+            for (const t of this.#classified_tags) {
+                if (this.#all_tags[t]) valid.add(t);
             }
-
-            parse_tags_file(await response.text());
-        } catch (error) {
-            console.error('Error loading file:', error);
-            return null;
+            this.#classified_tags = valid;
         }
-    };
-
-
-    tagFileInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        fileInfo.textContent = file.name;
-        const reader = new FileReader();
-        reader.onload = function (ev) {
-            parse_tags_file(ev.target.result);
-        };
-        reader.readAsText(file);
-    });
-
-    // ============ FILTERS (left panel) ============
-    function getFilterKeywords(textarea) {
-        const val = textarea.value.trim();
-        if (!val) return [];
-        return val.split(/[\s,]+/).filter(k => k.length > 0).map(k => k.toLowerCase());
     }
 
-    function getAvailableTags() {
-        const showKeywords = getFilterKeywords(showFilterTA);
-        const hideKeywords = getFilterKeywords(hideFilterTA);
-        const nameFilter = nameFilterInput.value.trim().toLowerCase();
-        const available = [];
-        for (const [tagName, categories] of Object.entries(allTagsData)) {
-            if (classifiedTags.has(tagName)) continue;
-            // Name filter check
-            if (nameFilter && !tagName.toLowerCase().includes(nameFilter)) continue;
-            const catsLower = categories.map(c => c.toLowerCase());
-            if (showKeywords.length > 0) {
-                const matchesShow = showKeywords.every(kw => catsLower.some(cat => cat.includes(kw)));
-                if (!matchesShow) continue;
-            }
-            if (hideKeywords.length > 0) {
-                const matchesHide = hideKeywords.some(kw => catsLower.some(cat => cat.includes(kw)));
-                if (matchesHide) continue;
-            }
-            available.push(tagName);
-        }
-        available.sort((a, b) => a.localeCompare(b));
-        return available;
-    }
+    // ===========================================================================
+    //  STRUCTURE SERVICE (handles section template)
+    // ===========================================================================
+    class structure_service {
+        /** @type {Record<string, {tags: string[], subs?: string[]}>} */
+        #sections = {};
+        /** @type {any} */
+        #root_value = null;
 
-    // ============ RENDER LEFT PANEL ============
-    function renderLeftPanel() {
-        const available = getAvailableTags();
-        availableTagsContainer.innerHTML = '';
-        if (available.length === 0) {
-            const msg = document.createElement('div');
-            msg.className = 'no-tags';
-            if (Object.keys(allTagsData).length === 0) {
-                msg.textContent = 'Load a JSON file to see tags';
-            } else if (classifiedTags.size === Object.keys(allTagsData).length) {
-                msg.textContent = 'All tags have been classified! 🎉';
-            } else {
-                msg.textContent = 'No tags match the current filters';
-            }
-            availableTagsContainer.appendChild(msg);
-        } else {
-            available.forEach(tagName => {
-                const pill = createTagPill(tagName, 'available', null);
-                availableTagsContainer.appendChild(pill);
-            });
-        }
-        leftCountEl.textContent = available.length;
-        updateStats();
-    }
-
-    function createTagPill(tagName, type, sourceSection) {
-        const pill = document.createElement('div');
-        pill.className = `tag-pill ${type}`;
-        pill.textContent = tagName;
-        pill.draggable = true;
-        pill.dataset.tagName = tagName;
-        if (sourceSection) {
-            pill.dataset.sourceSection = sourceSection;
+        /**
+         * Loads structure from a template JSON string.
+         * @param {string} json - Raw JSON.
+         * @param {tag_data_service} tag_service - To validate existing tags.
+         */
+        load_from_json(json, tag_service) {
+            const parsed = JSON.parse(json);
+            this.#validate_template_object(parsed);
+            this.#root_value = parsed.root ?? null;
+            const sections = { ...parsed };
+            delete sections.root;
+            this.#sections = deep_clone(sections);
+            this.#remove_nonexistent_tags(tag_service);
         }
 
-        pill.addEventListener('dragstart', function (e) {
-            e.dataTransfer.setData('text/plain', JSON.stringify({
-                tagName: tagName,
-                sourceSection: sourceSection || null,
-                fromLeft: type === 'available'
-            }));
-            e.dataTransfer.effectAllowed = 'move';
-            pill.classList.add('dragging');
-            setTimeout(() => {
-                if (pill.classList.contains('dragging')) {
-                    pill.classList.remove('dragging');
+        /**
+         * Loads default template from local file.
+         * @param {tag_data_service} tag_service
+         * @returns {Promise<void>}
+         */
+        async load_from_local(tag_service) {
+            const response = await fetch(LOCAL_TEMPLATE_PATH, { headers: { 'Content-Type': 'text/plain' } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const json = await response.text();
+            this.load_from_json(json, tag_service);
+        }
+
+        /**
+         * Returns a shallow copy of all sections.
+         * @returns {Record<string, {tags: string[], subs?: string[]}>}
+         */
+        get_sections() {
+            return { ...this.#sections };
+        }
+
+        /**
+         * Returns the root value.
+         * @returns {any}
+         */
+        get_root() {
+            return this.#root_value;
+        }
+
+        /**
+         * Returns tags of a specific section.
+         * @param {string} section_name
+         * @returns {string[]}
+         */
+        get_section_tags(section_name) {
+            return this.#sections[section_name]?.tags ?? [];
+        }
+
+        /**
+         * Adds a tag to a section.
+         * @param {string} section_name
+         * @param {string} tag_name
+         */
+        add_tag_to_section(section_name, tag_name) {
+            if (this.#sections[section_name] && !this.#sections[section_name].tags.includes(tag_name)) {
+                this.#sections[section_name].tags.push(tag_name);
+            }
+        }
+
+        /**
+         * Removes a tag from a section.
+         * @param {string} section_name
+         * @param {string} tag_name
+         * @returns {boolean} True if removed.
+         */
+        remove_tag_from_section(section_name, tag_name) {
+            if (!this.#sections[section_name]) return false;
+            const original_length = this.#sections[section_name].tags.length;
+            this.#sections[section_name].tags = this.#sections[section_name].tags.filter(t => t !== tag_name);
+            return original_length !== this.#sections[section_name].tags.length;
+        }
+
+        /**
+         * Checks whether a tag exists anywhere in the structure.
+         * @param {string} tag_name
+         * @returns {boolean}
+         */
+        is_tag_placed(tag_name) {
+            return Object.values(this.#sections).some(section => section.tags.includes(tag_name));
+        }
+
+        /**
+         * Resets all sections (clears all tags).
+         */
+        reset_all_tags() {
+            for (const section of Object.values(this.#sections)) {
+                section.tags = [];
+            }
+        }
+
+        /**
+         * Returns the total number of placed tags.
+         * @returns {number}
+         */
+        total_placed_count() {
+            let total = 0;
+            for (const section of Object.values(this.#sections)) {
+                total += section.tags.length;
+            }
+            return total;
+        }
+
+        /**
+         * Exports structure as a plain object ready for JSON.
+         * @returns {object}
+         */
+        export_to_object() {
+            const output = {};
+            if (this.#root_value !== undefined && this.#root_value !== null) {
+                output.root = this.#root_value;
+            }
+            const sorted_names = sort_strings(Object.keys(this.#sections));
+            for (const name of sorted_names) {
+                const section = this.#sections[name];
+                const entry = { tags: [...section.tags] };
+                if (section.subs?.length) entry.subs = [...section.subs];
+                output[name] = entry;
+            }
+            return output;
+        }
+
+        /**
+         * Validates template object.
+         * @param {any} obj
+         * @private
+         */
+        #validate_template_object(obj) {
+            if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+                throw new Error('Invalid format: expected object');
+            }
+            for (const [key, val] of Object.entries(obj)) {
+                if (key === 'root') continue;
+                if (typeof val !== 'object' || val === null || !Array.isArray(val.tags)) {
+                    throw new Error(`Invalid section "${key}": must have a "tags" array.`);
                 }
-            }, 0);
-        });
-
-        pill.addEventListener('dragend', function (e) {
-            pill.classList.remove('dragging');
-            document.querySelectorAll('.section-card.drop-hover').forEach(card => {
-                card.classList.remove('drop-hover');
-            });
-        });
-
-        if (type === 'placed') {
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = '×';
-            deleteBtn.title = 'Remove this tag';
-            deleteBtn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                deleteTagFromSection(sourceSection, tagName);
-            });
-            deleteBtn.addEventListener('mousedown', function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            });
-            pill.insertBefore(deleteBtn, pill.firstChild);
-        }
-
-        return pill;
-    }
-
-    function deleteTagFromSection(sectionName, tagName) {
-        if (structureData[sectionName]) {
-            structureData[sectionName].tags = structureData[sectionName].tags.filter(t => t !== tagName);
-        }
-        let stillClassified = false;
-        for (const sec of Object.values(structureData)) {
-            if (sec.tags.includes(tagName)) {
-                stillClassified = true;
-                break;
+                if (val.subs !== undefined && !Array.isArray(val.subs)) {
+                    throw new Error(`Invalid section "${key}": "subs" must be an array if present.`);
+                }
             }
         }
-        if (!stillClassified) {
-            classifiedTags.delete(tagName);
+
+        /**
+         * Removes tags that are not in the tag service.
+         * @param {tag_data_service} tag_service
+         * @private
+         */
+        #remove_nonexistent_tags(tag_service) {
+            for (const section of Object.values(this.#sections)) {
+                section.tags = section.tags.filter(t => tag_service.has_tag(t));
+            }
         }
-        refreshAll();
     }
 
-    // ============ RENDER RIGHT PANEL ============
-    function applyRightFilter() {
-        const filterText = rightSectionFilter.value.trim().toLowerCase();
-        const cards = sectionsGrid.querySelectorAll('.section-card');
-        let hiddenCount = 0;
-        cards.forEach(card => {
-            const sectionName = card.dataset.sectionName;
-            if (!filterText || sectionName.includes(filterText)) {
-                card.style.display = '';
+    // ===========================================================================
+    //  FILTER STRATEGY (strategy pattern for tag filtering)
+    // ===========================================================================
+    class tag_filter_strategy {
+        /**
+         * @param {string[]} show_keywords
+         * @param {string[]} hide_keywords
+         * @param {string} name_filter
+         */
+        constructor(show_keywords, hide_keywords, name_filter) {
+            this.show_keywords = show_keywords;
+            this.hide_keywords = hide_keywords;
+            this.name_filter = name_filter.toLowerCase();
+        }
+
+        /**
+         * Determines whether a tag passes all filters.
+         * @param {string} tag_name
+         * @param {string[]} categories
+         * @returns {boolean}
+         */
+        matches(tag_name, categories) {
+            // Name filter
+            if (this.name_filter && !tag_name.toLowerCase().includes(this.name_filter)) return false;
+            const cats_lower = categories.map(c => c.toLowerCase());
+            // Show keywords (AND)
+            if (this.show_keywords.length && !this.show_keywords.every(kw => cats_lower.some(cat => cat.includes(kw)))) return false;
+            // Hide keywords (OR)
+            if (this.hide_keywords.length && this.hide_keywords.some(kw => cats_lower.some(cat => cat.includes(kw)))) return false;
+            return true;
+        }
+    }
+
+    // ===========================================================================
+    //  TAG PILL FACTORY (factory pattern)
+    // ===========================================================================
+    class tag_pill_factory {
+        /**
+         * Creates a draggable tag pill.
+         * @param {string} tag_name
+         * @param {'available'|'placed'} type
+         * @param {string|null} source_section
+         * @param {Function} on_delete - Callback for delete button.
+         * @returns {HTMLDivElement}
+         */
+        static create(tag_name, type, source_section, on_delete = null) {
+            const pill = document.createElement('div');
+            pill.className = `tag-pill ${type}`;
+            pill.textContent = tag_name;
+            pill.draggable = true;
+            pill.dataset.tagName = tag_name;
+            if (source_section) pill.dataset.sourceSection = source_section;
+
+            const drag_data = JSON.stringify({ tag_name, source_section, from_left: type === 'available' });
+
+            pill.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', drag_data);
+                e.dataTransfer.effectAllowed = 'move';
+                pill.classList.add('dragging');
+                setTimeout(() => pill.classList.remove('dragging'), 0);
+            });
+
+            pill.addEventListener('dragend', () => {
+                pill.classList.remove('dragging');
+                document.querySelectorAll('.section-card.drop-hover').forEach(card => card.classList.remove('drop-hover'));
+            });
+
+            if (type === 'placed' && on_delete) {
+                const delete_btn = document.createElement('button');
+                delete_btn.className = 'delete-btn';
+                delete_btn.textContent = '×';
+                delete_btn.title = 'Remove this tag';
+                delete_btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    on_delete();
+                });
+                delete_btn.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+                pill.prepend(delete_btn);
+            }
+            return pill;
+        }
+    }
+
+    // ===========================================================================
+    //  VIEW RENDERER (handles UI updates)
+    // ===========================================================================
+    class view_renderer {
+        /**
+         * @param {tag_data_service} tag_service
+         * @param {structure_service} struct_service
+         * @param {object} dom - cached DOM elements
+         */
+        constructor(tag_service, struct_service, dom) {
+            this.tag_service = tag_service;
+            this.struct_service = struct_service;
+            this.dom = dom;
+            this.right_filter_text = '';
+        }
+
+        /**
+         * Refreshes both panels and stats.
+         */
+        refresh_all() {
+            this.render_left_panel();
+            this.render_right_panel();
+            this.update_stats();
+        }
+
+        /**
+         * Renders the available tags panel.
+         */
+        render_left_panel() {
+            const container = this.dom.available_container;
+            if (!container) return;
+            const available = this.#get_filtered_available_tags();
+            container.innerHTML = '';
+
+            if (available.length === 0) {
+                const msg = document.createElement('div');
+                msg.className = 'no-tags';
+                if (this.tag_service.total_count() === 0) {
+                    msg.textContent = 'Load a JSON file to see tags';
+                } else if (this.tag_service.get_classified_set().size === this.tag_service.total_count()) {
+                    msg.textContent = 'All tags have been classified! 🎉';
+                } else {
+                    msg.textContent = 'No tags match the current filters';
+                }
+                container.appendChild(msg);
             } else {
-                card.style.display = 'none';
-                hiddenCount++;
+                for (const tag_name of available) {
+                    const pill = tag_pill_factory.create(tag_name, 'available', null, null);
+                    container.appendChild(pill);
+                }
             }
-        });
-        rightFilterCount.textContent = hiddenCount > 0 ? `${hiddenCount} hidden` : 'all shown';
-    }
+            this.dom.left_count.textContent = available.length;
+        }
 
-    function renderRightPanel() {
-        sectionsGrid.innerHTML = '';
-        const sectionNames = Object.keys(structureData).sort((a, b) => a.localeCompare(b));
+        /**
+         * Renders the right panel (sections with placed tags).
+         */
+        render_right_panel() {
+            const grid = this.dom.sections_grid;
+            if (!grid) return;
+            const sections = this.struct_service.get_sections();
+            const section_names = sort_strings(Object.keys(sections));
+            grid.innerHTML = '';
+            let total_placed = 0;
 
-        sectionNames.forEach(sectionName => {
-            const section = structureData[sectionName];
+            for (const sec_name of section_names) {
+                const section = sections[sec_name];
+                const card = this.#create_section_card(sec_name, section);
+                grid.appendChild(card);
+                total_placed += section.tags.length;
+            }
+
+            this.#apply_right_filter();
+            this.dom.right_tag_count.textContent = `${total_placed} tag${total_placed !== 1 ? 's' : ''} placed`;
+        }
+
+        /**
+         * Updates the statistics counters.
+         */
+        update_stats() {
+            const total = this.tag_service.total_count();
+            const classified = this.tag_service.get_classified_set().size;
+            const available = this.#get_filtered_available_tags().length;
+            this.dom.available_count.textContent = available;
+            this.dom.classified_count.textContent = classified;
+            this.dom.total_count.textContent = total;
+        }
+
+        /**
+         * Sets the right panel filter text.
+         * @param {string} text
+         */
+        set_right_filter(text) {
+            this.right_filter_text = text.toLowerCase();
+            this.#apply_right_filter();
+        }
+
+        /**
+         * Returns filtered available tags.
+         * @returns {string[]}
+         * @private
+         */
+        #get_filtered_available_tags() {
+            const show_keywords = this.#get_keywords_from_textarea(this.dom.show_filter_textarea);
+            const hide_keywords = this.#get_keywords_from_textarea(this.dom.hide_filter_textarea);
+            const name_filter = this.dom.name_filter_input?.value ?? '';
+            const strategy = new tag_filter_strategy(show_keywords, hide_keywords, name_filter);
+            const result = [];
+
+            const all_tags = this.tag_service.get_all_tags();
+            for (const [tag_name, categories] of Object.entries(all_tags)) {
+                if (this.tag_service.is_classified(tag_name)) continue;
+                if (strategy.matches(tag_name, categories)) {
+                    result.push(tag_name);
+                }
+            }
+            return sort_strings(result);
+        }
+
+        /**
+         * Extracts keywords from a textarea.
+         * @param {HTMLTextAreaElement} ta
+         * @returns {string[]}
+         * @private
+         */
+        #get_keywords_from_textarea(ta) {
+            if (!ta) return [];
+            const val = ta.value.trim();
+            return val ? val.split(/[\s,]+/).filter(k => k).map(k => k.toLowerCase()) : [];
+        }
+
+        /**
+         * Creates a single section card.
+         * @param {string} sec_name
+         * @param {{tags:string[], subs?:string[]}} section
+         * @returns {HTMLDivElement}
+         * @private
+         */
+        #create_section_card(sec_name, section) {
             const card = document.createElement('div');
             card.className = 'section-card';
-            card.dataset.sectionName = sectionName;
+            card.dataset.sectionName = sec_name;
 
-            const nameEl = document.createElement('div');
-            nameEl.className = 'section-name';
-            nameEl.textContent = sectionName.replace(/_/g, ' ');
-            card.appendChild(nameEl);
+            const name_el = document.createElement('div');
+            name_el.className = 'section-name';
+            name_el.textContent = sec_name.replace(/_/g, ' ');
+            card.appendChild(name_el);
 
-            if (section.subs && section.subs.length > 0) {
-                const subsEl = document.createElement('div');
-                subsEl.className = 'section-subs';
-                subsEl.innerHTML = '└ subs: <span>' + section.subs.map(s => s.replace(/_/g, ' ')).join(', ') + '</span>';
-                card.appendChild(subsEl);
+            if (section.subs?.length) {
+                const subs_el = document.createElement('div');
+                subs_el.className = 'section-subs';
+                subs_el.innerHTML = `└ subs: <span>${section.subs.map(s => s.replace(/_/g, ' ')).join(', ')}</span>`;
+                card.appendChild(subs_el);
             }
 
-            const tagsArea = document.createElement('div');
-            tagsArea.className = 'tags-area';
-            if (section.tags.length === 0) {
-                tagsArea.classList.add('empty');
-            }
-            section.tags.forEach(tagName => {
-                const pill = createTagPill(tagName, 'placed', sectionName);
-                tagsArea.appendChild(pill);
-            });
-            card.appendChild(tagsArea);
+            const tags_area = document.createElement('div');
+            tags_area.className = 'tags-area';
+            if (!section.tags.length) tags_area.classList.add('empty');
 
-            if (section.tags.length > 0) {
-                const countEl = document.createElement('div');
-                countEl.className = 'tag-count';
-                countEl.textContent = section.tags.length + ' tag' + (section.tags.length > 1 ? 's' : '');
-                card.appendChild(countEl);
+            for (const tag_name of section.tags) {
+                const on_delete = () => this.#handle_delete_tag(sec_name, tag_name);
+                const pill = tag_pill_factory.create(tag_name, 'placed', sec_name, on_delete);
+                tags_area.appendChild(pill);
+            }
+            card.appendChild(tags_area);
+
+            if (section.tags.length) {
+                const count_el = document.createElement('div');
+                count_el.className = 'tag-count';
+                count_el.textContent = `${section.tags.length} tag${section.tags.length !== 1 ? 's' : ''}`;
+                card.appendChild(count_el);
             }
 
-            // Drop events
-            card.addEventListener('dragover', function (e) {
+            // Drag & drop event handlers (Observer pattern)
+            card.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
                 card.classList.add('drop-hover');
             });
-
-            card.addEventListener('dragleave', function (e) {
-                if (!card.contains(e.relatedTarget)) {
-                    card.classList.remove('drop-hover');
-                }
+            card.addEventListener('dragleave', (e) => {
+                if (!card.contains(e.relatedTarget)) card.classList.remove('drop-hover');
             });
-
-            card.addEventListener('drop', function (e) {
+            card.addEventListener('drop', (e) => {
                 e.preventDefault();
                 card.classList.remove('drop-hover');
-                try {
-                    const rawData = e.dataTransfer.getData('text/plain');
-                    if (!rawData) return;
-                    const data = JSON.parse(rawData);
-                    const tagName = data.tagName;
-                    const sourceSection = data.sourceSection;
-                    const fromLeft = data.fromLeft;
-                    handleTagDrop(tagName, sourceSection, sectionName, fromLeft);
-                } catch (err) {
-                    console.error('Drop error:', err);
-                }
+                this.#handle_drop_on_section(e, sec_name);
             });
 
-            sectionsGrid.appendChild(card);
+            return card;
+        }
+
+        /**
+         * Handles delete button on a placed tag.
+         * @param {string} sec_name
+         * @param {string} tag_name
+         * @private
+         */
+        #handle_delete_tag(sec_name, tag_name) {
+            this.struct_service.remove_tag_from_section(sec_name, tag_name);
+            const still_placed = this.struct_service.is_tag_placed(tag_name);
+            if (!still_placed) {
+                this.tag_service.remove_classified(tag_name);
+            }
+            this.refresh_all();
+        }
+
+        /**
+         * Handles dropping a tag onto a section.
+         * @param {DragEvent} e
+         * @param {string} target_section
+         * @private
+         */
+        #handle_drop_on_section(e, target_section) {
+            try {
+                const raw = e.dataTransfer.getData('text/plain');
+                if (!raw) return;
+                const { tag_name, source_section, from_left } = JSON.parse(raw);
+                if (source_section === target_section) return;
+
+                if (!this.tag_service.has_tag(tag_name) && !this.tag_service.is_classified(tag_name)) return;
+
+                // If already in target, do nothing but still remove from source?
+                if (this.struct_service.get_section_tags(target_section).includes(tag_name)) {
+                    if (source_section) {
+                        this.struct_service.remove_tag_from_section(source_section, tag_name);
+                    }
+                    this.refresh_all();
+                    return;
+                }
+
+                // Remove from source if any
+                if (source_section) {
+                    this.struct_service.remove_tag_from_section(source_section, tag_name);
+                }
+
+                // Add to target
+                this.struct_service.add_tag_to_section(target_section, tag_name);
+                this.tag_service.add_classified(tag_name);
+
+                // If we removed from source and tag is no longer anywhere, correct classification
+                if (source_section && !this.struct_service.is_tag_placed(tag_name)) {
+                    this.tag_service.remove_classified(tag_name);
+                }
+                if (from_left) {
+                    this.tag_service.add_classified(tag_name);
+                }
+                this.refresh_all();
+            } catch (err) {
+                console.error('Drop error:', err);
+            }
+        }
+
+        /**
+         * Applies text filter to section cards.
+         * @private
+         */
+        #apply_right_filter() {
+            const filter = this.right_filter_text;
+            const cards = document.querySelectorAll('.section-card');
+            let hidden = 0;
+            for (const card of cards) {
+                const sec_name = card.dataset.sectionName;
+                if (!filter || sec_name.includes(filter)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                    hidden++;
+                }
+            }
+            this.dom.right_filter_count.textContent = hidden ? `${hidden} hidden` : 'all shown';
+        }
+    }
+
+    // ===========================================================================
+    //  COMMAND HANDLERS (command pattern)
+    // ===========================================================================
+    class command_handlers {
+        /**
+         * @param {tag_data_service} tag_service
+         * @param {structure_service} struct_service
+         * @param {view_renderer} renderer
+         */
+        constructor(tag_service, struct_service, renderer) {
+            this.tag_service = tag_service;
+            this.struct_service = struct_service;
+            this.renderer = renderer;
+        }
+
+        /**
+         * Saves the current state to a JSON file.
+         */
+        save_json() {
+            const output = this.struct_service.export_to_object();
+            const json_str = JSON.stringify(output, null, 2);
+            const blob = new Blob([json_str], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${SAVE_FILENAME_PREFIX}-${get_timestamp()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast_service.show('✅ JSON saved successfully!');
+        }
+
+        /**
+         * Resets all placed tags after confirmation.
+         */
+        reset_all_tags() {
+            if (confirm('Are you sure you want to remove ALL placed tags from all sections?')) {
+                this.struct_service.reset_all_tags();
+                this.tag_service.reset_classified();
+                this.renderer.refresh_all();
+                toast_service.show('🔄 All tags reset');
+            }
+        }
+
+        /**
+         * Handles return of a tag to the left panel.
+         * @param {string} tag_name
+         * @param {string} source_section
+         */
+        return_tag_to_available(tag_name, source_section) {
+            if (source_section && this.struct_service.remove_tag_from_section(source_section, tag_name)) {
+                const still_placed = this.struct_service.is_tag_placed(tag_name);
+                if (!still_placed) {
+                    this.tag_service.remove_classified(tag_name);
+                }
+                this.renderer.refresh_all();
+                toast_service.show(`"${tag_name}" returned to available tags`);
+            }
+        }
+    }
+
+    // ===========================================================================
+    //  LEFT PANEL DROP HANDLER (decorator for drop zone)
+    // ===========================================================================
+    class left_panel_drop_zone {
+        /**
+         * @param {command_handlers} commands
+         * @param {view_renderer} renderer
+         * @param {HTMLElement} container
+         */
+        constructor(commands, renderer, container) {
+            this.commands = commands;
+            this.renderer = renderer;
+            this.container = container;
+            this.#attach_events();
+        }
+
+        #attach_events() {
+            this.container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                this.container.style.background = DRAG_HOVER_BACKGROUND;
+            });
+            this.container.addEventListener('dragleave', (e) => {
+                if (!this.container.contains(e.relatedTarget)) {
+                    this.container.style.background = '';
+                }
+            });
+            this.container.addEventListener('drop', (e) => {
+                e.preventDefault();
+                this.container.style.background = '';
+                try {
+                    const raw = e.dataTransfer.getData('text/plain');
+                    if (!raw) return;
+                    const { tag_name, source_section, from_left } = JSON.parse(raw);
+                    if (from_left) return; // already in left panel
+                    this.commands.return_tag_to_available(tag_name, source_section);
+                } catch (err) {
+                    console.error('Left panel drop error:', err);
+                }
+            });
+        }
+    }
+
+    // ===========================================================================
+    //  APPLICATION INITIALIZATION (module entry point)
+    // ===========================================================================
+    const init = async () => {
+        const dom = dom_cache.all();
+        const tag_service = new tag_data_service();
+        const struct_service = new structure_service();
+        const renderer = new view_renderer(tag_service, struct_service, dom);
+        const commands = new command_handlers(tag_service, struct_service, renderer);
+
+        // Load data
+        try {
+            await tag_service.load_from_local();
+        } catch (e) {
+            console.warn('Could not load tags.json, waiting for user upload');
+            dom.file_info.textContent = 'No file loaded';
+        }
+        try {
+            await struct_service.load_from_local(tag_service);
+        } catch (e) {
+            console.warn('Could not load body_template.json, using empty structure');
+            struct_service.reset_all_tags();
+        }
+
+        // Reconcile classified tags from the loaded structure
+        const classified_set = new Set();
+        const sections = struct_service.get_sections();
+        for (const sec of Object.values(sections)) {
+            for (const tag of sec.tags) {
+                if (tag_service.has_tag(tag)) classified_set.add(tag);
+            }
+        }
+        tag_service.set_classified_set(classified_set);
+
+        renderer.refresh_all();
+
+        // Setup UI event listeners (Observer pattern)
+        dom.tag_file_input.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            dom.file_info.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    tag_service.load_from_json(ev.target.result);
+                    renderer.refresh_all();
+                } catch (err) {
+                    dom.file_info.textContent = 'Invalid file';
+                }
+            };
+            reader.readAsText(file);
         });
 
-        applyRightFilter();
+        dom.show_filter_textarea?.addEventListener('input', () => renderer.refresh_all());
+        dom.hide_filter_textarea?.addEventListener('input', () => renderer.refresh_all());
+        dom.name_filter_input?.addEventListener('input', () => renderer.refresh_all());
+        dom.right_filter_input?.addEventListener('input', (e) => renderer.set_right_filter(e.target.value));
 
-        let totalPlaced = 0;
-        for (const sec of Object.values(structureData)) {
-            totalPlaced += sec.tags.length;
-        }
-        rightTagCountEl.textContent = totalPlaced + ' tag' + (totalPlaced !== 1 ? 's' : '') + ' placed';
-        updateStats();
-    }
-
-    function handleTagDrop(tagName, sourceSection, targetSection, fromLeft) {
-        if (sourceSection === targetSection) return;
-        if (!allTagsData[tagName] && !classifiedTags.has(tagName)) return;
-
-        if (structureData[targetSection] && structureData[targetSection].tags.includes(tagName)) {
-            if (sourceSection && structureData[sourceSection]) {
-                structureData[sourceSection].tags = structureData[sourceSection].tags.filter(t => t !== tagName);
-            }
-            refreshAll();
-            return;
-        }
-
-        if (sourceSection && structureData[sourceSection]) {
-            structureData[sourceSection].tags = structureData[sourceSection].tags.filter(t => t !== tagName);
-        }
-
-        if (structureData[targetSection]) {
-            structureData[targetSection].tags.push(tagName);
-        }
-
-        classifiedTags.add(tagName);
-
-        if (sourceSection) {
-            let stillExists = false;
-            for (const sec of Object.values(structureData)) {
-                if (sec.tags.includes(tagName)) {
-                    stillExists = true;
-                    break;
-                }
-            }
-            if (!stillExists) {
-                classifiedTags.delete(tagName);
-            }
-        }
-
-        if (fromLeft) {
-            classifiedTags.add(tagName);
-        }
-
-        refreshAll();
-    }
-
-    // ============ LEFT PANEL DROP (return tag) ============
-    window.handleLeftPanelDragOver = function (e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        availableTagsContainer.style.background = 'rgba(46,204,113,0.08)';
-    };
-
-    window.handleLeftPanelDragLeave = function (e) {
-        if (!availableTagsContainer.contains(e.relatedTarget)) {
-            availableTagsContainer.style.background = '';
-        }
-    };
-
-    window.handleLeftPanelDrop = function (e) {
-        e.preventDefault();
-        availableTagsContainer.style.background = '';
-        try {
-            const rawData = e.dataTransfer.getData('text/plain');
-            if (!rawData) return;
-            const data = JSON.parse(rawData);
-            const tagName = data.tagName;
-            const sourceSection = data.sourceSection;
-            const fromLeft = data.fromLeft;
-            if (fromLeft) return;
-
-            if (sourceSection && structureData[sourceSection]) {
-                structureData[sourceSection].tags = structureData[sourceSection].tags.filter(t => t !== tagName);
-            }
-
-            let stillClassified = false;
-            for (const sec of Object.values(structureData)) {
-                if (sec.tags.includes(tagName)) {
-                    stillClassified = true;
-                    break;
-                }
-            }
-            if (!stillClassified) {
-                classifiedTags.delete(tagName);
-            }
-
-            refreshAll();
-            showToast(`"${tagName}" returned to available tags`);
-        } catch (err) {
-            console.error('Left panel drop error:', err);
-        }
-    };
-
-    // ============ UPDATE STATS ============
-    function updateStats() {
-        const total = Object.keys(allTagsData).length;
-        const classified = classifiedTags.size;
-        const available = getAvailableTags().length;
-        availableCountEl.textContent = available;
-        classifiedCountEl.textContent = classified;
-        totalCountEl.textContent = total;
-    }
-
-    // ============ REFRESH ALL ============
-    function refreshAll() {
-        renderLeftPanel();
-        renderRightPanel();
-        updateStats();
-    }
-
-    // ============ EVENT LISTENERS ============
-    showFilterTA.addEventListener('input', refreshAll);
-    hideFilterTA.addEventListener('input', refreshAll);
-    nameFilterInput.addEventListener('input', refreshAll);
-
-    rightSectionFilter.addEventListener('input', function () {
-        applyRightFilter();
-    });
-
-    // ============ LOAD TEMPLATE (custom body structure) ============
-    loadTemplateBtn.addEventListener('click', function () {
-        templateFileInput.click();
-    });
-
-    templateFileInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function (ev) {
-            try {
-                const parsed = JSON.parse(ev.target.result);
-                if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-                    throw new Error('Invalid format: expected object');
-                }
-                // Validate each entry
-                for (const [key, val] of Object.entries(parsed)) {
-                    if (typeof val !== 'object' || val === null || !Array.isArray(val.tags)) {
-                        throw new Error(`Invalid section "${key}": must have a "tags" array.`);
+        dom.load_template_btn?.addEventListener('click', () => dom.template_file_input.click());
+        dom.template_file_input?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    struct_service.load_from_json(ev.target.result, tag_service);
+                    // Rebuild classified set
+                    const new_classified = new Set();
+                    const new_sections = struct_service.get_sections();
+                    for (const sec of Object.values(new_sections)) {
+                        for (const tag of sec.tags) {
+                            if (tag_service.has_tag(tag)) new_classified.add(tag);
+                        }
                     }
-                    if (val.subs !== undefined && !Array.isArray(val.subs)) {
-                        throw new Error(`Invalid section "${key}": "subs" must be an array if present.`);
-                    }
+                    tag_service.set_classified_set(new_classified);
+                    renderer.refresh_all();
+                    toast_service.show('✅ Template loaded!');
+                } catch (err) {
+                    toast_service.show('❌ Error loading template');
                 }
-                // Replace structure data, reset all tags
-                structureData = deepClone(parsed);
-                classifiedTags.clear();
+            };
+            reader.readAsText(file);
+            dom.template_file_input.value = '';
+        });
 
-                // Clear tags in new structure
-                for (const section of Object.values(structureData)) {
-                    const tags = section.tags.filter(k => k.length > 0).map(k => k.toLowerCase());
-                    tags.forEach(tagName => { classifiedTags.add(tagName) });
-                }
-
-                showToast('✅ Template loaded! Tags reset.');
-                refreshAll();
-            } catch (err) {
-                alert('Error loading template: ' + err.message);
-            }
-        };
-        reader.readAsText(file);
-        // Reset file input so the same file can be loaded again
-        templateFileInput.value = '';
-    });
-
-    // ============ SAVE JSON ============
-    window.saveJSON = function () {
-        const output = {};
-        const sortedKeys = Object.keys(structureData).sort((a, b) => a.localeCompare(b));
-        for (const key of sortedKeys) {
-            const section = structureData[key];
-            const entry = { tags: [...section.tags] };
-            if (section.subs && section.subs.length > 0) {
-                entry.subs = [...section.subs];
-            }
-            output[key] = entry;
+        // Setup left panel drop zone
+        if (dom.available_container) {
+            new left_panel_drop_zone(commands, renderer, dom.available_container);
         }
-        const jsonStr = JSON.stringify(output, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        a.download = `classified-tags-${timestamp}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('✅ JSON saved successfully!');
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                commands.save_json();
+            }
+        });
+
+        // Global drop prevention
+        document.addEventListener('dragover', (e) => {
+            if (e.target === document.body || e.target === document.documentElement) e.preventDefault();
+        });
+        document.addEventListener('drop', (e) => {
+            if (e.target === document.body || e.target === document.documentElement) {
+                e.preventDefault();
+                document.querySelectorAll('.section-card.drop-hover').forEach(c => c.classList.remove('drop-hover'));
+                if (dom.available_container) dom.available_container.style.background = '';
+            }
+        });
+
+        // Attach save/reset to window for HTML onclick compatibility
+        window.saveJSON = () => commands.save_json();
+        window.resetAllTags = () => commands.reset_all_tags();
     };
 
-    // ============ RESET ALL ============
-    window.resetAllTags = function () {
-        if (confirm('Are you sure you want to remove ALL placed tags from all sections?')) {
-            for (const section of Object.values(structureData)) {
-                section.tags = [];
-            }
-            classifiedTags.clear();
-            refreshAll();
-            showToast('🔄 All tags reset');
-        }
-    };
-
-    // ============ GLOBAL DROP HANDLERS ============
-    document.addEventListener('dragover', function (e) {
-        if (e.target === document.body || e.target === document.documentElement) {
-            e.preventDefault();
-        }
-    });
-
-    document.addEventListener('drop', function (e) {
-        if (e.target === document.body || e.target === document.documentElement) {
-            e.preventDefault();
-            document.querySelectorAll('.section-card.drop-hover').forEach(c => c.classList.remove('drop-hover'));
-            availableTagsContainer.style.background = '';
-        }
-    });
-
-    // ============ KEYBOARD SHORTCUT ============
-    document.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-            e.preventDefault();
-            saveJSON();
-        }
-    });
-
-    // ============ INITIAL RENDER ============
-    function init() {
-        load_local_tags();
-        
-        classifiedTags = new Set();
-        allTagsData = {};
-        refreshAll();
-        fileInfo.textContent = 'No file loaded';
-        rightSectionFilter.value = '';
-        applyRightFilter();
-        nameFilterInput.value = '';
-    }
-
-    init();
-
-    console.log('🏷️ Tag Classifier v2 ready!');
+    // Start application
+    init().catch(console.error);
 })();

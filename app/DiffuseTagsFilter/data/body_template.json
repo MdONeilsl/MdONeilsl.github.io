@@ -1,4 +1,5 @@
 {
+    "root":"body",
     "body": {
         "tags": [],
         "subs": ["head", "upper_body", "lower_body", "gender", "muscles_mass", "skin"]
