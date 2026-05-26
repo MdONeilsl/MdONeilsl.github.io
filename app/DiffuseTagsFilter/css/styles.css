@@ -561,3 +561,95 @@ body {
         flex: 1;
     }
 }
+
+/* ========== ADDITIONAL STYLES FOR WEIGHT INPUTS ========== */
+.tag-pill.placed {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px 5px 6px;
+    background: #2a1a3a;
+    border-radius: 24px;
+    border: 1px solid #5a3a7a;
+    transition: all 0.15s;
+}
+
+.tag-pill.placed .weight-input {
+    width: 52px;
+    background: #0f0f1a;
+    border: 1px solid #6a4a8a;
+    border-radius: 14px;
+    color: #f0e0ff;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 3px 4px;
+    margin-left: 4px;
+    font-family: 'Segoe UI', monospace;
+    transition: 0.1s;
+}
+
+.tag-pill.placed .weight-input:focus {
+    outline: none;
+    border-color: #e94560;
+    background: #1e1a2a;
+    box-shadow: 0 0 0 1px rgba(233, 69, 96, 0.3);
+}
+
+.tag-pill.placed .weight-input:hover {
+    background: #252035;
+    border-color: #aa8acc;
+}
+
+.tag-pill.placed .delete-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffaaaa;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.1s;
+}
+
+.tag-pill.placed .delete-btn:hover {
+    background: #e94560;
+    color: white;
+    transform: scale(1.1);
+}
+
+.tag-pill.placed .tag-name {
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.tag-pill.placed[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* ensure number input arrows are visible on dark theme */
+.weight-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.weight-input::-webkit-inner-spin-button,
+.weight-input::-webkit-outer-spin-button {
+    opacity: 0.6;
+    filter: invert(0.8);
+}
+
+.section-card .tags-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.toast {
+    background: #1e3a2e;
+    border-left: 4px solid #2ecc71;
+}

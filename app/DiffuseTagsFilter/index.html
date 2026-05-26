@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tag Classifier - Drag & Drop JSON Builder (v2)</title>
-</head>
-
-<body>
+    <title>Tag Classifier - Weighted Tags & Drag & Drop Builder</title>
+    <style>
+        
+    </style>
     <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
 
     <!-- TOP BAR -->
     <div class="top-bar">
@@ -46,26 +47,22 @@
                 🏷️ Available Tags
                 <span class="count" id="leftCount">0</span>
             </div>
-            <div class="tags-container" id="availableTagsContainer"
-                 ondragover="handleLeftPanelDragOver(event)"
-                 ondragleave="handleLeftPanelDragLeave(event)"
-                 ondrop="handleLeftPanelDrop(event)">
+            <div class="tags-container" id="availableTagsContainer">
                 <div class="no-tags">Load a JSON file to see tags</div>
             </div>
         </div>
 
-        <!-- RIGHT PANEL: JSON Structure -->
+        <!-- RIGHT PANEL: JSON Structure with Weighted Tags -->
         <div class="right-panel" id="rightPanel">
             <div class="panel-header">
                 📋 Drop Tags onto Sections
                 <div class="header-actions">
                     <span style="font-size:0.7rem;color:var(--text2);" id="rightTagCount">0 tags placed</span>
-                    <button class="btn-reset" onclick="resetAllTags()" title="Remove all placed tags">🔄 Reset All</button>
+                    <button class="btn-reset" id="resetAllBtn" title="Remove all placed tags">🔄 Reset All</button>
                     <button class="btn-template" id="loadTemplateBtn" title="Load a custom template (JSON)">📂 Load Template</button>
-                    <button class="btn-save" onclick="saveJSON()">💾 Save JSON</button>
+                    <button class="btn-save" id="saveJSONBtn">💾 Save JSON</button>
                 </div>
             </div>
-            <!-- Hidden file input for template loading -->
             <input type="file" id="templateFileInput" accept=".json" style="display: none;">
 
             <div class="right-filter-bar">
@@ -74,12 +71,11 @@
                 <span class="filter-count" id="rightFilterCount">0 hidden</span>
             </div>
             <div class="sections-grid" id="sectionsGrid">
-                <!-- Dynamically filled -->
+                <!-- dynamic sections -->
             </div>
         </div>
     </div>
 
-    <!-- Toast container -->
     <div id="toastContainer"></div>
 
     <script type="module" src="./js/main.js"></script>
